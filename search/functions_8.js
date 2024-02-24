@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['operator_21_3d_188',['operator!=',['../class_q_color.html#afad5c376cd0a67acb96b11d8b70e4a14',1,'QColor::operator!=(const QColor &amp;other) const'],['../class_q_color.html#abd252ec0624c0138eeefb3dfca201305',1,'QColor::operator!=(int other) const'],['../classpuzzle_1_1_spin_marble.html#a7a1c2f540c876616b37b24cbd6e0dcd0',1,'puzzle::SpinMarble::operator!=()']]],
+  ['operator_2a_189',['operator*',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#ac80f067f4e2307b8b90b6289719b3614',1,'puzzle::SpinPuzzleSide::iterator::operator*() const'],['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a53c6dcbce01d35a7588ab246c03d9f48',1,'puzzle::SpinPuzzleSide::iterator::operator*()']]],
+  ['operator_2b_190',['operator+',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a74973cc9e30dc5db759ab98a71c80d64',1,'puzzle::SpinPuzzleSide::iterator']]],
+  ['operator_2b_2b_191',['operator++',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a3f79314afef52b2d627acecbecef889c',1,'puzzle::SpinPuzzleSide::iterator']]],
+  ['operator_2b_3d_192',['operator+=',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#ae425f5ad5971fe24d8af84acf8f8dbd8',1,'puzzle::SpinPuzzleSide::iterator']]],
+  ['operator_2d_193',['operator-',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a3ea324151af9c30187d83210173a3079',1,'puzzle::SpinPuzzleSide::iterator']]],
+  ['operator_2d_2d_194',['operator--',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a4f7015a14b792069080f6415b3bb8b45',1,'puzzle::SpinPuzzleSide::iterator']]],
+  ['operator_2d_3d_195',['operator-=',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#aa08f0759452fa7c1382b8195ff5cf4f8',1,'puzzle::SpinPuzzleSide::iterator']]],
+  ['operator_2d_3e_196',['operator-&gt;',['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a1a7b05d8efff2555ff1b0527657915af',1,'puzzle::SpinPuzzleSide::iterator::operator-&gt;()'],['../classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a3b55c5ea50754cd0a932667451ab289c',1,'puzzle::SpinPuzzleSide::iterator::operator-&gt;() const']]],
+  ['operator_3d_197',['operator=',['../classpuzzle_1_1_spin_marble.html#a78aea815de652e766711b97692a0cc9c',1,'puzzle::SpinMarble::operator=(SpinMarble &amp;&amp;other)'],['../classpuzzle_1_1_spin_marble.html#a3246454fbf40977035de53620b72384f',1,'puzzle::SpinMarble::operator=(const SpinMarble &amp;other)=delete'],['../class_q_color.html#a23e9b6aaca950558da2947d93e82347c',1,'QColor::operator=(const QColor &amp;other)'],['../class_q_color.html#aef30544adc0ce66c1ef8970405d90230',1,'QColor::operator=(QColor &amp;&amp;other)']]],
+  ['operator_3d_3d_198',['operator==',['../classpuzzle_1_1_spin_marble.html#a4e2926cb5c2c9b0666fecfbaf35d9e38',1,'puzzle::SpinMarble::operator==()'],['../class_q_color.html#a178e62e4b450fdd1ca5b91f7635b94f5',1,'QColor::operator==(const QColor &amp;other) const'],['../class_q_color.html#a10c26e510b3315ee6378476edc36b0fe',1,'QColor::operator==(int other) const']]]
+];

@@ -1,0 +1,10 @@
+\_form#0=234x14:$(it(leaf_f; front) + n) \leftrightarrow it(leaf_b; back) + n$
+\_form#1=209x9:$it = \texttt{iterator of the section leaf}$
+\_form#2=64x11:$n\in{1,\ldots,5}$
+\_form#3=13x8:$\leftrightarrow$
+\_form#4=45x16:$\theta_0 := \frac{2\pi}{N}$
+\_form#5=238x28:\[ pos = i \texttt{ if } \theta_{pos(i)}\in (i\cdot\theta_0 - \frac{\theta_0}{2}, i\cdot\theta_0 - \frac{\theta_0}{2}) \]
+\_form#6=11x10:$N$
+\_form#7=153x13:$ m + phase-shift = it + \alpha$
+\_form#8=106x14:$ m = marbles(leaf) $
+\_form#9=111x14:$ (it, \alpha) = begin(leaf) $
