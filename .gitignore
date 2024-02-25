@@ -82,5 +82,13 @@ out/*
 Testing/ 
 cmake/
 .gdb_history
+venv/*
 
 build_*
+
+spyn_puzzle.egg-info/dependency_links.txt
+spyn_puzzle.egg-info/not-zip-safe
+spyn_puzzle.egg-info/PKG-INFO
+spyn_puzzle.egg-info/requires.txt
+spyn_puzzle.egg-info/SOURCES.txt
+spyn_puzzle.egg-info/top_level.txt

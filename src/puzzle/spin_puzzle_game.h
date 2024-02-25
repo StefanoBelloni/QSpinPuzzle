@@ -127,6 +127,16 @@ public:
     return m_sides[n];
   }
 
+  /**
+   * @brief get the SpinPuzzle For the given Side.
+
+   * @param  side: side to get
+   * @retval returns a \ref SpinPuzzleSide for the side.
+   */
+  puzzle::SpinPuzzleSide<10, 3> &get_side() {
+    return get_side(get_active_side());
+  }
+
   bool check_consistency(bool verbose = false);
 
   std::string game_as_stirng();

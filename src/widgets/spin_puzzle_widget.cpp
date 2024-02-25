@@ -23,8 +23,7 @@ inline constexpr int signum(T x, std::true_type is_signed) {
   return (T(0) < x) - (x < T(0));
 }
 
-template <typename T>
-inline constexpr int signum(T x) {
+template <typename T> inline constexpr int signum(T x) {
   return signum(x, std::is_signed<T>());
 }
 
@@ -264,25 +263,41 @@ void SpinPuzzleWidget::do_paint_marbles_on_border(QPainter &painter) {
 }
 
 QColor SpinPuzzleWidget::toQtColor(puzzle::Color value) {
-  switch (value)
-  {
-case puzzle::white : return Qt::white;
-case puzzle::black : return Qt::black;
-case puzzle::red : return Qt::red;
-case puzzle::darkRed : return Qt::darkRed;
-case puzzle::green : return Qt::green;
-case puzzle::darkGreen : return Qt::darkGreen;
-case puzzle::blue : return Qt::blue;
-case puzzle::darkBlue : return Qt::darkBlue;
-case puzzle::cyan : return Qt::cyan;
-case puzzle::darkCyan : return Qt::darkCyan;
-case puzzle::magenta : return Qt::magenta;
-case puzzle::darkMagenta : return Qt::darkMagenta;
-case puzzle::yellow : return Qt::yellow;
-case puzzle::darkYellow : return Qt::darkYellow;
-case puzzle::gray : return Qt::gray;
-case puzzle::darkGray : return Qt::darkGray;
-case puzzle::lightGray : return Qt::lightGray;
+  switch (value) {
+  case puzzle::white:
+    return Qt::white;
+  case puzzle::black:
+    return Qt::black;
+  case puzzle::red:
+    return Qt::red;
+  case puzzle::darkRed:
+    return Qt::darkRed;
+  case puzzle::green:
+    return Qt::green;
+  case puzzle::darkGreen:
+    return Qt::darkGreen;
+  case puzzle::blue:
+    return Qt::blue;
+  case puzzle::darkBlue:
+    return Qt::darkBlue;
+  case puzzle::cyan:
+    return Qt::cyan;
+  case puzzle::darkCyan:
+    return Qt::darkCyan;
+  case puzzle::magenta:
+    return Qt::magenta;
+  case puzzle::darkMagenta:
+    return Qt::darkMagenta;
+  case puzzle::yellow:
+    return Qt::yellow;
+  case puzzle::darkYellow:
+    return Qt::darkYellow;
+  case puzzle::gray:
+    return Qt::gray;
+  case puzzle::darkGray:
+    return Qt::darkGray;
+  case puzzle::lightGray:
+    return Qt::lightGray;
   default:
     return Qt::black;
     break;

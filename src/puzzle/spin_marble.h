@@ -41,6 +41,10 @@ public:
     other.m_color = INVALID_COLOR;
   }
 
+  SpinMarble(const SpinMarble &other) = default;
+
+  SpinMarble &operator=(const SpinMarble &other) = default;
+
   /**
    * @brief Move assignment
    *
@@ -57,15 +61,17 @@ public:
   /**
    * @brief  Copy contructor is deleted, to avoid duplicate of marbles
    *
+   * @note for pybind11 seems to be relevant
    * @param  other:
    */
-  SpinMarble(const SpinMarble &other) = delete;
+  // SpinMarble(const SpinMarble &other) = delete;
   /**
    * @brief  assign operator is deleted, to avoid duplicate of marbles
    *
+   * @note for pybind11 seems to be relevant
    * @param  other:
    */
-  SpinMarble &operator=(const SpinMarble &other) = delete;
+  // SpinMarble &operator=(const SpinMarble &other) = delete;
 
   //! \brief getter for the color
   Color color() const { return m_color; }
@@ -77,7 +83,7 @@ public:
   bool operator==(const SpinMarble &other) const {
     return m_id == other.m_id && m_color == other.m_color;
   }
-  operator Color() { return m_color;}
+  operator Color() { return m_color; }
 
   bool operator!=(const SpinMarble &other) const { return !(*this == other); }
 

@@ -10,37 +10,35 @@
  */
 namespace puzzle {
 
-
 // keys
-const inline int Key_N	= 0x4e;
+const inline int Key_N = 0x4e;
 const inline int Key_P = 0x50;
 const inline int Key_E = 0x45;
 const inline int Key_W = 0x57;
 const inline int Key_Left = 0x01000012;
-const inline int Key_Right	= 0x01000014;
-const inline int Key_PageUp	= 0x01000016;
-const inline int Key_PageDown	= 0x01000017;
-const inline int Key_I	= 0x49;
+const inline int Key_Right = 0x01000014;
+const inline int Key_PageUp = 0x01000016;
+const inline int Key_PageDown = 0x01000017;
+const inline int Key_I = 0x49;
 
 // colors
-const inline int white	= 3;
-const inline int black	= 2;
-const inline int red	= 7;
-const inline int darkRed	= 13;
-const inline int green	= 8;
-const inline int darkGreen	= 14;
-const inline int blue	= 9;
-const inline int darkBlue	= 15;
-const inline int cyan	= 10;
-const inline int darkCyan	= 16;
-const inline int magenta	= 11;
-const inline int darkMagenta	= 17;
-const inline int yellow	= 12;
-const inline int darkYellow	= 18;
-const inline int gray	= 5;
-const inline int darkGray	= 4;
-const inline int lightGray	= 6;
-
+const inline int white = 3;
+const inline int black = 2;
+const inline int red = 7;
+const inline int darkRed = 13;
+const inline int green = 8;
+const inline int darkGreen = 14;
+const inline int blue = 9;
+const inline int darkBlue = 15;
+const inline int cyan = 10;
+const inline int darkCyan = 16;
+const inline int magenta = 11;
+const inline int darkMagenta = 17;
+const inline int yellow = 12;
+const inline int darkYellow = 18;
+const inline int gray = 5;
+const inline int darkGray = 4;
+const inline int lightGray = 6;
 
 // keys
 inline int Key_T = 0x54; //!< see https://doc.qt.io/qt-6/qt.html

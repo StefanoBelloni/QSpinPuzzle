@@ -62,11 +62,6 @@ add_library(spinpuzzle SHARED
 )
 # ============================================== #
 
-# ============================================== #
-# pybind11 method:
-pybind11_add_module(spin_puzzle src/pybind11/add.cpp)
-# ============================================== #
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QSpinPuzzle
         MANUAL_FINALIZATION
@@ -147,6 +142,30 @@ install(TARGETS QSpinPuzzle
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(QSpinPuzzle)
 endif()
+
+if(ANDROID)
+else()
+# ============================================== #
+# pybind11 method:
+pybind11_add_module(
+    spyn_puzzle 
+    src/pybind11/puzzle.cpp
+    )
+
+target_include_directories(
+    spyn_puzzle 
+    PRIVATE 
+    src
+)
+
+target_link_libraries(
+    spyn_puzzle 
+    PUBLIC 
+    spinpuzzle
+)
+endif()
+# ============================================== #
+
 
 ## =========================================================================== ##
 ##                              TESTS WITH GTEST                               ##

@@ -200,10 +200,11 @@ SIDE SpinPuzzleGame::get_opposite_side(SIDE side) {
 std::array<SpinMarble, 30> SpinPuzzleGame::createFrontMarbles() {
   std::array<SpinMarble, 30> array = {
       // NORTH
-      SpinMarble(0, puzzle::blue), SpinMarble(1, puzzle::blue), SpinMarble(2, puzzle::blue),
-      SpinMarble(3, puzzle::blue), SpinMarble(4, puzzle::blue), SpinMarble(5, puzzle::blue),
-      SpinMarble(6, puzzle::blue), SpinMarble(7, puzzle::blue), SpinMarble(8, puzzle::blue),
-      SpinMarble(9, puzzle::blue),
+      SpinMarble(0, puzzle::blue), SpinMarble(1, puzzle::blue),
+      SpinMarble(2, puzzle::blue), SpinMarble(3, puzzle::blue),
+      SpinMarble(4, puzzle::blue), SpinMarble(5, puzzle::blue),
+      SpinMarble(6, puzzle::blue), SpinMarble(7, puzzle::blue),
+      SpinMarble(8, puzzle::blue), SpinMarble(9, puzzle::blue),
       // EAST
       SpinMarble(10, puzzle::green), SpinMarble(11, puzzle::green),
       SpinMarble(12, puzzle::green), SpinMarble(13, puzzle::green),
@@ -228,10 +229,11 @@ std::array<SpinMarble, 30> SpinPuzzleGame::createBackMarbles() {
       SpinMarble(36, puzzle::cyan), SpinMarble(37, puzzle::cyan),
       SpinMarble(38, puzzle::cyan), SpinMarble(39, puzzle::cyan),
       // EAST
-      SpinMarble(40, puzzle::red), SpinMarble(41, puzzle::red), SpinMarble(42, puzzle::red),
-      SpinMarble(43, puzzle::red), SpinMarble(44, puzzle::red), SpinMarble(45, puzzle::red),
-      SpinMarble(46, puzzle::red), SpinMarble(47, puzzle::red), SpinMarble(48, puzzle::red),
-      SpinMarble(49, puzzle::red),
+      SpinMarble(40, puzzle::red), SpinMarble(41, puzzle::red),
+      SpinMarble(42, puzzle::red), SpinMarble(43, puzzle::red),
+      SpinMarble(44, puzzle::red), SpinMarble(45, puzzle::red),
+      SpinMarble(46, puzzle::red), SpinMarble(47, puzzle::red),
+      SpinMarble(48, puzzle::red), SpinMarble(49, puzzle::red),
       // WEST
       SpinMarble(50, puzzle::yellow), SpinMarble(51, puzzle::yellow),
       SpinMarble(52, puzzle::yellow), SpinMarble(53, puzzle::yellow),

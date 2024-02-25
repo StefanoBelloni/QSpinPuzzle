@@ -6,8 +6,7 @@
 #include <array>
 #include <iostream>
 
-template <std::size_t N>
-auto getPuzzle() {
+template <std::size_t N> auto getPuzzle() {
   std::array<puzzle::SpinMarble, N * 3> marbles;
   int id = 0;
   puzzle::Color color = puzzle::black;
@@ -576,14 +575,16 @@ TEST(PuzzleSide, basic_move_sequence_0) {
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::WEST, 7 * DTHETA));
 
   north_expected = {
-      SpinMarble{7, puzzle::black}, {8, puzzle::black}, {9, puzzle::black}, {0, puzzle::black},
-      {1, puzzle::black},           {2, puzzle::black}, {3, puzzle::black}, {4, puzzle::black},
-      {5, puzzle::black},           {6, puzzle::black},
+      SpinMarble{7, puzzle::black}, {8, puzzle::black}, {9, puzzle::black},
+      {0, puzzle::black},           {1, puzzle::black}, {2, puzzle::black},
+      {3, puzzle::black},           {4, puzzle::black}, {5, puzzle::black},
+      {6, puzzle::black},
   };
   east_expected = {
-      SpinMarble{16, puzzle::red}, {17, puzzle::red}, {18, puzzle::red}, {19, puzzle::red},
-      {10, puzzle::red},           {11, puzzle::red}, {12, puzzle::red}, {13, puzzle::red},
-      {14, puzzle::red},           {15, puzzle::red},
+      SpinMarble{16, puzzle::red}, {17, puzzle::red}, {18, puzzle::red},
+      {19, puzzle::red},           {10, puzzle::red}, {11, puzzle::red},
+      {12, puzzle::red},           {13, puzzle::red}, {14, puzzle::red},
+      {15, puzzle::red},
   };
   west_expected = {
       SpinMarble{23, puzzle::green}, {24, puzzle::green}, {25, puzzle::green},

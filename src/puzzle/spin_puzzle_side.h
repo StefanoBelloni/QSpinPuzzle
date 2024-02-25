@@ -2,9 +2,10 @@
 #define SPINPUZZLESIDE_H
 
 #include <array>
+#include <cassert>
+#include <cmath>
 #include <iostream>
 #include <math.h>
-#include <cassert>
 
 #include "spin_marble.h"
 
@@ -75,8 +76,7 @@ namespace puzzle {
  * @tparam template parameter N is the number of marbles inside a single leaf.
  * @tparam template parameter M is the number of marbles inside the common area.
  */
-template <std::size_t N = 10ul, std::size_t M = 3ul>
-class SpinPuzzleSide {
+template <std::size_t N = 10ul, std::size_t M = 3ul> class SpinPuzzleSide {
 
 private:
   //!< number of leaves in the trefoil
@@ -216,6 +216,10 @@ public:
   public:
     iterator() = default;
 
+    // This does not really work:
+    // if state is in BORDER_ROTATION then NORTH/EAST/WEST are K.O
+    // and vice versa: this is py the python interface has specific
+    // callback for north, east, west, border.
     iterator(LEAF leaf, std::array<SpinMarble, N_MARBLES> &marbles,
              Status status, std::ptrdiff_t pos = 0, double angle = 0.0)
         : m_begin_range(marbles.begin()), m_end_range(marbles.end()),
@@ -283,6 +287,12 @@ public:
       offset -= remaining;
       m_curr = m_begin_range + offset;
       return *this;
+    }
+
+    //!< convinient operator
+    bool friend operator==(const SpinPuzzleSide<N, M>::iterator &self,
+                           const SpinPuzzleSide<N, M>::iterator &other) {
+      return (*self == *other);
     }
 
     //!< convinient operator
@@ -592,11 +602,12 @@ private:
 
   //!< update shift angle, after resetting 1° marble at origin
   double get_angle_for_origin(LEAF leaf) {
+    const double DTHETA12 = DTHETA / 1.0;
     const double theta = m_status.get_shift_of_leaf(leaf);
-    const double theta0 = theta + DTHETA / 2;
+    const double theta0 = theta + DTHETA12 / 2;
     const double t = fmod(theta0 + 360.0, 360.0);
-    const int pos = -floor(t / DTHETA);
-    const double alpha = theta + pos * DTHETA;
+    const int pos = -floor(t / DTHETA12);
+    const double alpha = theta + pos * DTHETA12;
     return alpha;
   }
 };

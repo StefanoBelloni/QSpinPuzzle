@@ -6,10 +6,7 @@
 
 namespace puzzle {
 
-template <std::size_t N>
-class MatrixOperation {
-public:
-};
+template <std::size_t N> class MatrixOperation { public: };
 
 } // namespace puzzle
 

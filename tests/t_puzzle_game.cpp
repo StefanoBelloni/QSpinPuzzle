@@ -77,12 +77,18 @@ TEST(PuzzleSide, game_rotate_marbles) {
   ASSERT_EQ(*back.begin(LEAF::EAST), SpinMarble(50 - 4, puzzle::red));
   ASSERT_EQ(*back.begin(LEAF::WEST), SpinMarble(60 - 5, puzzle::yellow));
 
-  ASSERT_EQ(*(front.begin(LEAF::NORTH) + 1), SpinMarble(40 - 3 + 1, puzzle::cyan));
-  ASSERT_EQ(*(front.begin(LEAF::EAST) + 1), SpinMarble(60 - 5 + 1, puzzle::yellow));
-  ASSERT_EQ(*(front.begin(LEAF::WEST) + 1), SpinMarble(50 - 4 + 1, puzzle::red));
-  ASSERT_EQ(*(back.begin(LEAF::NORTH) + 1), SpinMarble(10 - 3 + 1, puzzle::blue));
-  ASSERT_EQ(*(back.begin(LEAF::EAST) + 1), SpinMarble(30 - 5 + 1, puzzle::magenta));
-  ASSERT_EQ(*(back.begin(LEAF::WEST) + 1), SpinMarble(20 - 4 + 1, puzzle::green));
+  ASSERT_EQ(*(front.begin(LEAF::NORTH) + 1),
+            SpinMarble(40 - 3 + 1, puzzle::cyan));
+  ASSERT_EQ(*(front.begin(LEAF::EAST) + 1),
+            SpinMarble(60 - 5 + 1, puzzle::yellow));
+  ASSERT_EQ(*(front.begin(LEAF::WEST) + 1),
+            SpinMarble(50 - 4 + 1, puzzle::red));
+  ASSERT_EQ(*(back.begin(LEAF::NORTH) + 1),
+            SpinMarble(10 - 3 + 1, puzzle::blue));
+  ASSERT_EQ(*(back.begin(LEAF::EAST) + 1),
+            SpinMarble(30 - 5 + 1, puzzle::magenta));
+  ASSERT_EQ(*(back.begin(LEAF::WEST) + 1),
+            SpinMarble(20 - 4 + 1, puzzle::green));
 }
 
 TEST(PuzzleSide, game_reset_marbles) {

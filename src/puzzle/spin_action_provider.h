@@ -1,8 +1,8 @@
 #ifndef ACTIONPROVIDER_H
 #define ACTIONPROVIDER_H
 
-#include <vector>
 #include "spin_puzzle_definitions.h"
+#include <vector>
 
 class ActionProvider {
 public:
