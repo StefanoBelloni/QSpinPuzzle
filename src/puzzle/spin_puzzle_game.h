@@ -109,7 +109,9 @@ public:
    * @retval true if the marbles have been swaped and the spin succeeded
    */
   // TODO: angle 180 will not rotate, eventhough it should rotate!!!!
-  bool spin_leaf(LEAF leaf, double angle = 180);
+  bool spin_leaf(LEAF leaf, double angle);
+
+  bool spin_leaf(LEAF leaf);
 
   /**
    * @brief swap the active side of the trefoil
@@ -139,9 +141,9 @@ public:
 
   bool check_consistency(bool verbose = false);
 
-  std::string game_as_stirng();
-
   LEAF get_keybord_state() const { return keyboard.getSection(); }
+
+  std::string to_string();
 
 private:
   class KeyboardState {

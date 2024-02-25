@@ -439,7 +439,7 @@ void SpinPuzzleWidget::mouseMoveEvent(QMouseEvent *ev) {
                 "at position "
              << ev->pos();
     qDebug() << "[DEBUG][mouseMoveEvent] GAME:";
-    qDebug() << m_game.game_as_stirng().c_str();
+    qDebug() << m_game.to_string().c_str();
     assert(false);
   }
 #endif
@@ -542,7 +542,7 @@ void SpinPuzzleWidget::keyPressEvent(QKeyEvent *e) {
     if (!m_game.check_consistency()) {
       qDebug() << "[DEBUG][keyPressEvent] marbles are in an invalid state";
       qDebug() << "[DEBUG][KeyPressEvent] GAME:";
-      qDebug() << m_game.game_as_stirng().c_str();
+      qDebug() << m_game.to_string().c_str();
       assert(false);
     }
 #endif
@@ -566,7 +566,7 @@ void SpinPuzzleWidget::shuffle() {
   if (!m_game.check_consistency()) {
     qDebug() << "[DEBUG][keyPressEvent] marbles are in an invalid state";
     qDebug() << "[DEBUG][KeyPressEvent] GAME:";
-    qDebug() << m_game.game_as_stirng().c_str();
+    qDebug() << m_game.to_string().c_str();
     assert(false);
   }
 #endif

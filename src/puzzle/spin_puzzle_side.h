@@ -559,6 +559,52 @@ public:
     return m_status.get_rotation_status(leaf) == ROTATION::OK;
   }
 
+  std::string to_string() {
+    std::string str;
+    str += "marbles: ";
+    if (m_status.get_trefoil_status(TIME::CURRENT) ==
+        TREFOIL::BORDER_ROTATION) {
+      str += "\nBORDER: ";
+      auto it = begin(LEAF::TREFOIL);
+      for (size_t n = 0; n < N_MARBLES; ++n) {
+        if (n > 0) {
+          str += ", ";
+        }
+        str += it->to_string();
+        ++it;
+      }
+    } else {
+      str += "\nNORTH: ";
+      auto it = begin(LEAF::NORTH);
+      for (size_t n = 0; n < GROUP_SIZE; ++n) {
+        if (n > 0) {
+          str += ", ";
+        }
+        str += it->to_string();
+        ++it;
+      }
+      str += "\nEAST: ";
+      it = begin(LEAF::EAST);
+      for (size_t n = 0; n < GROUP_SIZE; ++n) {
+        if (n > 0) {
+          str += ", ";
+        }
+        str += it->to_string();
+        ++it;
+      }
+      str += "\nWEST: ";
+      it = begin(LEAF::WEST);
+      for (size_t n = 0; n < GROUP_SIZE; ++n) {
+        if (n > 0) {
+          str += ", ";
+        }
+        str += it->to_string();
+        ++it;
+      }
+    }
+    return str;
+  }
+
 private:
   static_assert(N_LEAVES == static_cast<std::size_t>(LEAF::TREFOIL));
 

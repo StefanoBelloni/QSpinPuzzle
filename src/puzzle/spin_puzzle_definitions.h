@@ -2,6 +2,7 @@
 #define SPIN_PUZZLE_DEFINITIONS_H
 
 #include <stdint.h>
+#include <string>
 
 /**
  * @brief Mock of the namespace Qt and its constants.
@@ -49,6 +50,8 @@ inline int Key_T = 0x54; //!< see https://doc.qt.io/qt-6/qt.html
  */
 
 using Color = int;
+
+std::string color_to_str(int color);
 
 /**
  * @brief enumeration to determine the leaf of a trefoil

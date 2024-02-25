@@ -2,6 +2,7 @@
 #define SPINMARBLE_H
 
 #include "spin_puzzle_definitions.h"
+#include <string>
 
 namespace puzzle {
 
@@ -86,6 +87,10 @@ public:
   operator Color() { return m_color; }
 
   bool operator!=(const SpinMarble &other) const { return !(*this == other); }
+
+  std::string to_string() {
+    return '(' + std::to_string(m_id) + ':' + std::to_string(m_color) + ')';
+  }
 
 private:
   //! \brief id of the marble

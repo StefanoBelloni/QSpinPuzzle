@@ -20,6 +20,8 @@ bool SpinPuzzleGame::rotate_internal_disk(double angle) {
   return m_sides[n].rotate_internal_disk(angle);
 }
 
+bool SpinPuzzleGame::spin_leaf(LEAF leaf) { return spin_leaf(leaf, 180.0); }
+
 // TODO: check of spin is possible based on the position of the marbles ...
 bool SpinPuzzleGame::spin_leaf(LEAF leaf, double angle) {
 
@@ -101,29 +103,15 @@ bool SpinPuzzleGame::check_consistency(bool verbose) {
   return check_consistency_side(SIDE::FRONT, verbose) &&
          check_consistency_side(SIDE::BACK, verbose);
 }
-
-std::string SpinPuzzleGame::game_as_stirng() {
-
-  std::stringstream s;
-  {
-    auto &puzzle = m_sides[static_cast<int8_t>(SIDE::FRONT)];
-    s << "FRONT: ";
-    auto it = puzzle.begin(puzzle::LEAF::TREFOIL);
-    for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::N_MARBLES; ++n, ++it) {
-      s << it->id() << ", ";
-    }
-  }
-  s << "\n";
-  {
-    auto &puzzle = m_sides[static_cast<int8_t>(SIDE::BACK)];
-    s << "BACK: ";
-    auto it = puzzle.begin(puzzle::LEAF::TREFOIL);
-    for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::N_MARBLES; ++n, ++it) {
-      s << it->id() << ", ";
-    }
-  }
-  s << "\n";
-  return s.str();
+std::string SpinPuzzleGame::to_string() {
+  std::string str("SpinPuzzleGame");
+  str += (get_active_side() == puzzle::SIDE::FRONT) ? "\nFRONT(active):\n"
+                                                    : "\nFRONT:\n";
+  str += get_side(puzzle::SIDE::FRONT).to_string();
+  str += (get_active_side() == puzzle::SIDE::BACK) ? "\nBACK(active):\n"
+                                                   : "\nBACK:\n";
+  str += get_side(puzzle::SIDE::BACK).to_string();
+  return str + '\n';
 }
 
 bool SpinPuzzleGame::check_consistency_side(SIDE side, bool verbose) {
@@ -316,7 +304,7 @@ void SpinPuzzleGame::shuffle(int seed, int commands, bool check) {
                 << key << ", command: " << command << "\n";
       std::cerr << "[DEBUG][shuffle] GAME:"
                 << "\n";
-      std::cerr << game_as_stirng().c_str() << "\n";
+      std::cerr << to_string().c_str() << "\n";
       assert(check_consistency(true));
     }
     ++command;

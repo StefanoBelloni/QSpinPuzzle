@@ -18,6 +18,8 @@ PYBIND11_MODULE(spyn_puzzle, m) {
       .def("color", &puzzle::SpinMarble::color)
       .def("id", &puzzle::SpinMarble::id)
       .def("is_valid", &puzzle::SpinMarble::is_valid)
+      .def("__str__", &puzzle::SpinMarble::to_string)
+      .def("__repr__", &puzzle::SpinMarble::to_string)
       .def(py::self == py::self)
       .def(py::self != py::self);
 
@@ -25,6 +27,8 @@ PYBIND11_MODULE(spyn_puzzle, m) {
   py::class_<puzzle::SpinPuzzleSide<>>(m, "SpinPuzzleSide")
       // =================================================================== //
       .def(py::init<std::array<puzzle::SpinMarble, 30>>())
+      .def("__str__", &puzzle::SpinPuzzleSide<>::to_string)
+      .def("__repr__", &puzzle::SpinPuzzleSide<>::to_string)
       .def("trifoild_status", &puzzle::SpinPuzzleSide<>::get_trifoild_status)
       .def("rotate_marbles", &puzzle::SpinPuzzleSide<>::rotate_marbles)
       .def("rotate_internal_disk",
@@ -134,8 +138,16 @@ PYBIND11_MODULE(spyn_puzzle, m) {
            [](const puzzle::SpinPuzzleSide<>::iterator &iter) {
              return iter->color();
            })
-      .def("get_angle", [](const puzzle::SpinPuzzleSide<>::iterator &iter) {
-        return iter.get_angle();
+      .def("get_angle",
+           [](const puzzle::SpinPuzzleSide<>::iterator &iter) {
+             return iter.get_angle();
+           })
+      .def("__str__",
+           [](puzzle::SpinPuzzleSide<>::iterator &iter) {
+             return iter->to_string();
+           })
+      .def("__repr__", [](puzzle::SpinPuzzleSide<>::iterator &iter) {
+        return iter->to_string();
       });
 
   // =================================================================== //
@@ -146,7 +158,10 @@ PYBIND11_MODULE(spyn_puzzle, m) {
       .def("rotate_marbles", &puzzle::SpinPuzzleGame::rotate_marbles)
       .def("rotate_internal_disk",
            &puzzle::SpinPuzzleGame::rotate_internal_disk)
-      .def("spin_leaf", &puzzle::SpinPuzzleGame::spin_leaf)
+      .def("spin_leaf", py::overload_cast<puzzle::LEAF, double>(
+                            &puzzle::SpinPuzzleGame::spin_leaf))
+      .def("spin_leaf",
+           py::overload_cast<puzzle::LEAF>(&puzzle::SpinPuzzleGame::spin_leaf))
       .def("swap_side", &puzzle::SpinPuzzleGame::swap_side)
       .def("get_side", py::overload_cast<>(&puzzle::SpinPuzzleGame::get_side),
            py::return_value_policy::reference)
@@ -154,8 +169,11 @@ PYBIND11_MODULE(spyn_puzzle, m) {
            py::overload_cast<puzzle::SIDE>(&puzzle::SpinPuzzleGame::get_side),
            py::return_value_policy::reference)
       .def("get_active_side", &puzzle::SpinPuzzleGame::get_active_side)
+      .def("reset", &puzzle::SpinPuzzleGame::reset)
       .def("shuffle", &puzzle::SpinPuzzleGame::shuffle, py::arg("seed") = 0,
-           py::arg("commands") = 10000, py::arg("check") = false);
+           py::arg("commands") = 10000, py::arg("check") = false)
+      .def("__str__", &puzzle::SpinPuzzleGame::to_string)
+      .def("__repr__", &puzzle::SpinPuzzleGame::to_string);
 
   // =================================================================== //
   py::enum_<puzzle::LEAF>(m, "LEAF")
@@ -196,6 +214,8 @@ PYBIND11_MODULE(spyn_puzzle, m) {
   m.attr("Key_PageDown") = py::int_(puzzle::Key_PageDown);
   m.attr("Key_I") = py::int_(puzzle::Key_I);
   // Colors
+  m.def("color_to_str", &puzzle::color_to_str,
+        "convert a color from int to its string");
   m.attr("white") = py::int_(puzzle::white);
   m.attr("black") = py::int_(puzzle::black);
   m.attr("red") = py::int_(puzzle::red);
