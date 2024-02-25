@@ -113,7 +113,7 @@ endif()
 target_link_libraries(
     spinpuzzle
     PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
+    # Qt${QT_VERSION_MAJOR}::Widgets
 )
 
 target_link_libraries(

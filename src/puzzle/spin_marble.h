@@ -8,7 +8,7 @@ namespace puzzle {
 /**
  * @brief The SpinMarble class rappresent a single marble in the Spin Game
  *
- * It is identified by a number (integer) and a color (QColor):
+ * It is identified by a number (integer) and a color (Color):
  * This helps to debug and develop the code.
  *
  * The default constructor creates a marble with id '-1' and color '-1'
@@ -16,7 +16,7 @@ namespace puzzle {
 class SpinMarble {
 public:
   //! \brief invalid value
-  static QColor INVALID_COLOR;
+  static Color INVALID_COLOR;
   static constexpr int32_t INVALID_ID = -1;
   /**
    * @brief  default constructor: it create a Marble in an invalid state.
@@ -28,7 +28,7 @@ public:
    * @param  id: id to assign to this marble
    * @param  color: to assign to this marble
    */
-  SpinMarble(int32_t id, QColor color);
+  SpinMarble(int32_t id, Color color);
   /**
    * @brief Move constructor: to avoid duplicate marbles
    *
@@ -68,7 +68,7 @@ public:
   SpinMarble &operator=(const SpinMarble &other) = delete;
 
   //! \brief getter for the color
-  QColor color() const { return m_color; }
+  Color color() const { return m_color; }
   //! \brief getter for the id
   int32_t id() const { return m_id; }
   //! \brief sanity check
@@ -77,6 +77,7 @@ public:
   bool operator==(const SpinMarble &other) const {
     return m_id == other.m_id && m_color == other.m_color;
   }
+  operator Color() { return m_color;}
 
   bool operator!=(const SpinMarble &other) const { return !(*this == other); }
 
@@ -84,7 +85,7 @@ private:
   //! \brief id of the marble
   int32_t m_id = SpinMarble::INVALID_ID;
   //! \brief color of this marble
-  QColor m_color = SpinMarble::INVALID_COLOR;
+  Color m_color = SpinMarble::INVALID_COLOR;
 };
 
 } // namespace puzzle

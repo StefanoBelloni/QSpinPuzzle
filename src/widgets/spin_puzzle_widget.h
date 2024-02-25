@@ -71,6 +71,7 @@ private:
   bool can_rotate_internal();
   bool is_mause_on_leaf_marbles(QMouseEvent *ev, QPoint center);
   double get_speed();
+  QColor toQtColor(puzzle::Color value);
 
   // plot puzzle body
   uint32_t m_length;

@@ -11,22 +11,22 @@ TEST(PuzzleMarbles, Default) {
   ASSERT_EQ(marble.id(), puzzle::SpinMarble::INVALID_ID);
   ASSERT_FALSE(marble.is_valid());
 
-  QColor c1(Qt::black);
-  QColor c2(Qt::red);
+  puzzle::Color c1(puzzle::black);
+  puzzle::Color c2(puzzle::red);
 
   ASSERT_NE(c1, c2);
 }
 
 TEST(PuzzleMarbles, Assign) {
   int id = 10;
-  puzzle::SpinMarble marble(id, Qt::black);
+  puzzle::SpinMarble marble(id, puzzle::black);
   auto copy = std::move(marble);
 
   // moved-from object should not be used!
   // ASSERT_EQ(marble.id(), puzzle::SpinMarble::INVALID_ID);
   // ASSERT_EQ(marble.color(), puzzle::SpinMarble::INVALID_COLOR);
   ASSERT_EQ(copy.id(), id);
-  ASSERT_EQ(copy.color(), Qt::black);
+  ASSERT_EQ(copy.color(), puzzle::black);
 }
 
 /**
@@ -39,7 +39,7 @@ TEST(PuzzleMarbles, Array) {
   int id = 0;
   // initialize
   for (auto &m : marbles) {
-    m = puzzle::SpinMarble(id, Qt::black);
+    m = puzzle::SpinMarble(id, puzzle::black);
     ++id;
   }
   // revert order using tmp array
@@ -52,12 +52,12 @@ TEST(PuzzleMarbles, Array) {
   }
   // check tmp array
   for (auto &m : tmp) {
-    ASSERT_EQ(m, puzzle::SpinMarble(--id, Qt::black));
+    ASSERT_EQ(m, puzzle::SpinMarble(--id, puzzle::black));
   }
   // swap tmp and marbles and check it
   std::swap(tmp, marbles);
   id = marbles.size();
   for (auto &m : marbles) {
-    ASSERT_EQ(m, puzzle::SpinMarble(--id, Qt::black));
+    ASSERT_EQ(m, puzzle::SpinMarble(--id, puzzle::black));
   }
 }

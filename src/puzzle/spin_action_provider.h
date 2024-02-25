@@ -1,8 +1,8 @@
 #ifndef ACTIONPROVIDER_H
 #define ACTIONPROVIDER_H
 
-#include <QKeyEvent>
 #include <vector>
+#include "spin_puzzle_definitions.h"
 
 class ActionProvider {
 public:
@@ -13,8 +13,8 @@ public:
   static constexpr int N = 8;
 
   int keys[N] = {
-      Qt::Key_N,      Qt::Key_E,    Qt::Key_W,     Qt::Key_I,
-      Qt::Key_PageUp, Qt::Key_Left, Qt::Key_Right, Qt::Key_P,
+      puzzle::Key_N,      puzzle::Key_E,    puzzle::Key_W,     puzzle::Key_I,
+      puzzle::Key_PageUp, puzzle::Key_Left, puzzle::Key_Right, puzzle::Key_P,
   };
 };
 

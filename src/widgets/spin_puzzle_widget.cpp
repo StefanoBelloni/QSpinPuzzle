@@ -116,7 +116,7 @@ void SpinPuzzleWidget::paint_status() {
 void SpinPuzzleWidget::set_size(int length) {
   this->m_length = length;
   const int r = get_radius_internal() - width;
-  radius_marble = std::min(2.0 * width, r * sin(M_PI / 5) / 2);
+  radius_marble = r * sin(M_PI / 5) / 2;
 }
 
 void SpinPuzzleWidget::next_section(QPainter &painter, int angle) const {
@@ -263,11 +263,38 @@ void SpinPuzzleWidget::do_paint_marbles_on_border(QPainter &painter) {
   // next_section(painter, 120 - internal_dist_angle);
 }
 
+QColor SpinPuzzleWidget::toQtColor(puzzle::Color value) {
+  switch (value)
+  {
+case puzzle::white : return Qt::white;
+case puzzle::black : return Qt::black;
+case puzzle::red : return Qt::red;
+case puzzle::darkRed : return Qt::darkRed;
+case puzzle::green : return Qt::green;
+case puzzle::darkGreen : return Qt::darkGreen;
+case puzzle::blue : return Qt::blue;
+case puzzle::darkBlue : return Qt::darkBlue;
+case puzzle::cyan : return Qt::cyan;
+case puzzle::darkCyan : return Qt::darkCyan;
+case puzzle::magenta : return Qt::magenta;
+case puzzle::darkMagenta : return Qt::darkMagenta;
+case puzzle::yellow : return Qt::yellow;
+case puzzle::darkYellow : return Qt::darkYellow;
+case puzzle::gray : return Qt::gray;
+case puzzle::darkGray : return Qt::darkGray;
+case puzzle::lightGray : return Qt::lightGray;
+  default:
+    return Qt::black;
+    break;
+  }
+  return Qt::black;
+}
+
 void SpinPuzzleWidget::paint_marble(double shift_local, QPainter &painter,
                                     puzzle::SpinPuzzleSide<>::iterator it,
                                     const QPoint center, size_t n,
                                     const int r) {
-  painter.setBrush(it->color());
+  painter.setBrush(toQtColor(it->color()));
   const auto position =
       center + QPoint(r * cos(shift_local + M_PI_2 + n * M_PI / 5),
                       r * sin(shift_local + M_PI_2 + n * M_PI / 5));

@@ -200,44 +200,44 @@ SIDE SpinPuzzleGame::get_opposite_side(SIDE side) {
 std::array<SpinMarble, 30> SpinPuzzleGame::createFrontMarbles() {
   std::array<SpinMarble, 30> array = {
       // NORTH
-      SpinMarble(0, Qt::blue), SpinMarble(1, Qt::blue), SpinMarble(2, Qt::blue),
-      SpinMarble(3, Qt::blue), SpinMarble(4, Qt::blue), SpinMarble(5, Qt::blue),
-      SpinMarble(6, Qt::blue), SpinMarble(7, Qt::blue), SpinMarble(8, Qt::blue),
-      SpinMarble(9, Qt::blue),
+      SpinMarble(0, puzzle::blue), SpinMarble(1, puzzle::blue), SpinMarble(2, puzzle::blue),
+      SpinMarble(3, puzzle::blue), SpinMarble(4, puzzle::blue), SpinMarble(5, puzzle::blue),
+      SpinMarble(6, puzzle::blue), SpinMarble(7, puzzle::blue), SpinMarble(8, puzzle::blue),
+      SpinMarble(9, puzzle::blue),
       // EAST
-      SpinMarble(10, Qt::green), SpinMarble(11, Qt::green),
-      SpinMarble(12, Qt::green), SpinMarble(13, Qt::green),
-      SpinMarble(14, Qt::green), SpinMarble(15, Qt::green),
-      SpinMarble(16, Qt::green), SpinMarble(17, Qt::green),
-      SpinMarble(18, Qt::green), SpinMarble(19, Qt::green),
+      SpinMarble(10, puzzle::green), SpinMarble(11, puzzle::green),
+      SpinMarble(12, puzzle::green), SpinMarble(13, puzzle::green),
+      SpinMarble(14, puzzle::green), SpinMarble(15, puzzle::green),
+      SpinMarble(16, puzzle::green), SpinMarble(17, puzzle::green),
+      SpinMarble(18, puzzle::green), SpinMarble(19, puzzle::green),
       // WEST
-      SpinMarble(20, Qt::magenta), SpinMarble(21, Qt::magenta),
-      SpinMarble(22, Qt::magenta), SpinMarble(23, Qt::magenta),
-      SpinMarble(24, Qt::magenta), SpinMarble(25, Qt::magenta),
-      SpinMarble(26, Qt::magenta), SpinMarble(27, Qt::magenta),
-      SpinMarble(28, Qt::magenta), SpinMarble(29, Qt::magenta)};
+      SpinMarble(20, puzzle::magenta), SpinMarble(21, puzzle::magenta),
+      SpinMarble(22, puzzle::magenta), SpinMarble(23, puzzle::magenta),
+      SpinMarble(24, puzzle::magenta), SpinMarble(25, puzzle::magenta),
+      SpinMarble(26, puzzle::magenta), SpinMarble(27, puzzle::magenta),
+      SpinMarble(28, puzzle::magenta), SpinMarble(29, puzzle::magenta)};
   return array;
 }
 
 std::array<SpinMarble, 30> SpinPuzzleGame::createBackMarbles() {
   std::array<SpinMarble, 30> array = {
       // NORTH
-      SpinMarble(30, Qt::cyan), SpinMarble(31, Qt::cyan),
-      SpinMarble(32, Qt::cyan), SpinMarble(33, Qt::cyan),
-      SpinMarble(34, Qt::cyan), SpinMarble(35, Qt::cyan),
-      SpinMarble(36, Qt::cyan), SpinMarble(37, Qt::cyan),
-      SpinMarble(38, Qt::cyan), SpinMarble(39, Qt::cyan),
+      SpinMarble(30, puzzle::cyan), SpinMarble(31, puzzle::cyan),
+      SpinMarble(32, puzzle::cyan), SpinMarble(33, puzzle::cyan),
+      SpinMarble(34, puzzle::cyan), SpinMarble(35, puzzle::cyan),
+      SpinMarble(36, puzzle::cyan), SpinMarble(37, puzzle::cyan),
+      SpinMarble(38, puzzle::cyan), SpinMarble(39, puzzle::cyan),
       // EAST
-      SpinMarble(40, Qt::red), SpinMarble(41, Qt::red), SpinMarble(42, Qt::red),
-      SpinMarble(43, Qt::red), SpinMarble(44, Qt::red), SpinMarble(45, Qt::red),
-      SpinMarble(46, Qt::red), SpinMarble(47, Qt::red), SpinMarble(48, Qt::red),
-      SpinMarble(49, Qt::red),
+      SpinMarble(40, puzzle::red), SpinMarble(41, puzzle::red), SpinMarble(42, puzzle::red),
+      SpinMarble(43, puzzle::red), SpinMarble(44, puzzle::red), SpinMarble(45, puzzle::red),
+      SpinMarble(46, puzzle::red), SpinMarble(47, puzzle::red), SpinMarble(48, puzzle::red),
+      SpinMarble(49, puzzle::red),
       // WEST
-      SpinMarble(50, Qt::yellow), SpinMarble(51, Qt::yellow),
-      SpinMarble(52, Qt::yellow), SpinMarble(53, Qt::yellow),
-      SpinMarble(54, Qt::yellow), SpinMarble(55, Qt::yellow),
-      SpinMarble(56, Qt::yellow), SpinMarble(57, Qt::yellow),
-      SpinMarble(58, Qt::yellow), SpinMarble(59, Qt::yellow)};
+      SpinMarble(50, puzzle::yellow), SpinMarble(51, puzzle::yellow),
+      SpinMarble(52, puzzle::yellow), SpinMarble(53, puzzle::yellow),
+      SpinMarble(54, puzzle::yellow), SpinMarble(55, puzzle::yellow),
+      SpinMarble(56, puzzle::yellow), SpinMarble(57, puzzle::yellow),
+      SpinMarble(58, puzzle::yellow), SpinMarble(59, puzzle::yellow)};
   return array;
 }
 
@@ -249,31 +249,31 @@ void SpinPuzzleGame::reset() {
 bool SpinPuzzleGame::process_key(int key, double fraction_angle) {
   switch (key) {
   // ========================== //
-  case Qt::Key_N:
+  case puzzle::Key_N:
     // ========================== //
     keyboard.selectSection(puzzle::LEAF::NORTH);
     return true;
   // ========================== //
-  case Qt::Key_E:
+  case puzzle::Key_E:
     // ========================== //
     keyboard.selectSection(puzzle::LEAF::EAST);
     return true;
   // ========================== //
-  case Qt::Key_W:
+  case puzzle::Key_W:
     // ========================== //
     keyboard.selectSection(puzzle::LEAF::WEST);
     return true;
   // ========================== //
-  case Qt::Key_I:
+  case puzzle::Key_I:
     // ========================== //
     keyboard.selectSection(puzzle::LEAF::CENTER);
     return true;
   // ========================== //
-  case Qt::Key_Left:
-  case Qt::Key_Right:
+  case puzzle::Key_Left:
+  case puzzle::Key_Right:
     // ========================== //
     {
-      double direction = (key == Qt::Key_Left) ? -1.0 : 1.0;
+      double direction = (key == puzzle::Key_Left) ? -1.0 : 1.0;
       auto &side = get_side(get_active_side());
       if (keyboard.getSection() == puzzle::LEAF::CENTER) {
         side.rotate_internal_disk(direction * 60.0 * fraction_angle);
@@ -286,15 +286,15 @@ bool SpinPuzzleGame::process_key(int key, double fraction_angle) {
       }
       return true;
     }
-  case Qt::Key_PageUp:
-  case Qt::Key_PageDown:
+  case puzzle::Key_PageUp:
+  case puzzle::Key_PageDown:
     // make scure only leaves are used
     if (static_cast<uint8_t>(keyboard.getSection()) <
         static_cast<uint8_t>(LEAF::TREFOIL)) {
       spin_leaf(keyboard.getSection());
     }
     return true;
-  case Qt::Key_P:
+  case puzzle::Key_P:
     swap_side();
     return true;
   }

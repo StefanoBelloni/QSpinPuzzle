@@ -10,13 +10,13 @@ template <std::size_t N>
 auto getPuzzle() {
   std::array<puzzle::SpinMarble, N * 3> marbles;
   int id = 0;
-  QColor color = Qt::black;
+  puzzle::Color color = puzzle::black;
   for (auto &m : marbles) {
     m = puzzle::SpinMarble(id++, color);
     if (id == N) {
-      color = Qt::red;
+      color = puzzle::red;
     } else if (id == 2 * N) {
-      color = Qt::green;
+      color = puzzle::green;
     }
   }
   return puzzle::SpinPuzzleSide<N>(std::move(marbles));
@@ -28,13 +28,13 @@ void no_rotation(std::array<puzzle::SpinMarble, N> &north_expected,
                  std::array<puzzle::SpinMarble, N> &east_expected,
                  std::array<puzzle::SpinMarble, N> &west_expected) {
   for (size_t i = 0; i < N; ++i) {
-    north_expected[i] = puzzle::SpinMarble(i, Qt::black);
+    north_expected[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = 0; i < N; ++i) {
-    east_expected[i] = puzzle::SpinMarble(N + i, Qt::red);
+    east_expected[i] = puzzle::SpinMarble(N + i, puzzle::red);
   }
   for (size_t i = 0; i < N; ++i) {
-    west_expected[i] = puzzle::SpinMarble(2 * N + i, Qt::green);
+    west_expected[i] = puzzle::SpinMarble(2 * N + i, puzzle::green);
   }
 }
 
@@ -43,22 +43,22 @@ void rotate_north_east_west(std::array<puzzle::SpinMarble, N> &north_expected,
                             std::array<puzzle::SpinMarble, N> &east_expected,
                             std::array<puzzle::SpinMarble, N> &west_expected) {
   for (size_t i = 0; i < N - 3; ++i) {
-    north_expected[i] = puzzle::SpinMarble(i, Qt::black);
+    north_expected[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = 0; i < N - 3; ++i) {
-    east_expected[i] = puzzle::SpinMarble(N + i, Qt::red);
+    east_expected[i] = puzzle::SpinMarble(N + i, puzzle::red);
   }
   for (size_t i = 0; i < N - 3; ++i) {
-    west_expected[i] = puzzle::SpinMarble(2 * N + i, Qt::green);
+    west_expected[i] = puzzle::SpinMarble(2 * N + i, puzzle::green);
   }
   for (size_t i = N - 3; i < N; ++i) {
-    north_expected[i] = puzzle::SpinMarble(2 * N + i, Qt::green);
+    north_expected[i] = puzzle::SpinMarble(2 * N + i, puzzle::green);
   }
   for (size_t i = N - 3; i < N; ++i) {
-    east_expected[i] = puzzle::SpinMarble(i, Qt::black);
+    east_expected[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = N - 3; i < N; ++i) {
-    west_expected[i] = puzzle::SpinMarble(N + i, Qt::red);
+    west_expected[i] = puzzle::SpinMarble(N + i, puzzle::red);
   }
 }
 
@@ -67,23 +67,23 @@ void rotate_north_west_east(std::array<puzzle::SpinMarble, N> &north_expected,
                             std::array<puzzle::SpinMarble, N> &west_expected,
                             std::array<puzzle::SpinMarble, N> &east_expected) {
   for (size_t i = 0; i < N - 3; ++i) {
-    north_expected[i] = puzzle::SpinMarble(i, Qt::black);
+    north_expected[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = 0; i < N - 3; ++i) {
-    east_expected[i] = puzzle::SpinMarble(N + i, Qt::red);
+    east_expected[i] = puzzle::SpinMarble(N + i, puzzle::red);
   }
   for (size_t i = 0; i < N - 3; ++i) {
-    west_expected[i] = puzzle::SpinMarble(2 * N + i, Qt::green);
+    west_expected[i] = puzzle::SpinMarble(2 * N + i, puzzle::green);
   }
   // ==================================== //
   for (size_t i = N - 3; i < N; ++i) {
-    north_expected[i] = puzzle::SpinMarble(N + i, Qt::red);
+    north_expected[i] = puzzle::SpinMarble(N + i, puzzle::red);
   }
   for (size_t i = N - 3; i < N; ++i) {
-    east_expected[i] = puzzle::SpinMarble(2 * N + i, Qt::green);
+    east_expected[i] = puzzle::SpinMarble(2 * N + i, puzzle::green);
   }
   for (size_t i = N - 3; i < N; ++i) {
-    west_expected[i] = puzzle::SpinMarble(i, Qt::black);
+    west_expected[i] = puzzle::SpinMarble(i, puzzle::black);
   }
 }
 
@@ -135,61 +135,61 @@ void check_marbles_border(std::array<puzzle::SpinMarble, 3 * N>& expected, puzzl
 
 void start_border_east(std::array<puzzle::SpinMarble, 30>& marbles) {
   for (size_t i = 0; i < puzzle::SpinPuzzleSide<>::GROUP_SIZE - 3; ++i) {
-    marbles[i] = puzzle::SpinMarble(i, Qt::black);
+    marbles[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = 0; i < puzzle::SpinPuzzleSide<>::GROUP_SIZE - 3; ++i) {
-    marbles[10 + i] = puzzle::SpinMarble(10 + i, Qt::red);
+    marbles[10 + i] = puzzle::SpinMarble(10 + i, puzzle::red);
   }
   for (size_t i = 0; i < puzzle::SpinPuzzleSide<>::GROUP_SIZE - 3; ++i) {
-    marbles[20 + i] = puzzle::SpinMarble(20 + i, Qt::green);
+    marbles[20 + i] = puzzle::SpinMarble(20 + i, puzzle::green);
   }
   // =========================================== //
-  marbles[7] = puzzle::SpinMarble(9, Qt::black);
-  marbles[8] = puzzle::SpinMarble(8, Qt::black);
-  marbles[9] = puzzle::SpinMarble(7, Qt::black);
+  marbles[7] = puzzle::SpinMarble(9, puzzle::black);
+  marbles[8] = puzzle::SpinMarble(8, puzzle::black);
+  marbles[9] = puzzle::SpinMarble(7, puzzle::black);
   // =========================================== //
-  marbles[17] = puzzle::SpinMarble(19, Qt::red);
-  marbles[18] = puzzle::SpinMarble(18, Qt::red);
-  marbles[19] = puzzle::SpinMarble(17, Qt::red);
+  marbles[17] = puzzle::SpinMarble(19, puzzle::red);
+  marbles[18] = puzzle::SpinMarble(18, puzzle::red);
+  marbles[19] = puzzle::SpinMarble(17, puzzle::red);
   // =========================================== //
-  marbles[27] = puzzle::SpinMarble(29, Qt::green);
-  marbles[28] = puzzle::SpinMarble(28, Qt::green);
-  marbles[29] = puzzle::SpinMarble(27, Qt::green);
+  marbles[27] = puzzle::SpinMarble(29, puzzle::green);
+  marbles[28] = puzzle::SpinMarble(28, puzzle::green);
+  marbles[29] = puzzle::SpinMarble(27, puzzle::green);
 }
 
 void start_border_west(std::array<puzzle::SpinMarble, 30>& marbles) {
   for (size_t i = 0; i < puzzle::SpinPuzzleSide<>::GROUP_SIZE - 3; ++i) {
-    marbles[i] = puzzle::SpinMarble(i, Qt::black);
+    marbles[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = 0; i < puzzle::SpinPuzzleSide<>::GROUP_SIZE - 3; ++i) {
-    marbles[10 + i] = puzzle::SpinMarble(10 + i, Qt::red);
+    marbles[10 + i] = puzzle::SpinMarble(10 + i, puzzle::red);
   }
   for (size_t i = 0; i < puzzle::SpinPuzzleSide<>::GROUP_SIZE - 3; ++i) {
-    marbles[20 + i] = puzzle::SpinMarble(20 + i, Qt::green);
+    marbles[20 + i] = puzzle::SpinMarble(20 + i, puzzle::green);
   }
   // =========================================== //
-  marbles[7] = puzzle::SpinMarble(19, Qt::red);
-  marbles[8] = puzzle::SpinMarble(18, Qt::red);
-  marbles[9] = puzzle::SpinMarble(17, Qt::red);
+  marbles[7] = puzzle::SpinMarble(19, puzzle::red);
+  marbles[8] = puzzle::SpinMarble(18, puzzle::red);
+  marbles[9] = puzzle::SpinMarble(17, puzzle::red);
   // =========================================== //
-  marbles[17] = puzzle::SpinMarble(29, Qt::green);
-  marbles[18] = puzzle::SpinMarble(28, Qt::green);
-  marbles[19] = puzzle::SpinMarble(27, Qt::green);
+  marbles[17] = puzzle::SpinMarble(29, puzzle::green);
+  marbles[18] = puzzle::SpinMarble(28, puzzle::green);
+  marbles[19] = puzzle::SpinMarble(27, puzzle::green);
   // =========================================== //
-  marbles[27] = puzzle::SpinMarble(9, Qt::black);
-  marbles[28] = puzzle::SpinMarble(8, Qt::black);
-  marbles[29] = puzzle::SpinMarble(7, Qt::black);
+  marbles[27] = puzzle::SpinMarble(9, puzzle::black);
+  marbles[28] = puzzle::SpinMarble(8, puzzle::black);
+  marbles[29] = puzzle::SpinMarble(7, puzzle::black);
 }
 
 void start_configuration(std::array<puzzle::SpinMarble, 30>& marbles) {
   for (size_t i = 0; i < 10; ++i) {
-    marbles[i] = puzzle::SpinMarble(i, Qt::black);
+    marbles[i] = puzzle::SpinMarble(i, puzzle::black);
   }
   for (size_t i = 0; i < 10; ++i) {
-    marbles[10 + i] = puzzle::SpinMarble(10 + i, Qt::red);
+    marbles[10 + i] = puzzle::SpinMarble(10 + i, puzzle::red);
   }
   for (size_t i = 0; i < 10; ++i) {
-    marbles[20 + i] = puzzle::SpinMarble(20 + i, Qt::green);
+    marbles[20 + i] = puzzle::SpinMarble(20 + i, puzzle::green);
   }
 }
 // clang-format on
@@ -202,19 +202,19 @@ TEST(PuzzleSide, iterate_leaf) {
   for (auto marbles_it = puzzle.marbles(puzzle::LEAF::NORTH); id <= 6 * N;
        ++marbles_it, ++id) {
     ASSERT_EQ(marbles_it->id(), id % N);
-    ASSERT_EQ(marbles_it->color(), Qt::black);
+    ASSERT_EQ(marbles_it->color(), puzzle::black);
   }
   id = N;
   for (auto marbles_it = puzzle.marbles(puzzle::LEAF::EAST); id <= 6 * N;
        ++marbles_it, ++id) {
     ASSERT_EQ(marbles_it->id(), id % N + N);
-    ASSERT_EQ(marbles_it->color(), Qt::red);
+    ASSERT_EQ(marbles_it->color(), puzzle::red);
   }
   id = 2 * N;
   for (auto marbles_it = puzzle.marbles(puzzle::LEAF::WEST); id <= 6 * N;
        ++marbles_it, ++id) {
     ASSERT_EQ(marbles_it->id(), id % N + 2 * N);
-    ASSERT_EQ(marbles_it->color(), Qt::green);
+    ASSERT_EQ(marbles_it->color(), puzzle::green);
   }
 }
 
@@ -549,11 +549,11 @@ TEST(PuzzleSide, start_border_rotation_west_side) {
 
 puzzle::SpinMarble MRB(int32_t id) {
   if (id < 10) {
-    return puzzle::SpinMarble(id, Qt::black);
+    return puzzle::SpinMarble(id, puzzle::black);
   } else if (id < 20) {
-    return puzzle::SpinMarble(id, Qt::red);
+    return puzzle::SpinMarble(id, puzzle::red);
   } else if (id < 30) {
-    return puzzle::SpinMarble(id, Qt::green);
+    return puzzle::SpinMarble(id, puzzle::green);
   }
   return puzzle::SpinMarble();
 }
@@ -576,20 +576,20 @@ TEST(PuzzleSide, basic_move_sequence_0) {
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::WEST, 7 * DTHETA));
 
   north_expected = {
-      SpinMarble{7, Qt::black}, {8, Qt::black}, {9, Qt::black}, {0, Qt::black},
-      {1, Qt::black},           {2, Qt::black}, {3, Qt::black}, {4, Qt::black},
-      {5, Qt::black},           {6, Qt::black},
+      SpinMarble{7, puzzle::black}, {8, puzzle::black}, {9, puzzle::black}, {0, puzzle::black},
+      {1, puzzle::black},           {2, puzzle::black}, {3, puzzle::black}, {4, puzzle::black},
+      {5, puzzle::black},           {6, puzzle::black},
   };
   east_expected = {
-      SpinMarble{16, Qt::red}, {17, Qt::red}, {18, Qt::red}, {19, Qt::red},
-      {10, Qt::red},           {11, Qt::red}, {12, Qt::red}, {13, Qt::red},
-      {14, Qt::red},           {15, Qt::red},
+      SpinMarble{16, puzzle::red}, {17, puzzle::red}, {18, puzzle::red}, {19, puzzle::red},
+      {10, puzzle::red},           {11, puzzle::red}, {12, puzzle::red}, {13, puzzle::red},
+      {14, puzzle::red},           {15, puzzle::red},
   };
   west_expected = {
-      SpinMarble{23, Qt::green}, {24, Qt::green}, {25, Qt::green},
-      {26, Qt::green},           {27, Qt::green}, {28, Qt::green},
-      {29, Qt::green},           {20, Qt::green}, {21, Qt::green},
-      {22, Qt::green},
+      SpinMarble{23, puzzle::green}, {24, puzzle::green}, {25, puzzle::green},
+      {26, puzzle::green},           {27, puzzle::green}, {28, puzzle::green},
+      {29, puzzle::green},           {20, puzzle::green}, {21, puzzle::green},
+      {22, puzzle::green},
   };
   check_marbles(north_expected, east_expected, west_expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_internal_disk(120));
