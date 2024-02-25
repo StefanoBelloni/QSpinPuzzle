@@ -83,6 +83,12 @@ apt install lcov
 ```
 * With doxygen you can have a good overview of the implementation.
 
+* pybind11:
+```
+git submodule add -b stable ../../pybind/pybind11 extern/pybind11
+git submodule update --init
+```
+
 ## TODOs
 
     [ ] add a button to check if the game has been solved.

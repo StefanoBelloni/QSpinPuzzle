@@ -6,6 +6,11 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+add_subdirectory(extern/pybind11)
+
+find_package(Python COMPONENTS Interpreter Development)
+find_package(pybind11 CONFIG)
+
 if ("${RUN_COVERAGE}" STREQUAL TRUE)
     # https://github.com/bilke/cmake-modules/blob/master/CodeCoverage.cmake
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -57,6 +62,10 @@ add_library(spinpuzzle SHARED
 )
 # ============================================== #
 
+# ============================================== #
+# pybind11 method:
+pybind11_add_module(spin_puzzle src/pybind11/add.cpp)
+# ============================================== #
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QSpinPuzzle
