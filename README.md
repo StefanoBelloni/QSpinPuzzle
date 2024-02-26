@@ -1,93 +1,110 @@
-# SPIN PUZZLE
+# SpinPuzzle
 
-**SpinPuzzle** is a strategy *solitary* game played on a special brett: it's goal is to group a list of marbles according to their color.
+**SpinPuzzle** is a strategic solitaire game played on a unique board where the objective is to group a set of marbles according to their colors.
 
-
-## Game Goal and Structure
+## Game Objective and Structure
 
 ### Board
 
-The game is played on a structure with a [Trefoil](https://en.wikipedia.org/wiki/Trefoil) ([1]) shape where both side are used.
+The game is played on a board with a Trefoil shape, utilizing both sides.
 
-The *brett* of the game for every side is made up of a central disk (denoted *CentralDisk*) and three leaves (denoted as *NorthLeaf*, *WestLeaf* and *EstLeaf*). See [Schema Game](./images/spin_puzzle.png).
+The board consists of a central disk (referred to as *CentralDisk*) and three leaves (*NorthLeaf*, *WestLeaf*, and *EastLeaf*). Refer to the [Game Schema](./images/spin_puzzle.png) for visualization.
 
-![Schema SpinPuzzle](./images/spin_puzzle.png)
+![Game Schema](./images/spin_puzzle.png)
 
 ### Moves
 
-On this brett the player can move a set of 60 marbels of 6 different colors (10 for each color) equally distributed on the two sides of
-the brett (threfoil).
+On this board, players interact with 60 marbles of six different colors (10 marbles per color) distributed evenly across the two sides of the Trefoil.
 
-The marbles are vincolated to different guides/rails.
-*  inside each leaf is present a circular trak and the marbles can be moved alonge this rail (green in [Schema Game](./images/spin_puzzle.png)).
-* the *CentralDisk* can rotate around its axis (orange in [Schema Game](./images/spin_puzzle.png)). 
-* each leaf and the central disk share a common section of the traks: in this way it is possible to transport a marble from one leaf to the other.
-(magenta in [Schema Game](./images/spin_puzzle.png))
-* The upper part of the Leaf can rotate around its x-axis (parallel to the X axis): in this way marbles from the different side of the trefoif can be mixed (cyan in [Schema Game](./images/spin_puzzle.png)).
+The marbles are confined to various guides/rails:
+- Each leaf contains a circular track where marbles can be moved (green in the [Game Schema](./images/spin_puzzle.png)).
+- The *CentralDisk* can rotate around its axis (orange in the [Game Schema](./images/spin_puzzle.png)).
+- Each leaf and the central disk share a common section of the tracks, allowing marbles to be transported between leaves (magenta in the [Game Schema](./images/spin_puzzle.png)).
+- The upper part of the leaf can rotate around its x-axis (parallel to the X axis), allowing for mixing marbles from different sides of the Trefoil (cyan in the [Game Schema](./images/spin_puzzle.png)).
 
 ## QSpinPuzzle
 
-When you lunch the game the front Trefoil is shown.
+### Getting Started
 
-![screenshot](./images/QSpinPuzzle_Front.png)
+- Launch the executable `QSpinPuzzle`.
+  - If using the Python version, execute:
+    ```
+    python -m qspyn_puzzle 
+    ```
+  **Note:** The Python version is located in the `appy` directory.
+- Press `shuffle`.
+- Attempt to restore the marbles to their original positions, where each leaf contains marbles of only one color.
 
-* You have the possibility to move the marbles with the mouse dragging them, or
-    using the keybord:
-    To use the keybord you need first to select the component you want to operate on:
-        - `key N`: NORTH leaf
-        - `key E`: EAST leaf
-        - `key W`: WEST leaf
-        - `key I`: Internal circle
-    You can then rotate the marbles with the `arrows`.
-    You can check the selected component in the status on the left corner (`KB: <status>`).
-* In order to chnage the active side you can press the button "twist" (top left)
-    or the `Key P`.
-* In order to Spin a leaf you can press the corresponding button on the leaf or
-    with the keyboard you can select the leaf and then press `PageUp` or `PageDown`
-* To shuffle the marbles with 10000 random operations you can press the button `shuffle`.
-* reset will reorder the marbles in the original configuration.
+Upon launching the game, the front Trefoil is displayed.
 
-### Start the Game
+![Screenshot](./images/QSpinPuzzle_Front.png)
 
-* Start the executable
-  - If you installed the python version you can run
-  ```
-  python -m qspyn_puzzle 
-  ```
-* press `shuffle` 
-* try to bring back the marbles in the original position, 
-  i.e. on each leaf only marble of a given color should be present.
+- You can move marbles using the mouse by dragging them or by using the keyboard:
+  - Select the component to operate on by pressing:
+    - `N`: North leaf
+    - `E`: East leaf
+    - `W`: West leaf
+    - `I`: Internal circle
+  - Rotate the marbles using the arrow keys.
+  - Check the selected component in the status on the left corner (`KB: <status>`).
+- Press the "twist" button (top left) or the `P` key to change the active side.
+- Spin a leaf by pressing the corresponding button on the leaf or selecting the leaf with the keyboard and pressing `PageUp` or `PageDown`.
+- Press `shuffle` to randomize the marbles with 10,000 random operations.
+- Use `reset` to reorder the marbles to their original configuration.
 
+### Installation
+
+To build this project, you need:
+- `cmake` (version 3.5 or higher)
+- A C++ compiler (C++ standard 17)
+  - Tested with `g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0`
+- `ninja` to build the corresponding Python package `spyn_puzzle`
+- Optional: Qt library
+  - If you have Qt libraries, use the argument `-D USE_QT=yes` when configuring with CMake.
+  - If `cmake` cannot find the Qt libraries, manually set the Qt installation directory in the `CMakeLists.txt` file.
+- `pyside6` to run the UI with Python:
+         `pip install pyside6` 
+
+For example, this should lunch the game:
+
+```
+git clone git@github.com:StefanoBelloni/QSpinPuzzle.git
+cd QSpinPuzzle
+python3 -m venv ./venv
+pip install .
+source venv/bin/activate
+pip install . 
+pip install ./appy/
+python -m qspyn_puzzle
+```
+  
 
 ### Implementation
 
-The implementation is quite straightforard:
-* The UI is a QWidget that paint the Trefoil inside a QWindows
-* The logic of the game is implemented in \ref puzzle::SpinPuzzleGame which
-  consits of two sides of \ref puzzle::SpinPuzzleSide.
-  Only a single side is active at some point in time.
-  The user can rotate the marbles, the internal disk or spin the leafs with the
-  given API from \ref puzzle::SpinPuzzleGame.
-* To iterate through the marbles you can use the iterators from \ref puzzle::SpinPuzzleSide
-  These iterator are dependent on the \ref LEAF:
-   - for leaves NORTH, EAST, WEST the iterate circularly iterate though the marbles
-     inside a LEAF
-   - for \ref puzzle::LEAF::TREFOIL the iterator starts from the trefoil origin
-     (i.e. first marble in the NORTH leaf) and iterate though all the marbles in
-     sequence.
-* A series of tests for the various operation can be found in `tests` directory.
+The implementation is straightforward:
+- The UI is a QWidget that paints the Trefoil inside a QWindow.
+- The game logic is implemented in `puzzle::SpinPuzzleGame`, consisting of two sides of `puzzle::SpinPuzzleSide`.
+- Only one side is active at a time, and users can manipulate marbles, the internal disk, or spin the leaves using the provided API from `puzzle::SpinPuzzleGame`.
+- Use iterators from `puzzle::SpinPuzzleSide` to iterate through the marbles:
+- For leaves (NORTH, EAST, WEST), circularly iterate through the marbles inside a leaf.
+- For `puzzle::LEAF::TREFOIL`, the iterator starts from the Trefoil origin and iterates through all the marbles in sequence.
+- Various operation tests can be found in the `tests` directory.
 
-## Dependency
+## Dependencies
 
-* The appliction needs Qt (version 6)
-    - Qt library (Qt6)
-* To generate the coverage results it requires `gcov` and  `lcov`
+- The UI of the application requires Qt (version 6).
+- Qt library (Qt6) or `pip install pyside6`.
+- Refer to [Qt's open-source LGPL obligations](https://www.qt.io/licensing/open-source-lgpl-obligations).
+- This project is licensed under GPL-3.0.
+- To generate coverage results, `gcov` and `lcov` are required:
+
 ```
 apt install lcov
 ```
-* With doxygen you can have a good overview of the implementation.
 
-* pybind11:
+- Use Doxygen for a comprehensive overview of the implementation.
+- To build the Python package, `pybind11` is required:
+
 ```
 git submodule add -b stable ../../pybind/pybind11 extern/pybind11
 git submodule update --init
@@ -95,10 +112,10 @@ git submodule update --init
 
 ## TODOs
 
-    [ ] add a button to check if the game has been solved.
-    [x] when spin a leaf, change its color accordingly
-    [x] ...
+- [ ] Add a button to check if the game has been solved.
+- [ ] Change leaf color when spinning a leaf.
+- [ ] ...
 
 ### References
 
-(1): https://en.wikipedia.org/wiki/Trefoil
+(1): [Trefoil](https://en.wikipedia.org/wiki/Trefoil)

@@ -7,6 +7,6 @@ setup(
     author_email="bulbasch@kotik.by",
     description="Qt UI for the implementation of the logic game 'SpinPuzzleGame'",
     packages=find_packages(),
-    install_requires=[],
+    install_requires=['pyside6'],
     include_package_data=True,
 )
