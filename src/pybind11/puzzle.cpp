@@ -28,6 +28,8 @@ PYBIND11_MODULE(spyn_puzzle, m) {
       // =================================================================== //
       .def(py::init<std::array<puzzle::SpinMarble, 30>>())
       .def("__str__", &puzzle::SpinPuzzleSide<>::to_string)
+      .def("is_border_rotation_possible", &puzzle::SpinPuzzleSide<>::is_border_rotation_possible)
+      .def("is_rotation_possible", &puzzle::SpinPuzzleSide<>::is_rotation_possible)
       .def("__repr__", &puzzle::SpinPuzzleSide<>::to_string)
       .def("trifoild_status", &puzzle::SpinPuzzleSide<>::get_trifoild_status)
       .def("rotate_marbles", &puzzle::SpinPuzzleSide<>::rotate_marbles)
@@ -155,6 +157,7 @@ PYBIND11_MODULE(spyn_puzzle, m) {
       // =================================================================== //
       .def(py::init<>())
       .def("process_key", &puzzle::SpinPuzzleGame::process_key)
+      .def("get_keybord_state", &puzzle::SpinPuzzleGame::get_keybord_state)
       .def("rotate_marbles", &puzzle::SpinPuzzleGame::rotate_marbles)
       .def("rotate_internal_disk",
            &puzzle::SpinPuzzleGame::rotate_internal_disk)
@@ -169,6 +172,9 @@ PYBIND11_MODULE(spyn_puzzle, m) {
            py::overload_cast<puzzle::SIDE>(&puzzle::SpinPuzzleGame::get_side),
            py::return_value_policy::reference)
       .def("get_active_side", &puzzle::SpinPuzzleGame::get_active_side)
+      .def("get_phase_shift_internal_disk", [](puzzle::SpinPuzzleGame& game) {
+        return game.get_side().get_phase_shift_internal_disk();
+      })
       .def("reset", &puzzle::SpinPuzzleGame::reset)
       .def("shuffle", &puzzle::SpinPuzzleGame::shuffle, py::arg("seed") = 0,
            py::arg("commands") = 10000, py::arg("check") = false)
@@ -181,7 +187,8 @@ PYBIND11_MODULE(spyn_puzzle, m) {
       .value("NORTH", puzzle::LEAF::NORTH)
       .value("EAST", puzzle::LEAF::EAST)
       .value("WEST", puzzle::LEAF::WEST)
-      .value("TREFOIL", puzzle::LEAF::TREFOIL);
+      .value("TREFOIL", puzzle::LEAF::TREFOIL)
+      .value("INVALID", puzzle::LEAF::INVALID);
   // =================================================================== //
   py::enum_<puzzle::SIDE>(m, "SIDE")
       // =================================================================== //
@@ -223,7 +230,7 @@ PYBIND11_MODULE(spyn_puzzle, m) {
   m.attr("green") = py::int_(puzzle::green);
   m.attr("darkGreen") = py::int_(puzzle::darkGreen);
   m.attr("blue") = py::int_(puzzle::blue);
-  m.attr("daskBlue") = py::int_(puzzle::darkBlue);
+  m.attr("darkBlue") = py::int_(puzzle::darkBlue);
   m.attr("cyan") = py::int_(puzzle::cyan);
   m.attr("darkCyan") = py::int_(puzzle::darkCyan);
   m.attr("magenta") = py::int_(puzzle::magenta);

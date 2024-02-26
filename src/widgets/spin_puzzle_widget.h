@@ -2,6 +2,7 @@
 #define SPIN_PUZZLE_WIDGET_H
 
 #include <QWidget>
+#include <QPushButton>
 
 #include "puzzle/spin_puzzle_definitions.h"
 #include "puzzle/spin_puzzle_game.h"
@@ -39,6 +40,7 @@ public:
   void mouseMoveEvent(QMouseEvent *ev) override;
   void mousePressEvent(QMouseEvent *e) override;
   void keyPressEvent(QKeyEvent *e) override;
+  void resizeEvent(QResizeEvent* e) override;
 
 private:
   void set_size(int length);
@@ -85,6 +87,13 @@ private:
   puzzle::SpinPuzzleGame m_game;
 
   const double m_speed = 350.0;
+
+  QPushButton *reset_btn = nullptr;
+  QPushButton *pb = nullptr;
+  QPushButton *twist_side = nullptr;
+  QPushButton *spin_north = nullptr;
+  QPushButton *spin_east = nullptr;
+  QPushButton *spin_west = nullptr;
 };
 
 #endif // SPIN_PUZZLE_WIDGET_H

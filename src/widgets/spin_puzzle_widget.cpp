@@ -6,7 +6,6 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
-#include <QPushButton>
 #include <QtMath>
 
 #define DEBUG_EVENT 0
@@ -30,45 +29,37 @@ template <typename T> inline constexpr int signum(T x) {
 SpinPuzzleWidget::SpinPuzzleWidget(uint32_t length, QWidget *parent)
     : QWidget(parent) {
 
-  set_size(length);
-  create_polygon(this->m_polygon);
-  const int L = this->m_length;
+  reset_btn = new QPushButton("reset", this);
+  connect(reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
 
-  QPushButton *reset = new QPushButton("reset", this);
-  reset->setGeometry(QRect(0, 3 * L / 24, 3 * L / 24, L / 24));
-  connect(reset, &QPushButton::released, this, &SpinPuzzleWidget::reset);
-
-  QPushButton *pb = new QPushButton("shuffle", this);
-  pb->setGeometry(QRect(0, 4 * L / 24, 3 * L / 24, L / 24));
+  pb = new QPushButton("shuffle", this);
   connect(pb, &QPushButton::released, this, &SpinPuzzleWidget::shuffle);
 
-  QPushButton *twist_side = new QPushButton("twist", this);
-  twist_side->setGeometry(QRect(0, 5 * L / 24, 3 * L / 24, L / 24));
+  twist_side = new QPushButton("twist", this);
   connect(twist_side, &QPushButton::released, this, [this] {
     this->m_game.swap_side();
     update();
   });
 
-  QPushButton *spin_north = new QPushButton("spin", this);
-  spin_north->setGeometry(QRect(L / 2 - L / 24, 0, 3 * L / 24, L / 24));
+  spin_north = new QPushButton("spin", this);
   connect(spin_north, &QPushButton::released, this, [this] {
     this->m_game.spin_leaf(puzzle::LEAF::NORTH);
     update();
   });
 
-  QPushButton *spin_east = new QPushButton("spin", this);
-  spin_east->setGeometry(QRect(L - 3 * L / 24, L / 2, 3 * L / 24, L / 24));
+  spin_east = new QPushButton("spin", this);
   connect(spin_east, &QPushButton::released, this, [this] {
     this->m_game.spin_leaf(puzzle::LEAF::EAST);
     update();
   });
 
-  QPushButton *spin_west = new QPushButton("spin", this);
-  spin_west->setGeometry(QRect(0, L / 2, 3 * L / 24, L / 24));
+  spin_west = new QPushButton("spin", this);
   connect(spin_west, &QPushButton::released, this, [this] {
     this->m_game.spin_leaf(puzzle::LEAF::WEST);
     update();
   });
+
+  set_size(length);
 
   this->setFocus();
 }
@@ -109,13 +100,22 @@ void SpinPuzzleWidget::paint_status() {
   } else if (m_game.get_keybord_state() == puzzle::LEAF::INVALID) {
     keyboard_status += "CENTER";
   }
-  painter_status.drawText(QPoint(0, 3 * L / 24 * (1 - 1 / 2)), keyboard_status);
+  painter_status.drawText(QPoint(0, 3 * L / 24 ), keyboard_status);
 }
 
 void SpinPuzzleWidget::set_size(int length) {
   this->m_length = length;
   const int r = get_radius_internal() - width;
   radius_marble = r * sin(M_PI / 5) / 2;
+  create_polygon(this->m_polygon);
+  const int L = this->m_length;
+
+  reset_btn->setGeometry(QRect(0, 3 * L / 24, 3 * L / 24, L / 24));
+  pb->setGeometry(QRect(0, 4 * L / 24, 3 * L / 24, L / 24));
+  twist_side->setGeometry(QRect(0, 5 * L / 24, 3 * L / 24, L / 24));
+  spin_north->setGeometry(QRect(L / 2 - L / 24, 0, 3 * L / 24, L / 24));
+  spin_east->setGeometry(QRect(L - 3 * L / 24, L / 2, 3 * L / 24, L / 24));
+  spin_west->setGeometry(QRect(0, L / 2, 3 * L / 24, L / 24));
 }
 
 void SpinPuzzleWidget::next_section(QPainter &painter, int angle) const {
@@ -186,13 +186,13 @@ void SpinPuzzleWidget::paintEvent(QPaintEvent *) {
   paint_internal_circular_guide(painter, Qt::darkBlue);
   // ====================================================================== //
   painter.restore();
-  painter.save();
   // ====================================================================== //
   paint_marbles(painter);
 }
 
 void SpinPuzzleWidget::paint_marbles(QPainter &painter) {
 
+  painter.save();
   auto &game_side = m_game.get_side(m_game.get_active_side());
   if (game_side.get_trifoild_status() != puzzle::TREFOIL::BORDER_ROTATION) {
     do_paint_marbles(painter);
@@ -363,6 +363,7 @@ void SpinPuzzleWidget::create_polygon(QPolygon &polygon) {
 
   const int arc_steps = 100;
   const int angle = 30;
+  polygon = QPolygon();
   polygon << centerTop;
   for (int i = 0; i <= arc_steps; ++i) {
     polygon << QPoint(
@@ -512,7 +513,6 @@ bool SpinPuzzleWidget::mouse_event_inside_leaf(QMouseEvent *ev, QPoint center,
     angle_old = fmod(angle_old + M_PI, 2 * M_PI);
   }
 
-  auto &game_side = m_game.get_side(m_game.get_active_side());
   double delta_angle = signum(angle_new - angle_old) * 360.0 * get_speed();
 
   auto &side = m_game.get_side(m_game.get_active_side());
@@ -549,6 +549,13 @@ void SpinPuzzleWidget::keyPressEvent(QKeyEvent *e) {
     update();
     this->setFocus();
   }
+}
+
+void SpinPuzzleWidget::resizeEvent(QResizeEvent *e)
+{
+  double length = std::min(e->size().width(), e->size().height());
+  this->set_size(length);
+  update();
 }
 
 bool SpinPuzzleWidget::processKey(int key, double fraction_angle) {

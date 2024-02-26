@@ -50,6 +50,10 @@ When you lunch the game the front Trefoil is shown.
 ### Start the Game
 
 * Start the executable
+  - If you installed the python version you can run
+  ```
+  python -m qspyn_puzzle 
+  ```
 * press `shuffle` 
 * try to bring back the marbles in the original position, 
   i.e. on each leaf only marble of a given color should be present.
@@ -92,6 +96,7 @@ git submodule update --init
 ## TODOs
 
     [ ] add a button to check if the game has been solved.
+    [x] when spin a leaf, change its color accordingly
     [x] ...
 
 ### References

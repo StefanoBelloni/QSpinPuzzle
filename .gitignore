@@ -92,3 +92,8 @@ spyn_puzzle.egg-info/PKG-INFO
 spyn_puzzle.egg-info/requires.txt
 spyn_puzzle.egg-info/SOURCES.txt
 spyn_puzzle.egg-info/top_level.txt
+
+appy/qspyn_puzzle.egg-info/dependency_links.txt
+appy/qspyn_puzzle.egg-info/PKG-INFO
+appy/qspyn_puzzle.egg-info/SOURCES.txt
+appy/qspyn_puzzle.egg-info/top_level.txt
