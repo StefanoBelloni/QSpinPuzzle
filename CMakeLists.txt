@@ -72,7 +72,7 @@ add_library(spinpuzzle SHARED
 # ============================================================================ #
 # pybind11 method:
 # ============================================================================ #
-if(NOT DEFINED ANDROID)
+if(NOT DEFINED ANDROID OR (NOT "${RUN_COVERAGE}" STREQUAL TRUE))
     pybind11_add_module(
         spyn_puzzle 
         src/pybind11/puzzle.cpp
@@ -122,6 +122,7 @@ add_executable(
   tests/t_marbles.cpp
   tests/t_puzzle_side.cpp
   tests/t_puzzle_game.cpp
+  tests/t_definition.cpp
 )
 target_include_directories(
     t_puzzle
@@ -139,7 +140,12 @@ add_test(t_puzzle t_puzzle)
 
 if ("${RUN_COVERAGE}" STREQUAL TRUE)
     # https://stackoverflow.com/questions/13116488/detailed-guide-on-using-gcov-with-cmake-cdash
-    set(COVERAGE_EXCLUDES "${CMAKE_CURRENT_BINARY_DIR}/_deps/*")   # exclude gtest
+    set(
+	    COVERAGE_EXCLUDES 
+	    "${CMAKE_CURRENT_BINARY_DIR}/_deps/*"                      # gtest
+	    "${CMAKE_CURRENT_BINARY_DIR}/../extern/*"                  # pybind11
+	    "${CMAKE_CURRENT_BINARY_DIR}/../src/pybind11/puzzle.cpp"   # py library def
+	    )   # exclude gtest
     setup_target_for_coverage_gcovr_html(
         NAME t_puzzle_html
         EXECUTABLE t_puzzle

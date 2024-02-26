@@ -164,7 +164,7 @@ private:
   SIDE m_active_side = SIDE::FRONT;
   double m_spin_rotation[static_cast<uint8_t>(LEAF::TREFOIL)] = {0.0, 0.0, 0.0};
 
-  void debug_iter(const char *name, SpinPuzzleSide<>::iterator it);
+  // void debug_iter(const char *name, SpinPuzzleSide<>::iterator it);
 
   //!< state when input is given by a batch
   KeyboardState keyboard;

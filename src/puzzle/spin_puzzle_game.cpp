@@ -44,14 +44,17 @@ bool SpinPuzzleGame::spin_leaf(LEAF leaf, double angle) {
   // whenever the new angle exceeds -90 or +90 then,
   // swap the marbles and reset the angle
   LEAF opposite_leaf = get_opposite_leaf(leaf);
+
   uint8_t active_side_int = static_cast<uint8_t>(m_active_side);
   uint8_t opposite_side_int =
       static_cast<uint8_t>(get_opposite_side(m_active_side));
+
   uint8_t opposite_leaf_int = static_cast<uint8_t>(opposite_leaf);
   uint8_t leaf_int = static_cast<uint8_t>(leaf);
-  // swap from it + 1 to it + 5
+
   auto state_active = m_sides[active_side_int].get_trifoild_status();
   auto state_opposite = m_sides[opposite_side_int].get_trifoild_status();
+
   auto it_current = m_sides[active_side_int].begin(
       (state_active != TREFOIL::BORDER_ROTATION) ? leaf : LEAF::TREFOIL);
   auto it_opposite = m_sides[opposite_side_int].begin(
@@ -64,30 +67,27 @@ bool SpinPuzzleGame::spin_leaf(LEAF leaf, double angle) {
   }
 
   if (state_opposite == TREFOIL::BORDER_ROTATION) {
-    it_opposite += leaf_int * SpinPuzzleSide<>::GROUP_SIZE + 1;
+    it_opposite += opposite_leaf_int * SpinPuzzleSide<>::GROUP_SIZE + 1;
   } else {
     it_opposite += 1;
   }
 
-  for (size_t n = 1; n <= 5; ++n) {
-    debug_iter("spin_leaf: it_current =  ", it_current);
-    debug_iter("spin_leaf: it_opposite = ", it_opposite);
+  // swap from it + 1 to it + 5
+  for (size_t n = 1; n <= 5; ++n, ++it_current, ++it_opposite) {
     std::iter_swap(it_current, it_opposite);
-    debug_iter("spin_leaf: it_current =  ", it_current);
-    debug_iter("spin_leaf: it_opposite = ", it_opposite);
-    ++it_current;
-    ++it_opposite;
   }
   update_spin_rotation_angle(leaf, updated_spin_angle);
   return true;
 }
 
+/*
 void SpinPuzzleGame::debug_iter(const char *name,
                                 SpinPuzzleSide<>::iterator it) {
   if (it->id() == it->INVALID_ID) {
     std::cout << "[DEBUG][" << name << "] marble: id => " << it->id() << "\n";
   }
 }
+*/
 
 /**
  * @brief swap the active side of the trefoil

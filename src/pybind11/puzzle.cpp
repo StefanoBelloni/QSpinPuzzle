@@ -28,8 +28,10 @@ PYBIND11_MODULE(spyn_puzzle, m) {
       // =================================================================== //
       .def(py::init<std::array<puzzle::SpinMarble, 30>>())
       .def("__str__", &puzzle::SpinPuzzleSide<>::to_string)
-      .def("is_border_rotation_possible", &puzzle::SpinPuzzleSide<>::is_border_rotation_possible)
-      .def("is_rotation_possible", &puzzle::SpinPuzzleSide<>::is_rotation_possible)
+      .def("is_border_rotation_possible",
+           &puzzle::SpinPuzzleSide<>::is_border_rotation_possible)
+      .def("is_rotation_possible",
+           &puzzle::SpinPuzzleSide<>::is_rotation_possible)
       .def("__repr__", &puzzle::SpinPuzzleSide<>::to_string)
       .def("trifoild_status", &puzzle::SpinPuzzleSide<>::get_trifoild_status)
       .def("rotate_marbles", &puzzle::SpinPuzzleSide<>::rotate_marbles)
@@ -172,9 +174,10 @@ PYBIND11_MODULE(spyn_puzzle, m) {
            py::overload_cast<puzzle::SIDE>(&puzzle::SpinPuzzleGame::get_side),
            py::return_value_policy::reference)
       .def("get_active_side", &puzzle::SpinPuzzleGame::get_active_side)
-      .def("get_phase_shift_internal_disk", [](puzzle::SpinPuzzleGame& game) {
-        return game.get_side().get_phase_shift_internal_disk();
-      })
+      .def("get_phase_shift_internal_disk",
+           [](puzzle::SpinPuzzleGame &game) {
+             return game.get_side().get_phase_shift_internal_disk();
+           })
       .def("reset", &puzzle::SpinPuzzleGame::reset)
       .def("shuffle", &puzzle::SpinPuzzleGame::shuffle, py::arg("seed") = 0,
            py::arg("commands") = 10000, py::arg("check") = false)

@@ -1,8 +1,8 @@
 #ifndef SPIN_PUZZLE_WIDGET_H
 #define SPIN_PUZZLE_WIDGET_H
 
-#include <QWidget>
 #include <QPushButton>
+#include <QWidget>
 
 #include "puzzle/spin_puzzle_definitions.h"
 #include "puzzle/spin_puzzle_game.h"
@@ -40,7 +40,7 @@ public:
   void mouseMoveEvent(QMouseEvent *ev) override;
   void mousePressEvent(QMouseEvent *e) override;
   void keyPressEvent(QKeyEvent *e) override;
-  void resizeEvent(QResizeEvent* e) override;
+  void resizeEvent(QResizeEvent *e) override;
 
 private:
   void set_size(int length);

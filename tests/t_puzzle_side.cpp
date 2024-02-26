@@ -643,3 +643,14 @@ TEST(PuzzleSide, basic_move_sequence_0) {
                    MRB(8),  MRB(9),  MRB(28), MRB(29), MRB(0)};
   check_marbles(north_expected, east_expected, west_expected, puzzle);
 }
+
+TEST(PuzzleSide, to_string) {
+  constexpr int N = 10;
+  auto puzzle = getPuzzle<N>();
+  ASSERT_EQ(
+      puzzle.to_string(),
+      "marbles: \nNORTH: (0:2), (1:2), (2:2), (3:2), (4:2), (5:2), (6:2), "
+      "(7:2), (8:2), (9:2)\nEAST: (10:7), (11:7), (12:7), (13:7), (14:7), "
+      "(15:7), (16:7), (17:7), (18:7), (19:7)\nWEST: (20:8), (21:8), (22:8), "
+      "(23:8), (24:8), (25:8), (26:8), (27:8), (28:8), (29:8)");
+}

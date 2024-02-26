@@ -69,6 +69,7 @@ For example, this should lunch the game:
 
 ```
 git clone https://github.com/StefanoBelloni/QSpinPuzzle.git
+git submodule update --init
 cd QSpinPuzzle
 python3 -m venv ./venv
 pip install .

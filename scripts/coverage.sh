@@ -2,7 +2,11 @@
 
 set -e
 
-rm -r build_coverage
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+cd ${SCRIPT_DIR}/..
+
+rm -rf build_coverage
 mkdir -p build_coverage
 cd ./build_coverage
 

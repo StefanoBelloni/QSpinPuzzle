@@ -100,7 +100,7 @@ void SpinPuzzleWidget::paint_status() {
   } else if (m_game.get_keybord_state() == puzzle::LEAF::INVALID) {
     keyboard_status += "CENTER";
   }
-  painter_status.drawText(QPoint(0, 3 * L / 24 ), keyboard_status);
+  painter_status.drawText(QPoint(0, 3 * L / 24), keyboard_status);
 }
 
 void SpinPuzzleWidget::set_size(int length) {
@@ -551,8 +551,7 @@ void SpinPuzzleWidget::keyPressEvent(QKeyEvent *e) {
   }
 }
 
-void SpinPuzzleWidget::resizeEvent(QResizeEvent *e)
-{
+void SpinPuzzleWidget::resizeEvent(QResizeEvent *e) {
   double length = std::min(e->size().width(), e->size().height());
   this->set_size(length);
   update();

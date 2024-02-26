@@ -27,6 +27,8 @@ TEST(PuzzleMarbles, Assign) {
   // ASSERT_EQ(marble.color(), puzzle::SpinMarble::INVALID_COLOR);
   ASSERT_EQ(copy.id(), id);
   ASSERT_EQ(copy.color(), puzzle::black);
+  ASSERT_TRUE(copy != marble);
+  ASSERT_EQ(copy.to_string(), "(10:2)");
 }
 
 /**

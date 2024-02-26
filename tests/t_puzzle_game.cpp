@@ -164,7 +164,28 @@ TEST(PuzzleSide, game_rotate_internal_disk) {
 
 TEST(PuzzleSide, game_shuffle) {
   SpinPuzzleGame game;
-  for (size_t n = 0; n < 1; ++n) {
-    game.shuffle(0, 10000, true);
-  }
+  game.shuffle(0, 10000, true);
+  game.shuffle(42, 10000, true);
+}
+
+TEST(PuzzleSide, to_stirng) {
+  SpinPuzzleGame game;
+  ASSERT_EQ(
+      game.to_string(),
+      "SpinPuzzleGame\nFRONT(active):\nmarbles: \nNORTH: (0:9), (1:9), (2:9), "
+      "(3:9), (4:9), (5:9), (6:9), (7:9), (8:9), (9:9)\nEAST: (10:8), (11:8), "
+      "(12:8), (13:8), (14:8), (15:8), (16:8), (17:8), (18:8), (19:8)\nWEST: "
+      "(20:11), (21:11), (22:11), (23:11), (24:11), (25:11), (26:11), (27:11), "
+      "(28:11), (29:11)\nBACK:\nmarbles: \nNORTH: (30:10), (31:10), (32:10), "
+      "(33:10), (34:10), (35:10), (36:10), (37:10), (38:10), (39:10)\nEAST: "
+      "(40:7), (41:7), (42:7), (43:7), (44:7), (45:7), (46:7), (47:7), (48:7), "
+      "(49:7)\nWEST: (50:12), (51:12), (52:12), (53:12), (54:12), (55:12), "
+      "(56:12), (57:12), (58:12), (59:12)\n");
+}
+
+TEST(PuzzleSide, basic) {
+  SpinPuzzleGame game;
+  ASSERT_EQ(game.get_side().begin(),
+            game.get_side(puzzle::SIDE::FRONT).begin());
+  ASSERT_EQ(game.get_keybord_state(), puzzle::LEAF::INVALID);
 }
