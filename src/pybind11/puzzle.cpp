@@ -8,7 +8,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(spyn_puzzle, m) {
+PYBIND11_MODULE(spinbind11_puzzle, m) {
 
   // =================================================================== //
   py::class_<puzzle::SpinMarble>(m, "SpinMarble")

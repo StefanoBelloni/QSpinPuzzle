@@ -8,10 +8,15 @@ set(CMAKE_AUTORCC ON)
 
 option(USE_QT "Enable this if you want to use QT" no)
 
-add_subdirectory(extern/pybind11)
+if(NOT DEFINED ANDROID)
+    add_subdirectory(extern/pybind11)
+    find_package(Python COMPONENTS Interpreter Development)
+    find_package(pybind11 CONFIG)
 
-find_package(Python COMPONENTS Interpreter Development)
-find_package(pybind11 CONFIG)
+else()
+    function(pybind11_add_module)
+    endfunction()
+endif()
 
 if ("${RUN_COVERAGE}" STREQUAL TRUE)
     # https://github.com/bilke/cmake-modules/blob/master/CodeCoverage.cmake
@@ -23,6 +28,10 @@ list(APPEND CMAKE_PREFIX_PATH "~/Qt/6.6.1/gcc_64")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(ANDROID)
+    SET(USE_QT YES)
+endif()
 
 if (USE_QT)
     find_package(
@@ -72,20 +81,20 @@ add_library(spinpuzzle SHARED
 # ============================================================================ #
 # pybind11 method:
 # ============================================================================ #
-if(NOT DEFINED ANDROID OR (NOT "${RUN_COVERAGE}" STREQUAL TRUE))
+if(NOT DEFINED ANDROID AND (NOT "${RUN_COVERAGE}" STREQUAL TRUE))
     pybind11_add_module(
-        spyn_puzzle 
+        spinbind11_puzzle 
         src/pybind11/puzzle.cpp
         )
 
     target_include_directories(
-        spyn_puzzle 
+        spinbind11_puzzle 
         PRIVATE 
         src
     )
 
     target_link_libraries(
-        spyn_puzzle 
+        spinbind11_puzzle 
         PUBLIC 
         spinpuzzle
     )

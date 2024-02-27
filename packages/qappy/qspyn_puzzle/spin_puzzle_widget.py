@@ -9,7 +9,7 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
     def __init__(self, size, parent) -> None:
         super().__init__(parent)
         # =============== #
-        self._debug = True
+        self._debug = False
         # =============== #
         self.reset_btn = QtWidgets.QPushButton("reset", self)
         self.reset_btn.clicked.connect(self.reset)
@@ -35,7 +35,6 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self._lastPositionMause = None
         # =============== #
         self.setFocus()
-        # =============== #
         # =============== #
 
     def _create_polygon(self):

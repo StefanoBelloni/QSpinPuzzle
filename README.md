@@ -71,14 +71,16 @@ For example, this should lunch the game:
 git clone https://github.com/StefanoBelloni/QSpinPuzzle.git
 git submodule update --init
 cd QSpinPuzzle
+
 python3 -m venv ./venv
-pip install .
 source venv/bin/activate
-pip install . 
-pip install ./appy/
+
+pip install packages/spinbind11_puzzle
+pip install packages/spyn_puzzle
+pip install packages/qappy
+
 python -m qspyn_puzzle
 ```
-  
 
 ### Implementation
 
@@ -110,6 +112,32 @@ apt install lcov
 git submodule add -b stable ../../pybind/pybind11 extern/pybind11
 git submodule update --init
 ```
+
+## Trubleshooting
+
+### Windows
+
+There have been some difficulties to run the applications on Windows.
+After some attempts, the following seems to work:
+
+* Install [WSYS2](https://www.msys2.org/) along with `gcc`, `cmake` and `ninja`
+  - `pacman -S mingw-w64-ucrt-x86_64-gcc`
+  - `pacman -S mingw-w64-ucrt-x86_64-cmake`
+  - `pacman -S mingw-w64-ucrt-x86_64-ninja`
+
+* Add the installation location of `MingW64` (most likely `C:\msys64\mingw64\bin`) to
+   - `PATH` enviromental variable
+   - `PYTHONPATH` enviromental variable
+   
+   **NOTE**: this is needed since on Windows the DLL
+      are no longer searched in `PATH` but have to be explicitly added via
+      `os.add_dll_directory`[see](https://github.com/pytest-dev/pytest/discussions/10692)
+      The package `packages/spyn_puzzle/spyn_puzzle` is there for this reason:
+      It adds the subpath from `PYTHONPATH` to `add_dll_directory`.
+
+* run the script `scripts/compile_win.ps1`
+
+It should lunch at the very end the `QSpinPuzzleGame`.
 
 ## TODOs
 
