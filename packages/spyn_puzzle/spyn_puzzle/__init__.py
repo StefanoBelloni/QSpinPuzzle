@@ -8,7 +8,7 @@ if os.name == 'nt':
             try: os.add_dll_directory(f)
             except: pass
         from spinbind11_puzzle import *
-    except Excpeiotn as e:
+    except Exception as e:
         raise Exception("Cannot load the spinbind11_puzzle package: " + str(e))
 else:
     from spinbind11_puzzle import *

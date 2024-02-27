@@ -12,7 +12,7 @@ $packages = "${venv}\Lib\site-packages\"
 
 $p1 = "${PSScriptRoot}\..\packages\spinbind11_puzzle"
 $p2 = "${PSScriptRoot}\..\packages\spyn_puzzle"
-$p3 = "${PSScriptRoot}\..\packages\qspy_puzzle"
+$p3 = "${PSScriptRoot}\..\packages\qappy"
 
 If(!(test-path -PathType container ${path}))
 {
@@ -27,7 +27,7 @@ If(!(test-path -PathType container ${venv}))
 invoke-expression -Command ${activate}
 
 
-Set-Location build
+Set-Location ${path}
 
 cmake ${root}
 cmake --build .

@@ -139,6 +139,10 @@ After some attempts, the following seems to work:
 
 It should lunch at the very end the `QSpinPuzzleGame`.
 
+**NOTE** when you need to decide where to clone the repository in Windows,
+it might be better to have a _short path_, since longer path might create
+problem when compiling, due to the limit of the maximum length of _paths_
+
 ## TODOs
 
 - [ ] Add a button to check if the game has been solved.
