@@ -6,7 +6,7 @@ import spyn_puzzle as spyn
 
 class QSpinPuzzleWidget(QtWidgets.QWidget):
 
-    def __init__(self, size, parent) -> None:
+    def __init__(self, win_width, win_height, parent) -> None:
         super().__init__(parent)
         # =============== #
         self._debug = False
@@ -14,7 +14,7 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self.reset_btn = QtWidgets.QPushButton("reset", self)
         self.reset_btn.clicked.connect(self.reset)
         # =============== #
-        self.shuffle_btn = QtWidgets.QPushButton("shuffle", self)
+        self.shuffle_btn = QtWidgets.QPushButton("START", self)
         self.shuffle_btn.clicked.connect(self.shuffle)
         # =============== #
         self.twist_btn = QtWidgets.QPushButton("twist", self)
@@ -29,9 +29,12 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self.west_spin_btn = QtWidgets.QPushButton("spin", self)
         self.west_spin_btn.clicked.connect(self.spin_west)
 
+        self._tx = 0
+        self._ty = 0
         # =============== #
         self._game = spyn.SpinPuzzleGame()
-        self.set_size(size)
+        self.set_size(win_width, win_height)
+        self._reset_leaf_colors()
         self._lastPositionMause = None
         # =============== #
         self.setFocus()
@@ -62,19 +65,40 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
             )
         return _polygon
 
-    def set_size(self, size):
-        self._length = size
+    def set_size(self, win_width, win_height):
+        self._length = min(win_width, win_height)
+
+        self._tx = (win_width - self._length) / 2.0
+        self._ty = (win_height - self._length) / 2.0
+
         self._width = 15
         r = self._get_radius_internal() - self._width
         L = self._length;
         self._radius_marble = r * math.sin(math.pi / 5) / 2
         self._polygon = self._create_polygon()
-        self.shuffle_btn.setGeometry(0, 4 * self._length / 24, 3 * self._length / 24, self._length / 24)
-        self.twist_btn.setGeometry(0, 5 * self._length / 24, 3 * self._length / 24, self._length / 24)
-        self.north_spin_btn.setGeometry(L / 2 - L / 24, 0, 3 * L / 24, L / 24)
-        self.reset_btn.setGeometry(0, 3 * self._length / 24, 3 * self._length / 24, self._length / 24)
-        self.west_spin_btn.setGeometry(0, L / 2, 3 * L / 24, L / 24)
-        self.east_spin_btn.setGeometry(L - 3 * L / 24, L / 2, 3 * L / 24, L / 24)
+
+        self.shuffle_btn.setGeometry   (0, 4 * self._length / 24, 3 * self._length / 24, self._length / 24)
+        self.twist_btn.setGeometry     (0, 5 * self._length / 24, 3 * self._length / 24, self._length / 24)
+        self.reset_btn.setGeometry     (0, 3 * self._length / 24, 3 * self._length / 24, self._length / 24)
+
+        self.north_spin_btn.setGeometry(L / 2 - L / 24 + self._tx, 0 + self._ty,     3 * L / 24, L / 24)
+        self.west_spin_btn.setGeometry (0 + self._tx,              L / 2 + self._ty, 3 * L / 24, L / 24)
+        self.east_spin_btn.setGeometry (L - 3 * L / 24 + self._tx, L / 2 + self._ty, 3 * L / 24, L / 24)
+    
+    def _reset_leaf_colors(self):
+        self._colors_leaves = [
+            [self._red(), self._blue(), self._yellow()],
+            [self._green(), self._darkBlue(), self._darkYellow()],
+        ]
+        self._colors_leaves_internal = [
+            [self._darkRed(), self._darkBlue(), self._darkYellow()],
+            [self._darkGreen(), self._blue(), self._yellow()],
+        ]
+        self._colors_leaves_body = [
+            [self._red(), self._blue(), self._yellow()],
+            [self._green(), self._darkBlue(), self._darkYellow()],
+        ]
+
     
     def reset(self):
         self._game.reset()
@@ -91,29 +115,55 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self.update()
         # print(self._game)
     
+    def _spin_north_colors(self):
+        color_side = int(self._game.get_active_side())
+        color_opposite = (color_side + 1) % 2
+        self._colors_leaves[color_side][0], self._colors_leaves[color_opposite][0] = self._colors_leaves[color_opposite][0], self._colors_leaves[color_side][0] 
+        self._colors_leaves_internal[color_side][0], self._colors_leaves_internal[color_opposite][0] = self._colors_leaves_internal[color_opposite][0], self._colors_leaves_internal[color_side][0] 
+
+    def _spin_east_colors(self):
+        color_side = int(self._game.get_active_side())
+        color_opposite = (color_side + 1) % 2
+        self._colors_leaves[color_side][1], self._colors_leaves[color_opposite][2] = self._colors_leaves[color_opposite][2], self._colors_leaves[color_side][1] 
+        self._colors_leaves_internal[color_side][1], self._colors_leaves_internal[color_opposite][2] = self._colors_leaves_internal[color_opposite][2], self._colors_leaves_internal[color_side][1] 
+
+    def _spin_west_colors(self):
+        color_side = int(self._game.get_active_side())
+        color_opposite = (color_side + 1) % 2
+        self._colors_leaves[color_side][2], self._colors_leaves[color_opposite][1] = self._colors_leaves[color_opposite][1], self._colors_leaves[color_side][2] 
+        self._colors_leaves_internal[color_side][2], self._colors_leaves_internal[color_opposite][1] = self._colors_leaves_internal[color_opposite][1], self._colors_leaves_internal[color_side][2] 
+
     def spin_north(self):
-        self._game.spin_leaf(spyn.LEAF.NORTH)
+        self.do_spin_north()
         self.update()
-        # print(self._game)
 
     def spin_east(self):
-        self._game.spin_leaf(spyn.LEAF.EAST)
+        self.do_spin_east()
         self.update()
-        # print(self._game)
 
     def spin_west(self):
-        self._game.spin_leaf(spyn.LEAF.WEST)
+        self.do_spin_west()
         self.update()
-        # print(self._game)
+    
+    def do_spin_north(self):
+        self._spin_north_colors()
+        self._game.spin_leaf(spyn.LEAF.NORTH)
+
+    def do_spin_east(self):
+        self._spin_east_colors()
+        self._game.spin_leaf(spyn.LEAF.EAST)
+
+    def do_spin_west(self):
+        self._game.spin_leaf(spyn.LEAF.WEST)
+        self._spin_west_colors()
     
     def _get_radius_internal(self):
         return 0.185 * self._length
 
-    def _paint_puzzle_section(self, painter, color, color_internal):
+    def _paint_puzzle_section(self, painter, color, color_internal, color_body):
         painter.drawPolygon(self._polygon)
         L = self._length;
         R = L / 4;
-        centerTop = QtCore.QPoint(L / 2, L / 4);
         internalRadius = self._get_radius_internal();
         # primary = m_game.get_active_side() == puzzle::SIDE::FRONT;
 
@@ -121,11 +171,23 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         # The span angle for an ellipse segment to angle , which is in 16ths of a
         # degree 360 * 16 / 2 is half the full ellipse
         painter.drawPie(R, 0, 2 * R, 2 * R, 0, 360 * 8);
+
         painter.setBrush(color_internal);
-        painter.drawPolygon(self._polygon);
+        painter.drawPie(R + (R - internalRadius), (R - internalRadius),
+                  2 * internalRadius, 2 * internalRadius, 0, 360 * 8);
 
         painter.setBrush(color);
-        painter.drawEllipse(centerTop, internalRadius, internalRadius);
+        painter.drawPie(R + (R - internalRadius + 2 * self._width),
+                  (R - internalRadius + 2 * self._width),
+                  2 * (internalRadius - 2 * self._width),
+                  2 * (internalRadius - 2 * self._width), 0, 360 * 8);
+
+        if self._game.get_active_side() == spyn.SIDE.FRONT:
+            painter.setBrush(self._cyan());
+        else:
+            painter.setBrush(self._darkCyan());
+        painter.drawPolygon(self._polygon);
+
         painter.drawLine(L / 2 - R, L / 4, L / 2 + R, L / 4);
     
     def _next_section(self, painter, angle=120):
@@ -286,7 +348,7 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
 
     def _get_speed(self): return 1.5 / self._length
 
-    def _mouse_event_inside_internal_circle(self, event):
+    def _mouse_event_inside_internal_circle(self, pos):
         if not self._can_rotate_internal():
             return False;
 
@@ -294,15 +356,15 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         center = QtCore.QPoint(L / 2, (2 * math.sqrt(3) + 3) * L / 12);
         internalRadius = self._get_radius_internal() + self._width / 2;
 
-        pos_center = copy.deepcopy(event.pos()) - center;
+        pos_center = copy.deepcopy(pos) - center;
         if (pos_center.dotProduct(pos_center, pos_center) > internalRadius * internalRadius):
             return False;
 
-        pos = copy.deepcopy(event.pos())
+        c_pos = copy.deepcopy(pos)
         last = copy.deepcopy(self._lastPositionMause)
-        pos -= center;
+        c_pos -= center;
         last -= center;
-        angle_new = math.atan2(pos.y(), pos.x());
+        angle_new = math.atan2(c_pos.y(), c_pos.x());
         angle_old = math.atan2(last.y(), last.x());
 
         if ((angle_new * angle_old < 0) and math.fabs(angle_new - angle_old) > math.pi):
@@ -310,29 +372,29 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
             angle_old = math.fmod(angle_old + math.pi, 2 * math.pi)
 
         delta_alpha = math.copysign(1, angle_new - angle_old) * 360.0 * self._get_speed();
-        self._lastPositionMause = event.pos();
+        self._lastPositionMause = pos;
 
         self._game.rotate_internal_disk(delta_alpha);
         return True;
     
-    def _is_mouse_on_leaf_marbles(self, ev, center):
+    def _is_mouse_on_leaf_marbles(self, pos, center):
         internalRadius = self._get_radius_internal();
 
-        pos = copy.deepcopy(ev.pos()) - center;
-        r = math.sqrt(pos.dotProduct(pos, pos));
+        c_pos = pos - center;
+        r = math.sqrt(pos.dotProduct(c_pos, c_pos));
         if (r < internalRadius and r > internalRadius - 2 * self._radius_marble):
             return True
         return False;
 
-    def _mouse_event_inside_leaf(self, ev, center, leaf):
-        if not self._is_mouse_on_leaf_marbles(ev, center):
+    def _mouse_event_inside_leaf(self, pos, center, leaf):
+        if not self._is_mouse_on_leaf_marbles(pos, center):
             return False;
-        pos = copy.deepcopy(ev.pos())
+        c_pos = copy.deepcopy(pos)
         last = copy.deepcopy(self._lastPositionMause)
-        pos -= center
+        c_pos -= center
         last -= center
 
-        angle_new = math.atan2(pos.y(), pos.x());
+        angle_new = math.atan2(c_pos.y(), c_pos.x());
         angle_old = math.atan2(last.y(), last.x());
 
         if ((angle_new * angle_old < 0) and math.fabs(angle_new - angle_old) > math.pi):
@@ -342,11 +404,20 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         delta_angle = math.copysign(1, angle_new - angle_old) * 360.0 * self._get_speed()
         side = self._game.get_side();
         side.rotate_marbles(leaf, delta_angle);
-        self._lastPositionMause = ev.pos();
+        self._lastPositionMause = pos;
 
         return True;
 
     def _processKey(self, key, fraction_angle):
+        if (key == spyn.Key_PageUp or key == spyn.Key_PageDown):
+            # make scure only leaves are used
+            if (self._game.get_keybord_state() == spyn.LEAF.NORTH):
+                self.spin_north();
+            elif (self._game.get_keybord_state() == spyn.LEAF.EAST):
+                self.spin_east();
+            elif (self._game.get_keybord_state() == spyn.LEAF.WEST):
+                self.spin_west();
+            return True;
         return self._game.process_key(key, fraction_angle);
 
     # ========================================= #
@@ -361,45 +432,56 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         center_west = QtCore.QPoint(L / 4, (math.sqrt(3) + 1) / 4 * L);
         center_east = QtCore.QPoint(3 * L / 4, (math.sqrt(3) + 1) / 4 * L);
 
-        if self._mouse_event_inside_internal_circle(event):
+        pos = event.pos() - QtCore.QPoint(self._tx, self._ty)
+        if self._mouse_event_inside_internal_circle(pos):
             self.update();
         elif (
-            self._mouse_event_inside_leaf(event, center_north, spyn.LEAF.NORTH) or
-            self._mouse_event_inside_leaf(event, center_east, spyn.LEAF.EAST) or
-            self._mouse_event_inside_leaf(event, center_west, spyn.LEAF.WEST)):
+            self._mouse_event_inside_leaf(pos, center_north, spyn.LEAF.NORTH) or
+            self._mouse_event_inside_leaf(pos, center_east, spyn.LEAF.EAST) or
+            self._mouse_event_inside_leaf(pos, center_west, spyn.LEAF.WEST)):
             self.update();
 
     def paintEvent(self,event):
         self._paint_status()
         painter = QtGui.QPainter(self)
+        painter.translate(QtCore.QPoint(self._tx, self._ty));
         L = self._length
         center = QtCore.QPoint(L / 2, (2 * math.sqrt(3) + 3) * L / 12)
-        primary = self._game.get_active_side() == spyn.SIDE.FRONT
-        if primary:
-            colorNorth = self._red()
-            colorEast = self._blue()
-            colorWest = self._yellow()
-            colorInternal = self._magenta()
-        else:
-            colorNorth = self._green()
-            colorEast = self._darkBlue()
-            colorWest = self._darkYellow()
-            colorInternal = self._magenta()
+        color_side = self._game.get_active_side()
+        north = spyn.LEAF.NORTH
+        east = spyn.LEAF.EAST
+        west = spyn.LEAF.WEST
 
         painter.save()
         try:
             # ================================================================ #
-            self._paint_puzzle_section(painter, colorNorth, colorInternal)
+            self._paint_puzzle_section(
+                painter, 
+                self._colors_leaves[color_side][north], 
+                self._colors_leaves_internal[color_side][north], 
+                self._colors_leaves_body[color_side][north]
+            )
             self._next_section(painter)
-            self._paint_puzzle_section(painter, colorEast, colorInternal)
+            self._paint_puzzle_section(
+                painter, 
+                self._colors_leaves[color_side][east], 
+                self._colors_leaves_internal[color_side][east], 
+                self._colors_leaves_body[color_side][east]
+            )
             self._next_section(painter)
-            self._paint_puzzle_section(painter, colorWest, colorInternal)
+            self._paint_puzzle_section(
+                painter, 
+                self._colors_leaves[color_side][west], 
+                self._colors_leaves_internal[color_side][west], 
+                self._colors_leaves_body[color_side][west]
+            )
             # ================================================================ #
             painter.restore()
             painter.save()
             # --------------- #
             internalRadius = self._get_radius_internal() + self._width / 2;
-            painter.setBrush(QtGui.QColor(0, 125, 125));
+            # painter.setBrush(QtGui.QColor(0, 125, 125));
+            painter.setBrush(self._magenta());
             painter.drawEllipse(center, internalRadius, internalRadius);
             # ================================================================ #
             painter.restore()
@@ -425,8 +507,7 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
             self.setFocus();
 
     def resizeEvent(self, e):
-        length = min(e.size().width(), e.size().height())
-        self.set_size(length)
+        self.set_size(e.size().width(), e.size().height())
         self.update()
     # ========================================= #
     # COLORS

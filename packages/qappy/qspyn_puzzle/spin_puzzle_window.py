@@ -6,6 +6,8 @@ class QSpinPuzzleWindow(QtWidgets.QMainWindow):
         super().__init__()
         screen = QtGui.QGuiApplication.primaryScreen()
         screenGeometry = screen.geometry()
-        size = min(screenGeometry.height() / 2, screenGeometry.width() / 2)
-        self.spin_puzzle = QSpinPuzzleWidget(size, self)
+        self.spin_puzzle = QSpinPuzzleWidget(
+            screenGeometry.width() / 2,
+            screenGeometry.height() / 2, 
+            self)
         self.setCentralWidget(self.spin_puzzle)

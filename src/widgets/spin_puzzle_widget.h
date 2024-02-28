@@ -34,7 +34,7 @@
 class SpinPuzzleWidget : public QWidget {
   Q_OBJECT
 public:
-  SpinPuzzleWidget(uint32_t length, QWidget *parent = nullptr);
+  SpinPuzzleWidget(int win_width, int win_heigth, QWidget *parent = nullptr);
 
   void paintEvent(QPaintEvent *ev) override;
   void mouseMoveEvent(QMouseEvent *ev) override;
@@ -43,10 +43,11 @@ public:
   void resizeEvent(QResizeEvent *e) override;
 
 private:
-  void set_size(int length);
+  void set_size(int win_width, int win_height);
   int get_radius_internal() const;
   void create_polygon(QPolygon &polygon);
-  void paint_puzzle_section(QPainter &painter, QColor color) const;
+  void paint_puzzle_section(QPainter &painter, QColor color,
+                            QColor color_internal, QColor color_body) const;
 
   void next_section(QPainter &painter, int angle = 120) const;
 
@@ -62,16 +63,20 @@ private:
                     puzzle::SpinPuzzleSide<>::iterator it, const QPoint center,
                     size_t n, const int r);
 
-  bool mouse_event_inside_internal_circle(QMouseEvent *ev);
-  bool mouse_event_inside_leaf(QMouseEvent *ev, QPoint center,
+  bool mouse_event_inside_internal_circle(QPoint position);
+  bool mouse_event_inside_leaf(QPoint position, QPoint center,
                                puzzle::LEAF leaf);
+  void do_spin_north();
+  void do_spin_east();
+  void do_spin_west();
 
   bool processKey(int key, double fraction_angle);
   void shuffle();
   void reset();
+  void reset_leaf_colors();
 
   bool can_rotate_internal();
-  bool is_mause_on_leaf_marbles(QMouseEvent *ev, QPoint center);
+  bool is_mause_on_leaf_marbles(QPoint pos, QPoint center);
   double get_speed();
   QColor toQtColor(puzzle::Color value);
 
@@ -94,6 +99,15 @@ private:
   QPushButton *spin_north = nullptr;
   QPushButton *spin_east = nullptr;
   QPushButton *spin_west = nullptr;
+
+  int m_tx = 0;
+  int m_ty = 0;
+
+  using ColorsSide = std::array<QColor, 3>;
+
+  std::array<ColorsSide, 2> m_colors_leaves;
+  std::array<ColorsSide, 2> m_colors_leaves_internal;
+  std::array<ColorsSide, 2> m_colors_leaves_body;
 };
 
 #endif // SPIN_PUZZLE_WIDGET_H

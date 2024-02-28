@@ -26,13 +26,14 @@ template <typename T> inline constexpr int signum(T x) {
   return signum(x, std::is_signed<T>());
 }
 
-SpinPuzzleWidget::SpinPuzzleWidget(uint32_t length, QWidget *parent)
+SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
+                                   QWidget *parent)
     : QWidget(parent) {
 
   reset_btn = new QPushButton("reset", this);
   connect(reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
 
-  pb = new QPushButton("shuffle", this);
+  pb = new QPushButton("START", this);
   connect(pb, &QPushButton::released, this, &SpinPuzzleWidget::shuffle);
 
   twist_side = new QPushButton("twist", this);
@@ -43,25 +44,64 @@ SpinPuzzleWidget::SpinPuzzleWidget(uint32_t length, QWidget *parent)
 
   spin_north = new QPushButton("spin", this);
   connect(spin_north, &QPushButton::released, this, [this] {
-    this->m_game.spin_leaf(puzzle::LEAF::NORTH);
+    do_spin_north();
     update();
   });
 
   spin_east = new QPushButton("spin", this);
   connect(spin_east, &QPushButton::released, this, [this] {
-    this->m_game.spin_leaf(puzzle::LEAF::EAST);
+    do_spin_east();
     update();
   });
 
   spin_west = new QPushButton("spin", this);
   connect(spin_west, &QPushButton::released, this, [this] {
-    this->m_game.spin_leaf(puzzle::LEAF::WEST);
+    do_spin_west();
     update();
   });
 
-  set_size(length);
+  set_size(win_width, win_heigth);
+  reset_leaf_colors();
 
   this->setFocus();
+}
+
+void SpinPuzzleWidget::do_spin_north() {
+  int color_side = static_cast<uint8_t>(m_game.get_active_side());
+  int color_opposite = (color_side + 1) % 2;
+  std::swap(m_colors_leaves[color_side][0], m_colors_leaves[color_opposite][0]);
+  std::swap(m_colors_leaves_internal[color_side][0],
+            m_colors_leaves_internal[color_opposite][0]);
+  this->m_game.spin_leaf(puzzle::LEAF::NORTH);
+}
+
+void SpinPuzzleWidget::do_spin_east() {
+  int color_side = static_cast<uint8_t>(m_game.get_active_side());
+  int color_opposite = (color_side + 1) % 2;
+  std::swap(m_colors_leaves[color_side][1], m_colors_leaves[color_opposite][2]);
+  std::swap(m_colors_leaves_internal[color_side][1],
+            m_colors_leaves_internal[color_opposite][2]);
+  this->m_game.spin_leaf(puzzle::LEAF::EAST);
+}
+
+void SpinPuzzleWidget::do_spin_west() {
+  int color_side = static_cast<uint8_t>(m_game.get_active_side());
+  int color_opposite = (color_side + 1) % 2;
+  std::swap(m_colors_leaves[color_side][2], m_colors_leaves[color_opposite][1]);
+  std::swap(m_colors_leaves_internal[color_side][2],
+            m_colors_leaves_internal[color_opposite][1]);
+  this->m_game.spin_leaf(puzzle::LEAF::WEST);
+}
+
+void SpinPuzzleWidget::reset_leaf_colors() {
+
+  m_colors_leaves[0] = {Qt::red, Qt::blue, Qt::yellow};
+  m_colors_leaves_internal[0] = {Qt::darkRed, Qt::darkBlue, Qt::darkYellow};
+  m_colors_leaves_body[0] = {Qt::red, Qt::blue, Qt::yellow};
+
+  m_colors_leaves[1] = {Qt::green, Qt::darkBlue, Qt::darkYellow};
+  m_colors_leaves_internal[1] = {Qt::darkGreen, Qt::blue, Qt::yellow};
+  m_colors_leaves_body[1] = {Qt::green, Qt::darkBlue, Qt::darkYellow};
 }
 
 void SpinPuzzleWidget::paint_status() {
@@ -103,8 +143,11 @@ void SpinPuzzleWidget::paint_status() {
   painter_status.drawText(QPoint(0, 3 * L / 24), keyboard_status);
 }
 
-void SpinPuzzleWidget::set_size(int length) {
-  this->m_length = length;
+void SpinPuzzleWidget::set_size(int win_width, int win_height) {
+  m_length = std::min(win_width, win_height);
+  m_tx = (win_width - m_length) / 2.0;
+  m_ty = (win_height - m_length) / 2.0;
+
   const int r = get_radius_internal() - width;
   radius_marble = r * sin(M_PI / 5) / 2;
   create_polygon(this->m_polygon);
@@ -113,9 +156,12 @@ void SpinPuzzleWidget::set_size(int length) {
   reset_btn->setGeometry(QRect(0, 3 * L / 24, 3 * L / 24, L / 24));
   pb->setGeometry(QRect(0, 4 * L / 24, 3 * L / 24, L / 24));
   twist_side->setGeometry(QRect(0, 5 * L / 24, 3 * L / 24, L / 24));
-  spin_north->setGeometry(QRect(L / 2 - L / 24, 0, 3 * L / 24, L / 24));
-  spin_east->setGeometry(QRect(L - 3 * L / 24, L / 2, 3 * L / 24, L / 24));
-  spin_west->setGeometry(QRect(0, L / 2, 3 * L / 24, L / 24));
+
+  spin_north->setGeometry(
+      QRect(L / 2 - L / 24 + m_tx, 0 + m_ty, 3 * L / 24, L / 24));
+  spin_east->setGeometry(
+      QRect(L - 3 * L / 24 + m_tx, L / 2 + m_ty, 3 * L / 24, L / 24));
+  spin_west->setGeometry(QRect(0 + m_tx, L / 2 + m_ty, 3 * L / 24, L / 24));
 }
 
 void SpinPuzzleWidget::next_section(QPainter &painter, int angle) const {
@@ -126,23 +172,37 @@ void SpinPuzzleWidget::next_section(QPainter &painter, int angle) const {
   painter.translate(-center);
 }
 
-void SpinPuzzleWidget::paint_puzzle_section(QPainter &painter,
-                                            QColor color) const {
+void SpinPuzzleWidget::paint_puzzle_section(QPainter &painter, QColor color,
+                                            QColor color_internal,
+                                            QColor color_body) const {
   const int L = this->m_length;
   const double R = L / 4;
   const QPoint centerTop = QPoint(L / 2, L / 4);
   const int internalRadius = get_radius_internal();
-  bool primary = m_game.get_active_side() == puzzle::SIDE::FRONT;
+  const bool primary = m_game.get_active_side() == puzzle::SIDE::FRONT;
 
   painter.setBrush(color);
   // The span angle for an ellipse segment to angle , which is in 16ths of a
   // degree 360 * 16 / 2 is half the full ellipse
   painter.drawPie(R, 0, 2 * R, 2 * R, 0, 360 * 8);
+
+  painter.setBrush(color_internal);
+  painter.drawPie(R + (R - internalRadius), (R - internalRadius),
+                  2 * internalRadius, 2 * internalRadius, 0, 360 * 8);
+
+  painter.setBrush(color);
+  painter.drawPie(R + (R - internalRadius + 2 * width),
+                  (R - internalRadius + 2 * width),
+                  2 * (internalRadius - 2 * width),
+                  2 * (internalRadius - 2 * width), 0, 360 * 8);
+
   painter.setBrush((primary) ? Qt::cyan : Qt::darkCyan);
   painter.drawPolygon(m_polygon);
 
-  painter.setBrush(color);
-  painter.drawEllipse(centerTop, internalRadius, internalRadius);
+  painter.setBrush(color_body);
+  painter.drawPie(R + (R - internalRadius), (R - internalRadius),
+                  2 * internalRadius, 2 * internalRadius, 360 * 8, 360 * 8);
+
   painter.drawLine(L / 2 - R, L / 4, L / 2 + R, L / 4);
 }
 
@@ -154,22 +214,32 @@ void SpinPuzzleWidget::paintEvent(QPaintEvent *) {
 
   paint_status();
   QPainter painter(this);
+  painter.translate(QPoint(m_tx, m_ty));
   painter.save();
   // ====================================================================== //
   // NORTH
-  bool primary = m_game.get_active_side() == puzzle::SIDE::FRONT;
-  paint_puzzle_section(painter, (primary) ? Qt::red : Qt::green);
+  int color_side = static_cast<uint8_t>(m_game.get_active_side());
+  int north = static_cast<uint8_t>(puzzle::LEAF::NORTH);
+  int east = static_cast<uint8_t>(puzzle::LEAF::EAST);
+  int west = static_cast<uint8_t>(puzzle::LEAF::WEST);
+  paint_puzzle_section(painter, m_colors_leaves[color_side][north],
+                       m_colors_leaves_internal[color_side][north],
+                       m_colors_leaves_body[color_side][north]);
   next_section(painter);
-  paint_puzzle_section(painter, (primary) ? Qt::blue : Qt::darkBlue);
+  paint_puzzle_section(painter, m_colors_leaves[color_side][east],
+                       m_colors_leaves_internal[color_side][east],
+                       m_colors_leaves_body[color_side][east]);
   // WEST
   next_section(painter);
-  paint_puzzle_section(painter, (primary) ? Qt::yellow : Qt::darkYellow);
+  paint_puzzle_section(painter, m_colors_leaves[color_side][west],
+                       m_colors_leaves_internal[color_side][west],
+                       m_colors_leaves_body[color_side][west]);
   // ====================================================================== //
 
   painter.restore();
   painter.save();
   const int internalRadius = get_radius_internal() + width / 2;
-  painter.setBrush((primary) ? Qt::magenta : Qt::magenta);
+  painter.setBrush(Qt::magenta);
   painter.drawEllipse(center, internalRadius, internalRadius);
 
   painter.restore();
@@ -415,7 +485,7 @@ void SpinPuzzleWidget::mousePressEvent(QMouseEvent *e) {
 #if DEBUG_EVENT == 1
   qDebug() << "[DEBUG][mousePessEvent] position: " << e->pos();
 #endif
-  m_lastPositionMause = e->pos();
+  m_lastPositionMause = e->pos() - QPoint(m_tx, m_ty);
 }
 
 void SpinPuzzleWidget::mouseMoveEvent(QMouseEvent *ev) {
@@ -427,11 +497,12 @@ void SpinPuzzleWidget::mouseMoveEvent(QMouseEvent *ev) {
   const QPoint center_west = QPoint(L / 4, (sqrt(3) + 1) / 4 * L);
   const QPoint center_east = QPoint(3 * L / 4, (sqrt(3) + 1) / 4 * L);
 
-  if (mouse_event_inside_internal_circle(ev)) {
+  auto pos = ev->pos() - QPoint(m_tx, m_ty);
+  if (mouse_event_inside_internal_circle(pos)) {
     update();
-  } else if (mouse_event_inside_leaf(ev, center_north, puzzle::LEAF::NORTH) ||
-             mouse_event_inside_leaf(ev, center_east, puzzle::LEAF::EAST) ||
-             mouse_event_inside_leaf(ev, center_west, puzzle::LEAF::WEST)) {
+  } else if (mouse_event_inside_leaf(pos, center_north, puzzle::LEAF::NORTH) ||
+             mouse_event_inside_leaf(pos, center_east, puzzle::LEAF::EAST) ||
+             mouse_event_inside_leaf(pos, center_west, puzzle::LEAF::WEST)) {
     update();
   }
 #ifdef DEBUG_CONSISTENCY
@@ -448,7 +519,7 @@ void SpinPuzzleWidget::mouseMoveEvent(QMouseEvent *ev) {
 
 bool SpinPuzzleWidget::can_rotate_internal() { return true; }
 
-bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QMouseEvent *ev) {
+bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QPoint pos) {
   if (!can_rotate_internal()) {
 #if DEBUG_EVENT == 1
     qDebug()
@@ -461,17 +532,17 @@ bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QMouseEvent *ev) {
   const QPoint center = QPoint(L / 2, (2 * std::sqrt(3) + 3) * L / 12);
   const int internalRadius = get_radius_internal() + width / 2;
 
-  auto pos_center = ev->pos() - center;
+  auto pos_center = pos - center;
   if (pos_center.dotProduct(pos_center, pos_center) >
       internalRadius * internalRadius) {
     return false;
   }
 
-  auto pos = ev->pos();
+  auto c_pos = pos;
   auto last = m_lastPositionMause;
-  pos -= center;
+  c_pos -= center;
   last -= center;
-  auto angle_new = atan2(pos.y(), pos.x());
+  auto angle_new = atan2(c_pos.y(), c_pos.x());
   auto angle_old = atan2(last.y(), last.x());
 
   if ((angle_new * angle_old < 0) && abs(angle_new - angle_old) > M_PI) {
@@ -481,7 +552,7 @@ bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QMouseEvent *ev) {
 
   // shift += (angle_new - angle_old) * internalRadius / 2;
   double delta_alpha = signum(angle_new - angle_old) * 360.0 * get_speed();
-  m_lastPositionMause = ev->pos();
+  m_lastPositionMause = pos;
 
 #if DEBUG_EVENT == 1
   qDebug()
@@ -494,18 +565,18 @@ bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QMouseEvent *ev) {
   return true;
 }
 
-bool SpinPuzzleWidget::mouse_event_inside_leaf(QMouseEvent *ev, QPoint center,
+bool SpinPuzzleWidget::mouse_event_inside_leaf(QPoint pos, QPoint center,
                                                puzzle::LEAF leaf) {
-  if (!is_mause_on_leaf_marbles(ev, center)) {
+  if (!is_mause_on_leaf_marbles(pos, center)) {
     return false;
   }
 
-  auto pos = ev->pos();
+  auto c_pos = pos;
   auto last = m_lastPositionMause;
-  pos -= center;
+  c_pos -= center;
   last -= center;
 
-  auto angle_new = atan2(pos.y(), pos.x());
+  auto angle_new = atan2(c_pos.y(), c_pos.x());
   auto angle_old = atan2(last.y(), last.x());
 
   if ((angle_new * angle_old < 0) && abs(angle_new - angle_old) > M_PI) {
@@ -517,18 +588,17 @@ bool SpinPuzzleWidget::mouse_event_inside_leaf(QMouseEvent *ev, QPoint center,
 
   auto &side = m_game.get_side(m_game.get_active_side());
   side.rotate_marbles(leaf, delta_angle);
-  m_lastPositionMause = ev->pos();
+  m_lastPositionMause = pos;
 
   return true;
 }
 
 double SpinPuzzleWidget::get_speed() { return 1.5 / this->m_length; }
 
-bool SpinPuzzleWidget::is_mause_on_leaf_marbles(QMouseEvent *ev,
-                                                QPoint center) {
+bool SpinPuzzleWidget::is_mause_on_leaf_marbles(QPoint pos, QPoint center) {
   const double internalRadius = get_radius_internal();
 
-  auto pos = ev->pos() - center;
+  pos = pos - center;
   auto r = sqrt(pos.dotProduct(pos, pos));
   if (r < internalRadius && r > internalRadius - 2 * radius_marble) {
     return true;
@@ -552,17 +622,31 @@ void SpinPuzzleWidget::keyPressEvent(QKeyEvent *e) {
 }
 
 void SpinPuzzleWidget::resizeEvent(QResizeEvent *e) {
-  double length = std::min(e->size().width(), e->size().height());
-  this->set_size(length);
+  this->set_size(e->size().width(), e->size().height());
   update();
 }
 
 bool SpinPuzzleWidget::processKey(int key, double fraction_angle) {
+  // To sync. spin of leaf and colors: not optimal.
+  // shuffle also is not in sync.
+  // probably better directly in SpinPuzzleGame
+  if (key == puzzle::Key_PageUp || key == puzzle::Key_PageDown) {
+    // make scure only leaves are used
+      if (m_game.get_keybord_state() == puzzle::LEAF::NORTH) {
+        do_spin_north();
+      } else if (m_game.get_keybord_state() == puzzle::LEAF::EAST) {
+        do_spin_east();
+      } else if (m_game.get_keybord_state() == puzzle::LEAF::WEST) {
+        do_spin_west();
+      }
+      return true;
+  }
   return m_game.process_key(key, fraction_angle);
 }
 
 void SpinPuzzleWidget::reset() {
   m_game = puzzle::SpinPuzzleGame();
+  reset_leaf_colors();
   update();
 }
 
