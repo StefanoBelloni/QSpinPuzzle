@@ -114,6 +114,44 @@ std::string SpinPuzzleGame::to_string() {
   return str + '\n';
 }
 
+bool SpinPuzzleGame::is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf) {
+  auto it = side.begin(leaf);
+  Color color = it->color();
+  size_t count_ok = 1;
+  size_t n = 0;
+  while (++n < puzzle::SpinPuzzleSide<>::GROUP_SIZE) {
+    ++it;
+    if (color == it->color()) {
+      ++count_ok;
+    } else {
+      return false;
+    }
+  }
+  return count_ok == puzzle::SpinPuzzleSide<>::GROUP_SIZE;
+}
+
+
+bool SpinPuzzleGame::is_game_solved()
+{
+  auto& front = get_side(SIDE::FRONT);
+  auto& back = get_side(SIDE::BACK);
+
+  auto front_status_ok = front.get_trifoild_status() == TREFOIL::LEAF_ROTATION;
+  auto back_status_ok = back.get_trifoild_status() == TREFOIL::LEAF_ROTATION;
+
+  if (!back_status_ok || !front_status_ok) {
+    return false;
+  }
+
+  // check every leaf:
+  return is_leaf_complete(front, LEAF::NORTH) && 
+    is_leaf_complete(front, LEAF::EAST) && 
+    is_leaf_complete(front, LEAF::WEST) && 
+    is_leaf_complete(back, LEAF::NORTH) && 
+    is_leaf_complete(back, LEAF::EAST) && 
+    is_leaf_complete(back, LEAF::WEST);
+}
+
 bool SpinPuzzleGame::check_consistency_side(SIDE side, bool verbose) {
   if (verbose) {
     std::cout << ((side == SIDE::BACK) ? "BACK" : "FRONT") << "\n";

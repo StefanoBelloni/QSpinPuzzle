@@ -28,9 +28,13 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         # =============== #
         self.west_spin_btn = QtWidgets.QPushButton("spin", self)
         self.west_spin_btn.clicked.connect(self.spin_west)
-
+        # =============== #
         self._tx = 0
         self._ty = 0
+        # =============== #
+        self._elapsed_time = 0
+        self._timer = QtCore.QTimer(self)
+        self._timer.timeout.connect(self._update_elapsed_time)
         # =============== #
         self._game = spyn.SpinPuzzleGame()
         self.set_size(win_width, win_height)
@@ -39,6 +43,10 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         # =============== #
         self.setFocus()
         # =============== #
+    
+    def _update_elapsed_time(self):
+        self._elapsed_time += 1
+        self.update()
 
     def _create_polygon(self):
         L = self._length
@@ -66,6 +74,8 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         return _polygon
 
     def set_size(self, win_width, win_height):
+        self._win_width = win_width;
+        self._win_height = win_height;
         self._length = min(win_width, win_height)
 
         self._tx = (win_width - self._length) / 2.0
@@ -101,11 +111,15 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
 
     
     def reset(self):
+        self._elapsed_time = 0
+        self._timer.stop(1000)
         self._game.reset()
         self.update()
         # print(self._game)
 
     def shuffle(self):
+        self._elapsed_time = 0
+        self._timer.start(1000)
         self._game.shuffle()
         self.update()
         # print(self._game)
@@ -341,6 +355,21 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
             elif (self._game.get_keybord_state() == spyn.LEAF.INVALID):
                 keyboard_status += "CENTER";
             painter_status.drawText(QtCore.QPoint(0, 3 * L / 24 * (1)), keyboard_status);
+
+            if (self._game.is_game_solved()):
+                painter_status.setBrush(self._green());
+                self._timer.stop();
+            else:
+                painter_status.setBrush(self._red());
+            painter_status.drawRect(self._win_width - 6 * L / 24, 0, 6 * L / 24, L / 24);
+            time = "time: {:02d}:{:02d}:{:02d}".format(
+                self._elapsed_time // 60 // 60,
+                self._elapsed_time // 60,
+                self._elapsed_time % 60,
+            ); 
+            painter_status.drawText(QtCore.QPoint(self._win_width - 6 * L / 24, 2 * L/24), time);
+
+
         finally:
             painter_status.end()
 

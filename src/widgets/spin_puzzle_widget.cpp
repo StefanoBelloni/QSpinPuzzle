@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QtMath>
+#include <QTimer>
 
 #define DEBUG_EVENT 0
 #define DEBUG_MARBLES 0
@@ -59,6 +60,9 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
     do_spin_west();
     update();
   });
+
+  timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this] { m_elapsed_time += 1; update(); });
 
   set_size(win_width, win_heigth);
   reset_leaf_colors();
@@ -141,12 +145,25 @@ void SpinPuzzleWidget::paint_status() {
     keyboard_status += "CENTER";
   }
   painter_status.drawText(QPoint(0, 3 * L / 24), keyboard_status);
+
+  if (m_game.is_game_solved()) {
+    painter_status.setBrush(Qt::green);
+    timer->stop();
+  } else {
+    painter_status.setBrush(Qt::red);
+  }
+  painter_status.drawRect(m_win_width - 6 * L / 24, 0, 6 * L / 24, L / 24);
+  QString time = QString("time: %3:%2:%1").arg(m_elapsed_time % 60, 2, 10, QChar('0')).arg(m_elapsed_time / 60, 2, 10, QChar('0')).arg(m_elapsed_time / 60 / 60, 2, 10, QChar('0')); 
+  painter_status.drawText(QPoint(m_win_width - 6 * L / 24, 2 * L/24), time);
+
 }
 
 void SpinPuzzleWidget::set_size(int win_width, int win_height) {
   m_length = std::min(win_width, win_height);
   m_tx = (win_width - m_length) / 2.0;
   m_ty = (win_height - m_length) / 2.0;
+  m_win_width = win_width;
+  m_win_height = win_height;
 
   const int r = get_radius_internal() - width;
   radius_marble = r * sin(M_PI / 5) / 2;
@@ -645,12 +662,16 @@ bool SpinPuzzleWidget::processKey(int key, double fraction_angle) {
 }
 
 void SpinPuzzleWidget::reset() {
+  m_elapsed_time = 0;
+  timer->stop();
   m_game = puzzle::SpinPuzzleGame();
   reset_leaf_colors();
   update();
 }
 
 void SpinPuzzleWidget::shuffle() {
+  m_elapsed_time = 0;
+  timer->start(1000);
   m_game.shuffle();
 #ifdef DEBUG_CONSISTENCY
   if (!m_game.check_consistency()) {

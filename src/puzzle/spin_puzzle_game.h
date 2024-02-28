@@ -145,6 +145,13 @@ public:
 
   std::string to_string();
 
+  /**
+   * @brief  this function check if a game is solved
+   * @note   the game must be in LEAF_ROTATION state
+   * @retval true if the game is solved.
+   */
+  bool is_game_solved();
+
 private:
   class KeyboardState {
   public:
@@ -157,6 +164,8 @@ private:
   private:
     puzzle::LEAF section = puzzle::LEAF::INVALID;
   };
+
+  bool is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf);
 
   //!< sides of a trefoil
   std::array<puzzle::SpinPuzzleSide<>, 2> m_sides;

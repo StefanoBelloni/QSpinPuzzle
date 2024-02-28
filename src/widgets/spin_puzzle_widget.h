@@ -100,8 +100,13 @@ private:
   QPushButton *spin_east = nullptr;
   QPushButton *spin_west = nullptr;
 
+  QTimer *timer;
+  int m_elapsed_time = 0;
+
   int m_tx = 0;
   int m_ty = 0;
+  int m_win_width = 0;
+  int m_win_height = 0;
 
   using ColorsSide = std::array<QColor, 3>;
 

@@ -145,10 +145,13 @@ problem when compiling, due to the limit of the maximum length of _paths_
 
 ## TODOs
 
-- [ ] Add a button to check if the game has been solved.
+- [x] Add a status to check if the game has been solved.
+- [x] add a timer
 - [x] Change leaf color when spinning a leaf.
 - [ ] processKey is not sincronized with swap leaf color by spin: fix it!
       the workaround fails when shuffle is called.
+  [ ] possibility to stop the game, save and load it
+  [ ] add internal history of commands
 
 ### References
 

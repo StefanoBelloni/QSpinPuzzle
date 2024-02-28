@@ -158,6 +158,7 @@ PYBIND11_MODULE(spinbind11_puzzle, m) {
   py::class_<puzzle::SpinPuzzleGame>(m, "SpinPuzzleGame")
       // =================================================================== //
       .def(py::init<>())
+      .def("is_game_solved", &puzzle::SpinPuzzleGame::is_game_solved)
       .def("process_key", &puzzle::SpinPuzzleGame::process_key)
       .def("get_keybord_state", &puzzle::SpinPuzzleGame::get_keybord_state)
       .def("rotate_marbles", &puzzle::SpinPuzzleGame::rotate_marbles)
