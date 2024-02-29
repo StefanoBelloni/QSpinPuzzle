@@ -143,6 +143,11 @@ public:
 
   LEAF get_keybord_state() const { return keyboard.getSection(); }
 
+  /**
+   * @brief  utility to print the game state to screen
+   * @note  This is useful when using the python binding as in print(game)
+   * @retval string rappresentation
+   */
   std::string to_string();
 
   /**
@@ -151,6 +156,25 @@ public:
    * @retval true if the game is solved.
    */
   bool is_game_solved();
+
+  /**
+   * @brief Convenient callback to be able to implement
+   * tensorflow::tf_environment
+   *
+   * This rappresentantation is as follow:
+   *    - the array is composed of the leaves + 3 places that are the connection
+   *      between the leaves when the game is in BORDER_ROTATION state.
+   *      So the layout of the array is as follow:
+   *                    NORTH if LEAF R.        For EAST and WEST.
+   *      [active side] [0-->6][7 8 9][9 8 7]    [0-->6] ...
+   *                                if BORDER R.
+   * In this case the
+   *
+   * @note see:
+   * https://www.tensorflow.org/agents/api_docs/python/tf_agents/environments/tf_environment
+   * @retval array rappresentation of the state.
+   */
+  std::array<Color, puzzle::SIZE_STEP_ARRAY> current_time_step();
 
 private:
   class KeyboardState {
@@ -165,7 +189,7 @@ private:
     puzzle::LEAF section = puzzle::LEAF::INVALID;
   };
 
-  bool is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf);
+  bool is_leaf_complete(puzzle::SpinPuzzleSide<> &side, LEAF leaf);
 
   //!< sides of a trefoil
   std::array<puzzle::SpinPuzzleSide<>, 2> m_sides;

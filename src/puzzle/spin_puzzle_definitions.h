@@ -44,6 +44,9 @@ const inline int lightGray = 6;
 // keys
 inline int Key_T = 0x54; //!< see https://doc.qt.io/qt-6/qt.html
 
+//!< size of the array use to store the state of the game for tf_enviroments
+constexpr size_t SIZE_STEP_ARRAY = 1 + 2 * 3 * (10 + 3);
+
 /**
  * @brief The Color class is a mock for the Qt version, in case is not
  * available

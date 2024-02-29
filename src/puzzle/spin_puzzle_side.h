@@ -605,6 +605,9 @@ public:
     return str;
   }
 
+  void current_time_step(size_t start_index,
+                         std::array<Color, puzzle::SIZE_STEP_ARRAY> &out);
+
 private:
   static_assert(N_LEAVES == static_cast<std::size_t>(LEAF::TREFOIL));
 
@@ -882,6 +885,38 @@ template <std::size_t N, std::size_t M>
 void SpinPuzzleSide<N, M>::prepare_for_border_rotation() {
   reset_marbles_for_border_rotation();
   reorder_marbles_after_border_reset();
+}
+
+template <std::size_t N, std::size_t M>
+void SpinPuzzleSide<N, M>::current_time_step(
+    size_t start_index, std::array<Color, puzzle::SIZE_STEP_ARRAY> &out) {
+  if (get_trifoild_status() == puzzle::TREFOIL::BORDER_ROTATION) {
+    auto it = begin(LEAF::TREFOIL);
+    for (size_t n_leaf = 0; n_leaf < 3; ++n_leaf) {
+      for (size_t n = 0; n < N - M; ++n, ++it, ++start_index) {
+        out[start_index] = it->color();
+      }
+      start_index += 3;
+      for (size_t n = N - M; n < N; ++n, ++it, ++start_index) {
+        out[start_index] = it->color();
+      }
+    }
+  } else {
+    auto it = begin(LEAF::NORTH);
+    for (size_t n = 0; n < N; ++n, ++it, ++start_index) {
+      out[start_index] = it->color();
+    }
+    start_index += 3;
+    it = begin(LEAF::EAST);
+    for (size_t n = 0; n < N; ++n, ++it, ++start_index) {
+      out[start_index] = it->color();
+    }
+    start_index += 3;
+    it = begin(LEAF::WEST);
+    for (size_t n = 0; n < N; ++n, ++it, ++start_index) {
+      out[start_index] = it->color();
+    }
+  }
 }
 
 } // namespace puzzle

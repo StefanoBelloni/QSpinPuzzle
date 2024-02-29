@@ -183,7 +183,8 @@ PYBIND11_MODULE(spinbind11_puzzle, m) {
       .def("shuffle", &puzzle::SpinPuzzleGame::shuffle, py::arg("seed") = 0,
            py::arg("commands") = 10000, py::arg("check") = false)
       .def("__str__", &puzzle::SpinPuzzleGame::to_string)
-      .def("__repr__", &puzzle::SpinPuzzleGame::to_string);
+      .def("__repr__", &puzzle::SpinPuzzleGame::to_string)
+      .def("current_time_step", &puzzle::SpinPuzzleGame::current_time_step);
 
   // =================================================================== //
   py::enum_<puzzle::LEAF>(m, "LEAF")

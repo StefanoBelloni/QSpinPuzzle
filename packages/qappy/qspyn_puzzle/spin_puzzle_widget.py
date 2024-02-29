@@ -10,6 +10,7 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         super().__init__(parent)
         # =============== #
         self._debug = False
+        self._hidden_btn = False
         # =============== #
         self.reset_btn = QtWidgets.QPushButton("reset", self)
         self.reset_btn.clicked.connect(self.reset)
@@ -87,13 +88,13 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self._radius_marble = r * math.sin(math.pi / 5) / 2
         self._polygon = self._create_polygon()
 
-        self.shuffle_btn.setGeometry   (0, 4 * self._length / 24, 3 * self._length / 24, self._length / 24)
-        self.twist_btn.setGeometry     (0, 5 * self._length / 24, 3 * self._length / 24, self._length / 24)
-        self.reset_btn.setGeometry     (0, 3 * self._length / 24, 3 * self._length / 24, self._length / 24)
+        self.reset_btn.setGeometry     (0, 4 * self._length / 24, 3 * self._length / 24, self._length / 24)
+        self.shuffle_btn.setGeometry   (0, 6 * self._length / 24, 3 * self._length / 24, self._length / 24)
+        self.twist_btn.setGeometry     (0, 8 * self._length / 24, 3 * self._length / 24, self._length / 24)
 
-        self.north_spin_btn.setGeometry(L / 2 - L / 24 + self._tx, 0 + self._ty,     3 * L / 24, L / 24)
-        self.west_spin_btn.setGeometry (0 + self._tx,              L / 2 + self._ty, 3 * L / 24, L / 24)
-        self.east_spin_btn.setGeometry (L - 3 * L / 24 + self._tx, L / 2 + self._ty, 3 * L / 24, L / 24)
+        self.north_spin_btn.setGeometry(L / 2 - L / 24 + self._tx, 0 + self._ty,     5 * L / 24, L / 24)
+        self.west_spin_btn.setGeometry (0 + self._tx,              L / 2 + self._ty, 5 * L / 24, L / 24)
+        self.east_spin_btn.setGeometry (L - 3 * L / 24 + self._tx, L / 2 + self._ty, 5 * L / 24, L / 24)
     
     def _reset_leaf_colors(self):
         self._colors_leaves = [
@@ -111,13 +112,23 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
 
     
     def reset(self):
-        self._elapsed_time = 0
-        self._timer.stop(1000)
-        self._game.reset()
+        do_reset = QtWidgets.QMessageBox.StandardButton.Cancel;
+        if (self._timer.isActive() or self._elapsed_time > 0):
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setText("Are you sure you waht to reset the puzzle?");
+            msgBox.setInformativeText("You will loose yuor progress");
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok | QtWidgets.QMessageBox.StandardButton.Cancel);
+            msgBox.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Cancel);
+            do_reset = msgBox.exec();
+        if do_reset == QtWidgets.QMessageBox.StandardButton.Ok:
+            self._elapsed_time = 0
+            self._timer.stop()
+            self._game.reset()
         self.update()
         # print(self._game)
 
     def shuffle(self):
+        if self._timer.isActive(): return
         self._elapsed_time = 0
         self._timer.start(1000)
         self._game.shuffle()
@@ -361,6 +372,9 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
                 self._timer.stop();
             else:
                 painter_status.setBrush(self._red());
+                if self._timer.isActive():
+                    painter_status.setPen(self._red());
+
             painter_status.drawRect(self._win_width - 6 * L / 24, 0, 6 * L / 24, L / 24);
             time = "time: {:02d}:{:02d}:{:02d}".format(
                 self._elapsed_time // 60 // 60,
@@ -453,6 +467,19 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
     # EVENTS
     # ========================================= #
     def mousePressEvent(self, event):
+        L = self._length
+        if (self._hidden_btn and (
+            event.pos().x() > self._win_width - L / 24 and 
+            event.pos().y() > self._win_height - L / 24)):
+            msgBox = QtCore.QMessageBox()
+            msgBox.setText("Serialize game to console");
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok | QtWidgets.QMessageBox.StandardButton.Cancel)
+            msgBox.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Cancel);
+            if msgBox.exec() == QtWidgets.QMessageBox.StandardButton.Ok:
+                print("[DEBUG][GAME]")
+                print(self._game.to_string())
+                print("[DEBUG][CUURENT_TIME_STAMP]")
+                str(self._game.current_time_step())
         self._lastPositionMause = event.pos()
     
     def mouseMoveEvent(self, event):

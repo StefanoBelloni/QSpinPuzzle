@@ -3,15 +3,18 @@
 
 #include <QBrush>
 #include <QGridLayout>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
-#include <QtMath>
 #include <QTimer>
+#include <QtMath>
+#include <sstream>
 
 #define DEBUG_EVENT 0
 #define DEBUG_MARBLES 0
 #define DEBUG_CONSISTENCY 0
+#define HIDDEN_BUTTON 1
 
 template <typename T>
 inline constexpr int signum(T x, std::false_type is_signed) {
@@ -62,7 +65,10 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
   });
 
   timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [this] { m_elapsed_time += 1; update(); });
+  connect(timer, &QTimer::timeout, this, [this] {
+    m_elapsed_time += 1;
+    update();
+  });
 
   set_size(win_width, win_heigth);
   reset_leaf_colors();
@@ -151,11 +157,16 @@ void SpinPuzzleWidget::paint_status() {
     timer->stop();
   } else {
     painter_status.setBrush(Qt::red);
+    if (timer->isActive()) {
+      painter_status.setPen(Qt::darkRed);
+    }
   }
   painter_status.drawRect(m_win_width - 6 * L / 24, 0, 6 * L / 24, L / 24);
-  QString time = QString("time: %3:%2:%1").arg(m_elapsed_time % 60, 2, 10, QChar('0')).arg(m_elapsed_time / 60, 2, 10, QChar('0')).arg(m_elapsed_time / 60 / 60, 2, 10, QChar('0')); 
-  painter_status.drawText(QPoint(m_win_width - 6 * L / 24, 2 * L/24), time);
-
+  QString time = QString("time: %3:%2:%1")
+                     .arg(m_elapsed_time % 60, 2, 10, QChar('0'))
+                     .arg(m_elapsed_time / 60, 2, 10, QChar('0'))
+                     .arg(m_elapsed_time / 60 / 60, 2, 10, QChar('0'));
+  painter_status.drawText(QPoint(m_win_width - 6 * L / 24, 2 * L / 24), time);
 }
 
 void SpinPuzzleWidget::set_size(int win_width, int win_height) {
@@ -170,15 +181,15 @@ void SpinPuzzleWidget::set_size(int win_width, int win_height) {
   create_polygon(this->m_polygon);
   const int L = this->m_length;
 
-  reset_btn->setGeometry(QRect(0, 3 * L / 24, 3 * L / 24, L / 24));
-  pb->setGeometry(QRect(0, 4 * L / 24, 3 * L / 24, L / 24));
-  twist_side->setGeometry(QRect(0, 5 * L / 24, 3 * L / 24, L / 24));
+  reset_btn->setGeometry(QRect(0, 4 * L / 24, 5 * L / 24, L / 24));
+  pb->setGeometry(QRect(0, 6 * L / 24, 5 * L / 24, L / 24));
+  twist_side->setGeometry(QRect(0, 8 * L / 24, 5 * L / 24, L / 24));
 
   spin_north->setGeometry(
-      QRect(L / 2 - L / 24 + m_tx, 0 + m_ty, 3 * L / 24, L / 24));
+      QRect(L / 2 - L / 24 + m_tx, 0 + m_ty, 5 * L / 24, L / 24));
   spin_east->setGeometry(
-      QRect(L - 3 * L / 24 + m_tx, L / 2 + m_ty, 3 * L / 24, L / 24));
-  spin_west->setGeometry(QRect(0 + m_tx, L / 2 + m_ty, 3 * L / 24, L / 24));
+      QRect(L - 3 * L / 24 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
+  spin_west->setGeometry(QRect(0 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
 }
 
 void SpinPuzzleWidget::next_section(QPainter &painter, int angle) const {
@@ -502,6 +513,28 @@ void SpinPuzzleWidget::mousePressEvent(QMouseEvent *e) {
 #if DEBUG_EVENT == 1
   qDebug() << "[DEBUG][mousePessEvent] position: " << e->pos();
 #endif
+
+#if HIDDEN_BUTTON == 1
+  const int L = this->m_length;
+  if (e->pos().x() > m_win_width - L / 24 &&
+      e->pos().y() > m_win_height - L / 24) {
+    QMessageBox msgBox;
+    msgBox.setText("Serialize game to console");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    if (msgBox.exec() == QMessageBox::Ok) {
+      qDebug() << "[DEBUG][GAME]";
+      qDebug() << m_game.to_string().c_str();
+      std::stringstream sstr;
+      for (auto c : m_game.current_time_step()) {
+        sstr << c << ", ";
+      }
+      qDebug() << "[DEBUG][CUURENT_TIME_STAMP]";
+      qDebug() << "array: [" << sstr.str().c_str() << "]";
+    }
+  }
+#endif
+
   m_lastPositionMause = e->pos() - QPoint(m_tx, m_ty);
 }
 
@@ -649,27 +682,42 @@ bool SpinPuzzleWidget::processKey(int key, double fraction_angle) {
   // probably better directly in SpinPuzzleGame
   if (key == puzzle::Key_PageUp || key == puzzle::Key_PageDown) {
     // make scure only leaves are used
-      if (m_game.get_keybord_state() == puzzle::LEAF::NORTH) {
-        do_spin_north();
-      } else if (m_game.get_keybord_state() == puzzle::LEAF::EAST) {
-        do_spin_east();
-      } else if (m_game.get_keybord_state() == puzzle::LEAF::WEST) {
-        do_spin_west();
-      }
-      return true;
+    if (m_game.get_keybord_state() == puzzle::LEAF::NORTH) {
+      do_spin_north();
+    } else if (m_game.get_keybord_state() == puzzle::LEAF::EAST) {
+      do_spin_east();
+    } else if (m_game.get_keybord_state() == puzzle::LEAF::WEST) {
+      do_spin_west();
+    }
+    return true;
   }
   return m_game.process_key(key, fraction_angle);
 }
 
 void SpinPuzzleWidget::reset() {
-  m_elapsed_time = 0;
-  timer->stop();
-  m_game = puzzle::SpinPuzzleGame();
-  reset_leaf_colors();
+  int do_reset = QMessageBox::Cancel;
+  if (timer->isActive() || m_elapsed_time > 0) {
+    QMessageBox msgBox;
+    msgBox.setText("Are you sure you waht to reset the puzzle?");
+    msgBox.setInformativeText("You will loose yuor progress");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    do_reset = msgBox.exec();
+  }
+  if (do_reset == QMessageBox::Ok) {
+    // Save was clicked
+    m_elapsed_time = 0;
+    timer->stop();
+    m_game = puzzle::SpinPuzzleGame();
+    reset_leaf_colors();
+  }
   update();
 }
 
 void SpinPuzzleWidget::shuffle() {
+  if (timer->isActive()) {
+    return;
+  }
   m_elapsed_time = 0;
   timer->start(1000);
   m_game.shuffle();

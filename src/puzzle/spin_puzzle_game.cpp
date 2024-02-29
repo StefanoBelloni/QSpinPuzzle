@@ -114,7 +114,8 @@ std::string SpinPuzzleGame::to_string() {
   return str + '\n';
 }
 
-bool SpinPuzzleGame::is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf) {
+bool SpinPuzzleGame::is_leaf_complete(puzzle::SpinPuzzleSide<> &side,
+                                      LEAF leaf) {
   auto it = side.begin(leaf);
   Color color = it->color();
   size_t count_ok = 1;
@@ -130,11 +131,9 @@ bool SpinPuzzleGame::is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf)
   return count_ok == puzzle::SpinPuzzleSide<>::GROUP_SIZE;
 }
 
-
-bool SpinPuzzleGame::is_game_solved()
-{
-  auto& front = get_side(SIDE::FRONT);
-  auto& back = get_side(SIDE::BACK);
+bool SpinPuzzleGame::is_game_solved() {
+  auto &front = get_side(SIDE::FRONT);
+  auto &back = get_side(SIDE::BACK);
 
   auto front_status_ok = front.get_trifoild_status() == TREFOIL::LEAF_ROTATION;
   auto back_status_ok = back.get_trifoild_status() == TREFOIL::LEAF_ROTATION;
@@ -144,12 +143,12 @@ bool SpinPuzzleGame::is_game_solved()
   }
 
   // check every leaf:
-  return is_leaf_complete(front, LEAF::NORTH) && 
-    is_leaf_complete(front, LEAF::EAST) && 
-    is_leaf_complete(front, LEAF::WEST) && 
-    is_leaf_complete(back, LEAF::NORTH) && 
-    is_leaf_complete(back, LEAF::EAST) && 
-    is_leaf_complete(back, LEAF::WEST);
+  return is_leaf_complete(front, LEAF::NORTH) &&
+         is_leaf_complete(front, LEAF::EAST) &&
+         is_leaf_complete(front, LEAF::WEST) &&
+         is_leaf_complete(back, LEAF::NORTH) &&
+         is_leaf_complete(back, LEAF::EAST) &&
+         is_leaf_complete(back, LEAF::WEST);
 }
 
 bool SpinPuzzleGame::check_consistency_side(SIDE side, bool verbose) {
@@ -347,6 +346,17 @@ void SpinPuzzleGame::shuffle(int seed, int commands, bool check) {
     }
     ++command;
   }
+}
+
+// optimize it!
+std::array<Color, puzzle::SIZE_STEP_ARRAY> SpinPuzzleGame::current_time_step() {
+  std::array<Color, puzzle::SIZE_STEP_ARRAY> out;
+  out.fill(puzzle::SpinMarble::INVALID_COLOR);
+  out[0] = static_cast<int>(get_active_side());
+  get_side(SIDE::FRONT).current_time_step(1, out);
+  get_side(SIDE::BACK)
+      .current_time_step((puzzle::SIZE_STEP_ARRAY - 1) / 2, out);
+  return out;
 }
 
 } // namespace puzzle
