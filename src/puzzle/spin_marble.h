@@ -92,6 +92,16 @@ public:
     return '(' + std::to_string(m_id) + ':' + std::to_string(m_color) + ')';
   }
 
+  template <typename Buffer> Buffer &serialize(Buffer &buffer) {
+    buffer << m_id << " " << m_color << " ";
+    return buffer;
+  }
+
+  template <typename Buffer> Buffer &load(Buffer &buffer) {
+    buffer >> m_id >> m_color;
+    return buffer;
+  }
+
 private:
   //! \brief id of the marble
   int32_t m_id = SpinMarble::INVALID_ID;

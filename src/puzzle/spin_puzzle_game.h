@@ -2,6 +2,7 @@
 #define SPINPUZZLEGAME_H
 
 #include "spin_puzzle_side.h"
+#include <sstream>
 
 namespace puzzle {
 
@@ -175,6 +176,71 @@ public:
    * @retval array rappresentation of the state.
    */
   std::array<Color, puzzle::SIZE_STEP_ARRAY> current_time_step();
+
+  /**
+   * @brief  function to serialize the game to save it
+   * @note
+   * @param  buffer: location where to save the data
+   * @retval
+   */
+  template <typename Buffer> Buffer &serialize(Buffer &buffer) {
+    buffer << "v0"
+           << " " << static_cast<uint32_t>(m_active_side) << " "
+           << m_spin_rotation[0] << " " << m_spin_rotation[1] << " "
+           << m_spin_rotation[2] << " ";
+    m_sides[static_cast<uint8_t>(SIDE::FRONT)].serialize(buffer);
+    m_sides[static_cast<uint8_t>(SIDE::BACK)].serialize(buffer);
+    buffer << "\n";
+    return buffer;
+  }
+
+  std::FILE *serialize(std::FILE *file) {
+    std::stringstream s;
+    serialize(s);
+    std::fputs(s.str().c_str(), file);
+    return file;
+  }
+
+  template <typename Buffer> Buffer &load(Buffer &buffer) {
+    std::string version;
+    uint32_t active_side;
+
+    buffer >> version;
+    buffer >> active_side;
+    m_active_side = static_cast<SIDE>(active_side);
+    buffer >> m_spin_rotation[0];
+    buffer >> m_spin_rotation[1];
+    buffer >> m_spin_rotation[2];
+
+    m_sides[static_cast<uint8_t>(SIDE::FRONT)].load(buffer);
+    m_sides[static_cast<uint8_t>(SIDE::BACK)].load(buffer);
+
+    return buffer;
+  }
+
+  // TODO: Improve performance !!!
+  std::FILE *load(std::FILE *file) {
+    std::string str;
+    char c;
+    do {
+      c = std::fgetc(file);
+    } while (c != '\0' && c != 'v');
+    // empty file
+    if (c == '\0') {
+      return file;
+    }
+    std::stringstream s;
+    s << c;
+    c = std::fgetc(file);
+    assert(c == '0'); // version
+    s << c;
+    while (c != '\n') {
+      c = std::fgetc(file);
+      s << c;
+    }
+    load(s);
+    return file;
+  }
 
 private:
   class KeyboardState {

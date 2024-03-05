@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <sstream>
 
 #include "puzzle/spin_puzzle_game.h"
 #include "puzzle/spin_puzzle_side.h"
@@ -188,4 +189,85 @@ TEST(PuzzleSide, basic) {
   ASSERT_EQ(game.get_side().begin(),
             game.get_side(puzzle::SIDE::FRONT).begin());
   ASSERT_EQ(game.get_keybord_state(), puzzle::LEAF::INVALID);
+}
+
+TEST(PuzzleSide, serialize_stringstream) {
+  size_t max_n = 99;
+  for (size_t n = 0; n < max_n; ++n) {
+    // if ( (n % 100) == 0) { std::cout << "[          ]    iteration: " << n <<
+    // "/" << max_n << "\r" << std::flush; }
+    std::stringstream out;
+    SpinPuzzleGame game;
+    game.shuffle();
+    std::string shuffled_game = game.to_string();
+    game.serialize(out);
+    game.reset();
+    out.seekg(0, std::ios::beg);
+    game.load(out);
+    ASSERT_EQ(game.to_string(), shuffled_game);
+  }
+}
+
+TEST(PuzzleSide, serialize_file) {
+  std::FILE *tmpf = std::tmpfile();
+  SpinPuzzleGame game;
+  game.shuffle();
+  std::string shuffled_game = game.to_string();
+  game.serialize(tmpf);
+  game.reset();
+  std::rewind(tmpf);
+  game.load(tmpf);
+  ASSERT_EQ(game.to_string(), shuffled_game);
+}
+
+TEST(PuzzleSide, serialize_many_stringstream) {
+  std::stringstream out;
+  SpinPuzzleGame game;
+  // ========================= //
+  game.shuffle();
+  std::string shuffled_game1 = game.to_string();
+  game.serialize(out);
+  // ========================= //
+  game.shuffle();
+  std::string shuffled_game2 = game.to_string();
+  game.serialize(out);
+  // ========================= //
+  game.shuffle();
+  std::string shuffled_game3 = game.to_string();
+  game.serialize(out);
+  // ========================= //
+  game.reset();
+  out.seekg(0, std::ios::beg);
+  game.load(out);
+  ASSERT_EQ(game.to_string(), shuffled_game1);
+  game.load(out);
+  ASSERT_EQ(game.to_string(), shuffled_game2);
+  game.load(out);
+  ASSERT_EQ(game.to_string(), shuffled_game3);
+}
+
+TEST(PuzzleSide, many_serialize_file) {
+  std::FILE *tmpf = std::tmpfile();
+  SpinPuzzleGame game;
+  // ============================ //
+  game.shuffle();
+  std::string shuffled_game1 = game.to_string();
+  game.serialize(tmpf);
+  // ============================ //
+  game.shuffle();
+  std::string shuffled_game2 = game.to_string();
+  game.serialize(tmpf);
+  // ============================ //
+  game.shuffle();
+  std::string shuffled_game3 = game.to_string();
+  game.serialize(tmpf);
+  // ============================ //
+  game.reset();
+  std::rewind(tmpf);
+  game.load(tmpf);
+  ASSERT_EQ(game.to_string(), shuffled_game1);
+  game.load(tmpf);
+  ASSERT_EQ(game.to_string(), shuffled_game2);
+  game.load(tmpf);
+  ASSERT_EQ(game.to_string(), shuffled_game3);
 }

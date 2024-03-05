@@ -269,6 +269,7 @@ std::array<SpinMarble, 30> SpinPuzzleGame::createBackMarbles() {
 }
 
 void SpinPuzzleGame::reset() {
+  m_active_side = SIDE::FRONT;
   m_sides[0] = SpinPuzzleSide(std::move(createFrontMarbles()));
   m_sides[1] = SpinPuzzleSide(std::move(createBackMarbles()));
 }

@@ -7,6 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 option(USE_QT "Enable this if you want to use QT" no)
+# option(USE_QT "Enable this if you want to use QT" yes)
 
 if(NOT DEFINED ANDROID)
     add_subdirectory(extern/pybind11)
@@ -42,6 +43,7 @@ if (USE_QT)
         Qt${QT_VERSION_MAJOR} 
         COMPONENTS Widgets LinguistTools
     )
+    # set(CMAKE_INCLUDE_CURRENT_DIR YES)
 endif(USE_QT)
 
 # find_package (
@@ -163,6 +165,7 @@ endif()
 
 # ============================================================================ #
 # Qt installation available
+# https://scythe-studio.com/en/blog/how-to-interface-qt-with-android-java-code-2023
 # ============================================================================ #
 if (USE_QT)
     if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -172,6 +175,8 @@ if (USE_QT)
             # =========================== #
             src/widgets/spin_puzzle_widget.h 
             src/widgets/spin_puzzle_widget.cpp
+            src/widgets/spin_puzzle_history_widget.h
+            src/widgets/spin_puzzle_history_widget.cpp
             # =========================== #
             README.md
             # =========================== #
@@ -185,6 +190,10 @@ if (USE_QT)
             PRIVATE 
             src
         )
+
+    ## NOTE:
+    # https://stackoverflow.com/questions/47471629/fail-to-use-q-object-macro-in-cmake-project
+    # set_target_properties(QSpinPuzzle PROPERTIES AUTOMOC TRUE)
 
     # Define target properties for Android with Qt 6 as:
     #    set_property(TARGET QSpinPuzzle APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

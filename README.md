@@ -32,12 +32,13 @@ The marbles are confined to various guides/rails:
     python -m qspyn_puzzle 
     ```
   **Note:** The Python version is located in the `appy` directory.
-- Press `shuffle`.
+  **Note:** At the moment the python version is not sync with the C++ version.
+- Press `START`.
 - Attempt to restore the marbles to their original positions, where each leaf contains marbles of only one color.
 
 Upon launching the game, the front Trefoil is displayed.
 
-![Screenshot](./images/QSpinPuzzle_Front.png)
+![Screenshot](./images/spin_puzzle_play.gif)
 
 - You can move marbles using the mouse by dragging them or by using the keyboard:
   - Select the component to operate on by pressing:
@@ -46,11 +47,31 @@ Upon launching the game, the front Trefoil is displayed.
     - `W`: West leaf
     - `I`: Internal circle
   - Rotate the marbles using the arrow keys.
-  - Check the selected component in the status on the left corner (`KB: <status>`).
+  - Check the selected component in the status on the left corner (`*** <active section> ***`).
 - Press the "twist" button (top left) or the `P` key to change the active side.
 - Spin a leaf by pressing the corresponding button on the leaf or selecting the leaf with the keyboard and pressing `PageUp` or `PageDown`.
-- Press `shuffle` to randomize the marbles with 10,000 random operations.
-- Use `reset` to reorder the marbles to their original configuration.
+- Press `START` to randomize the marbles with 10,000 random operations.
+- Use `RESET` to reorder the marbles to their original configuration.
+- Use `SAVE` to save your progress
+- Use `LOAD` to load the latest progress
+**NOTE:** the is no automatic save of the progress!
+
+You can also see your records in solving the puzzle and challenge them back.
+
+![Screenshot](./images/records_import_export.png)
+
+Clicking on the button `PUZZLE RECORDS` on the top left corner you cann access
+a new dialog:
+
+You will see a list of the fastest 10 puzzle you solved alonge with their time.
+You can select the puzzle from the combo box:
+For every puzzle
+* You can retry a puzzle to improve your time.
+* You can also export it to the clipboard - a string rappresentation of the initial configuration
+* You can also delete a puzzle.
+
+In bottom of the Dialog you can also import a game (exported by QSpinPuzzleGame)
+or delete every records by clicking on `Reset Files`
 
 ### Installation
 
@@ -148,9 +169,14 @@ problem when compiling, due to the limit of the maximum length of _paths_
 - [x] Add a status to check if the game has been solved.
 - [x] add a timer
 - [x] Change leaf color when spinning a leaf.
+- [x] possibility to stop the game, save and load it
+- [x] export game to clipboard
+- [x] import game (from clipboard)
+- [x] delete game from records
+- [ ] remove spin button and use mouse or improve them
+- [ ] save/load etc. port to python
 - [ ] processKey is not sincronized with swap leaf color by spin: fix it!
       the workaround fails when shuffle is called.
-  [ ] possibility to stop the game, save and load it
   [ ] add internal history of commands
 
 ### References

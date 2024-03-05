@@ -2,18 +2,22 @@
 #include <stdint.h>
 
 #include <QBrush>
+#include <QDir>
 #include <QGridLayout>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
+#include <QRadialGradient>
+#include <QStandardPaths>
+#include <QStyleOption>
 #include <QTimer>
 #include <QtMath>
+
+#include <fstream>
 #include <sstream>
 
-#define DEBUG_EVENT 0
 #define DEBUG_MARBLES 0
-#define DEBUG_CONSISTENCY 0
 #define HIDDEN_BUTTON 1
 
 template <typename T>
@@ -31,42 +35,29 @@ template <typename T> inline constexpr int signum(T x) {
 }
 
 SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
-                                   QWidget *parent)
-    : QWidget(parent) {
+                                   bool save_files, QWidget *parent)
+    : QWidget(parent), m_allow_play(save_files) {
 
-  reset_btn = new QPushButton("reset", this);
-  connect(reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
-
-  pb = new QPushButton("START", this);
-  connect(pb, &QPushButton::released, this, &SpinPuzzleWidget::shuffle);
-
-  twist_side = new QPushButton("twist", this);
-  connect(twist_side, &QPushButton::released, this, [this] {
+  m_twist_side = new QPushButton("twist", this);
+  connect(m_twist_side, &QPushButton::released, this, [this] {
     this->m_game.swap_side();
     update();
   });
 
-  spin_north = new QPushButton("spin", this);
-  connect(spin_north, &QPushButton::released, this, [this] {
-    do_spin_north();
-    update();
-  });
+  if (m_allow_play) {
+    create_play_buttons();
+    connect_play_buttons();
+  }
 
-  spin_east = new QPushButton("spin", this);
-  connect(spin_east, &QPushButton::released, this, [this] {
-    do_spin_east();
-    update();
-  });
-
-  spin_west = new QPushButton("spin", this);
-  connect(spin_west, &QPushButton::released, this, [this] {
-    do_spin_west();
-    update();
-  });
-
-  timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, this, [this] {
+  m_timer = new QTimer(this);
+  connect(m_timer, &QTimer::timeout, this, [this] {
     m_elapsed_time += 1;
+    update();
+  });
+
+  m_congratulation_timer = new QTimer(this);
+  connect(m_congratulation_timer, &QTimer::timeout, this, [this] {
+    m_rotation_congratulation += 5;
     update();
   });
 
@@ -74,6 +65,311 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
   reset_leaf_colors();
 
   this->setFocus();
+}
+
+void SpinPuzzleWidget::create_play_buttons() {
+  m_spin_north = new QPushButton("SPIN", this);
+  m_spin_east = new QPushButton("SPIN", this);
+  m_spin_west = new QPushButton("SPIN", this);
+  m_reset_btn = new QPushButton("RESET", this);
+  m_start_btn = new QPushButton("START", this);
+  m_load_btn = new QPushButton("LOAD", this);
+  m_save_btn = new QPushButton("SAVE", this);
+  m_load_records_btn = new QPushButton("PUZZLE RECORDS", this);
+}
+
+void SpinPuzzleWidget::connect_play_buttons() {
+  connect(m_spin_north, &QPushButton::released, this, [this] {
+    do_spin_north();
+    update();
+  });
+
+  connect(m_spin_east, &QPushButton::released, this, [this] {
+    do_spin_east();
+    update();
+  });
+
+  connect(m_spin_west, &QPushButton::released, this, [this] {
+    do_spin_west();
+    update();
+  });
+
+  connect(m_reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
+
+  connect(m_start_btn, &QPushButton::released, this,
+          &SpinPuzzleWidget::start_game);
+
+  connect(m_load_btn, &QPushButton::released, this, [this] {
+    m_paint_congratulations = false;
+    stop_spinning_winning();
+    load();
+    update();
+  });
+
+  connect(m_save_btn, &QPushButton::released, this, [this] {
+    if (m_game.is_game_solved() ||
+        (!(m_timer->isActive() || m_elapsed_time > 0))) {
+      return;
+    }
+    if (save_progress()) {
+      QMessageBox(QMessageBox::Information, "progress", "progress saved.")
+          .exec();
+      update();
+    }
+  });
+
+  connect(m_load_records_btn, &QPushButton::released, this, [this] {
+    std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
+    load_records(games);
+    /*
+    if (games.size() == 0) {
+      QMessageBox(QMessageBox::Warning, "records",
+                  "No record could be loaded.")
+          .exec();
+      return;
+    }
+    */
+    m_history_widget =
+        new SpinPuzzleHistoryWidget(m_length, m_length, this, games);
+    m_history_widget->setFixedSize(m_length, m_length);
+    m_history_widget->show();
+    m_history_widget->setVisible(true);
+  });
+}
+
+double SpinPuzzleWidget::get_height_button_bottom() const {
+  return 17.0 / 10.0 * m_length / 24.0;
+}
+
+double SpinPuzzleWidget::get_width_button_bottom() const {
+  return 5.0 * m_length / 24.0;
+}
+
+double SpinPuzzleWidget::get_length_status_square() const {
+  return m_length / 24.0;
+}
+
+void SpinPuzzleWidget::reset_file_app() {
+  auto msg = QMessageBox(QMessageBox::Warning, "reset",
+                         "Do you want to delete all saved puzzles",
+                         QMessageBox::Ok | QMessageBox::Cancel);
+  msg.setInformativeText("This operation cannot be reversed!");
+  msg.setDefaultButton(QMessageBox::Cancel);
+  int delete_progress = msg.exec();
+  if (delete_progress == QMessageBox::Cancel) {
+    return;
+  }
+  std::vector<std::string> files;
+  files.emplace_back((get_current_puzzle_file().c_str()));
+  files.emplace_back((get_puzzle_file().c_str()));
+  files.emplace_back((get_records_puzzle_file().c_str()));
+  for (auto &d : files) {
+    QFile file(d.c_str());
+    file.remove();
+  }
+  // QFile file(get_records_puzzle_file().c_str());
+  // file.remove();
+  reset();
+  delete_history_popup();
+  update();
+}
+
+bool SpinPuzzleWidget::save_progress() {
+  auto file_name = get_current_puzzle_file();
+  std::ofstream f(get_current_puzzle_file(), std::ios::trunc);
+  if (f.is_open()) {
+    f << m_elapsed_time << " ";
+    m_game.serialize(f);
+    f.close();
+    return true;
+  }
+  return false;
+}
+
+void SpinPuzzleWidget::store_puzzle_begin() {
+  std::ofstream f(get_puzzle_file(), std::ios::trunc);
+  if (f.is_open()) {
+    f << m_elapsed_time << " ";
+    m_game.serialize(f);
+    f.close();
+  }
+}
+
+int SpinPuzzleWidget::load_records(
+    std::vector<std::pair<int, puzzle::SpinPuzzleGame>> &games) {
+  games.clear();
+  int max_time = 0;
+  std::ifstream f1(get_records_puzzle_file());
+  int t = 0;
+  if (f1.is_open()) {
+    std::string s;
+    f1 >> s;
+    if (s == "records:") {
+      while (!f1.eof()) {
+        f1 >> t;
+        if (f1.eof())
+          break;
+        max_time = std::max(t, max_time);
+        puzzle::SpinPuzzleGame g;
+        g.load(f1);
+        games.emplace_back(t, g);
+      }
+    }
+  }
+  return max_time;
+}
+
+bool SpinPuzzleWidget::store_puzzle_record() {
+  puzzle::SpinPuzzleGame game;
+  std::ifstream f0(get_puzzle_file());
+  // load beginning
+  if (f0.is_open()) {
+    int tmp;
+    f0 >> tmp;
+    game.load(f0);
+    f0.close();
+  }
+  bool ok = store_puzzle_record(m_elapsed_time, game);
+  game.reset();
+  return ok;
+}
+
+bool SpinPuzzleWidget::store_puzzles_record(
+    std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games) {
+  std::sort(games.begin(), games.end(),
+            [](const std::pair<int, puzzle::SpinPuzzleGame> &first,
+               const std::pair<int, puzzle::SpinPuzzleGame> &second) {
+              return first.first < second.first;
+            });
+
+  std::ofstream f(get_records_puzzle_file());
+  if (!f.is_open()) {
+    return false;
+  }
+  f << "records:"
+    << " ";
+  int m = games.size();
+  for (size_t n = 0; n < std::min(m, m_max_saved_games); ++n) {
+    f << games[n].first << " ";
+    games[n].second.serialize(f);
+  }
+  f.close();
+
+  return true;
+}
+
+bool SpinPuzzleWidget::store_puzzle_record(int elapsed_time,
+                                           puzzle::SpinPuzzleGame game) {
+  // store in records - max 5
+  std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
+  // check if current is faster then the others
+  int max_time = load_records(games);
+  if (games.size() > m_max_saved_games && elapsed_time > max_time) {
+    return false;
+  }
+
+  auto current = game.current_time_step();
+  // check for duplicates
+  bool found_duplicate = false;
+  for (auto &p : games) {
+    if (p.second.current_time_step() == current) {
+      if (p.first > elapsed_time) {
+        p.first = elapsed_time;
+      }
+      found_duplicate = true;
+      break;
+    }
+  }
+  // add to games
+  if (!found_duplicate) {
+    games.emplace_back(elapsed_time, game);
+  } else {
+    return false;
+  }
+
+  return store_puzzles_record(games);
+}
+
+void SpinPuzzleWidget::start_timer() { m_timer->start(1000); }
+
+// TODO:
+// do not overwrite while iterating
+void SpinPuzzleWidget::load(int index, puzzle::SpinPuzzleGame &game) {
+
+  m_solved = false;
+  m_elapsed_time = 0;
+  std::string path;
+  path = get_records_puzzle_file();
+
+  auto msg =
+      QMessageBox(QMessageBox::Warning, "load", "Unable to load puzzle.");
+
+  std::ifstream f(path);
+  int current = -1;
+  if (!f.is_open()) {
+    msg.setInformativeText("File not found.");
+    msg.exec();
+    return;
+  }
+  std::string s;
+  f >> s;
+  if (s != "records:") {
+    msg.setInformativeText("Invalid file.");
+    msg.exec();
+    f.close();
+    return;
+  }
+
+  do {
+    f >> m_elapsed_time;
+    if (f.eof()) {
+      msg.setInformativeText("Puzzle not found.");
+      f.close();
+      return;
+    }
+    game.load(f);
+    current++;
+  } while (current != index);
+  f.close();
+}
+
+void SpinPuzzleWidget::load(int index) { load(index, m_game); }
+
+void SpinPuzzleWidget::load() {
+
+  m_solved = false;
+  int do_load = QMessageBox::Cancel;
+  QMessageBox msgBox(QMessageBox::Question, "load",
+                     "Are you sure you what to load the puzzle?");
+  QAbstractButton *pButtonLatest =
+      msgBox.addButton(tr("latest"), QMessageBox::YesRole);
+  QAbstractButton *pButtonBegin =
+      msgBox.addButton(tr("start"), QMessageBox::YesRole);
+  msgBox.setInformativeText("You will lose yuor progress");
+  msgBox.setStandardButtons(QMessageBox::Cancel);
+  msgBox.setDefaultButton(QMessageBox::Cancel);
+  do_load = msgBox.exec();
+
+  if (do_load == QMessageBox::Cancel) {
+    return;
+  }
+  m_elapsed_time = 0;
+  std::string path;
+  if (msgBox.clickedButton() == pButtonLatest) {
+    path = get_current_puzzle_file();
+  } else if (msgBox.clickedButton() == pButtonBegin) {
+    path = get_puzzle_file();
+  } else {
+    return;
+  }
+
+  std::ifstream f(path);
+  if (f.is_open()) {
+    f >> m_elapsed_time;
+    m_game.load(f);
+    f.close();
+  }
+  m_timer->start(1000);
 }
 
 void SpinPuzzleWidget::do_spin_north() {
@@ -105,16 +401,23 @@ void SpinPuzzleWidget::do_spin_west() {
 
 void SpinPuzzleWidget::reset_leaf_colors() {
 
-  m_colors_leaves[0] = {Qt::red, Qt::blue, Qt::yellow};
-  m_colors_leaves_internal[0] = {Qt::darkRed, Qt::darkBlue, Qt::darkYellow};
-  m_colors_leaves_body[0] = {Qt::red, Qt::blue, Qt::yellow};
+  m_colors_leaves[0] = {QColor(0xee6c6c), QColor(0x756ef3), QColor(0xf3dd6e)};
+  m_colors_leaves_internal[0] = {QColor(0x7e413c), QColor(0x93a1d7),
+                                 QColor(0xe2c67f)};
+  m_colors_leaves_body[0] = {QColor(0xee6c6d), QColor(0x756ef4),
+                             QColor(0xf3dd60)};
 
-  m_colors_leaves[1] = {Qt::green, Qt::darkBlue, Qt::darkYellow};
-  m_colors_leaves_internal[1] = {Qt::darkGreen, Qt::blue, Qt::yellow};
-  m_colors_leaves_body[1] = {Qt::green, Qt::darkBlue, Qt::darkYellow};
+  m_colors_leaves[1] = {QColor(0x84bf72), QColor(0x1000ab), QColor(0xefc111)};
+  m_colors_leaves_internal[1] = {QColor(0x619e02), QColor(0x029e98),
+                                 QColor(0xf2ea41)};
+  m_colors_leaves_body[1] = {QColor(0x84bf72), QColor(0x1000ab),
+                             QColor(0xefc111)};
 }
 
 void SpinPuzzleWidget::paint_status() {
+  if (!m_allow_play) {
+    return;
+  }
   const int L = this->m_length;
   const auto &side = m_game.get_side(m_game.get_active_side());
 
@@ -128,19 +431,22 @@ void SpinPuzzleWidget::paint_status() {
   } else {
     painter_status.setBrush(Qt::yellow);
   }
-  painter_status.drawRect(0, 0, L / 24, L / 24);
+
+  auto s = get_length_status_square();
+  painter_status.translate(0, s);
+  painter_status.drawRect(0, s, s - 1, s - 1);
 
   painter_status.setBrush(
       (side.is_rotation_possible(puzzle::LEAF::NORTH)) ? Qt::green : Qt::red);
-  painter_status.drawRect(0 + 0 * L / 24, L / 24, L / 24, L / 24);
+  painter_status.drawRect(0 + 1 * s, s, s, s);
   painter_status.setBrush(
       (side.is_rotation_possible(puzzle::LEAF::EAST)) ? Qt::green : Qt::red);
-  painter_status.drawRect(0 + 1 * L / 24, L / 24, L / 24, L / 24);
+  painter_status.drawRect(0 + 2 * s, s, s, s);
   painter_status.setBrush(
       (side.is_rotation_possible(puzzle::LEAF::WEST)) ? Qt::green : Qt::red);
-  painter_status.drawRect(0 + 2 * L / 24, L / 24, L / 24, L / 24);
+  painter_status.drawRect(0 + 3 * s, s, s, s);
 
-  QString keyboard_status("KB: ");
+  QString keyboard_status("***");
   if (m_game.get_keybord_state() == puzzle::LEAF::NORTH) {
     keyboard_status += "NORTH";
   } else if (m_game.get_keybord_state() == puzzle::LEAF::EAST) {
@@ -149,24 +455,58 @@ void SpinPuzzleWidget::paint_status() {
     keyboard_status += "WEST";
   } else if (m_game.get_keybord_state() == puzzle::LEAF::INVALID) {
     keyboard_status += "CENTER";
+  } else {
+    keyboard_status += "...";
   }
-  painter_status.drawText(QPoint(0, 3 * L / 24), keyboard_status);
+  keyboard_status += " ***";
+  painter_status.drawText(QPoint(0, 3 * s), keyboard_status);
+}
 
+void SpinPuzzleWidget::paint_timer() {
+  // if (!m_allow_play) { return; }
+  const int L = this->m_length;
+  QPainter painter_status(this);
   if (m_game.is_game_solved()) {
     painter_status.setBrush(Qt::green);
-    timer->stop();
+    if (m_timer->isActive() && m_elapsed_time > 0 && !m_solved) {
+      store_puzzle_record();
+      m_solved = true;
+      m_paint_congratulations = true;
+      m_congratulation_timer->start(10);
+    }
+    m_timer->stop();
   } else {
     painter_status.setBrush(Qt::red);
-    if (timer->isActive()) {
+    if (m_timer->isActive()) {
       painter_status.setPen(Qt::darkRed);
     }
   }
-  painter_status.drawRect(m_win_width - 6 * L / 24, 0, 6 * L / 24, L / 24);
+  if (m_paint_congratulations) {
+    paint_congratulation(painter_status);
+  }
+  int win_width = (m_allow_play) ? m_win_width : 8 * L / 24;
+  int win_heigth = (m_allow_play) ? 0 : (L - L / 24);
+  if (m_allow_play) {
+    painter_status.drawRect(win_width - 8 * L / 24, win_heigth, 8 * L / 24,
+                            L / 24);
+  }
   QString time = QString("time: %3:%2:%1")
                      .arg(m_elapsed_time % 60, 2, 10, QChar('0'))
                      .arg(m_elapsed_time / 60, 2, 10, QChar('0'))
                      .arg(m_elapsed_time / 60 / 60, 2, 10, QChar('0'));
-  painter_status.drawText(QPoint(m_win_width - 6 * L / 24, 2 * L / 24), time);
+  painter_status.drawText(QPoint(win_width - 8 * L / 24, 2 * L / 24), time);
+}
+
+void SpinPuzzleWidget::paint_congratulation(QPainter &painter) {
+  const int L = this->m_length;
+  painter.setBrush(
+      QColor(125 * abs(std::cos(m_rotation_congratulation / 62.8) *
+                       std::sin(m_rotation_congratulation / 120)),
+             255 * abs(std::sin(m_rotation_congratulation / 62.8)),
+             255 * abs(std::cos(m_rotation_congratulation / 100.0))));
+  painter.drawRect(L / 4 + m_tx, L / 2 - L / 16 + m_ty, L / 2, L / 8);
+  painter.drawText(QPoint(L / 4 + L / 8 + m_tx, L / 2 + m_ty),
+                   "CONGRATULATION!");
 }
 
 void SpinPuzzleWidget::set_size(int win_width, int win_height) {
@@ -181,15 +521,33 @@ void SpinPuzzleWidget::set_size(int win_width, int win_height) {
   create_polygon(this->m_polygon);
   const int L = this->m_length;
 
-  reset_btn->setGeometry(QRect(0, 4 * L / 24, 5 * L / 24, L / 24));
-  pb->setGeometry(QRect(0, 6 * L / 24, 5 * L / 24, L / 24));
-  twist_side->setGeometry(QRect(0, 8 * L / 24, 5 * L / 24, L / 24));
+  // pb->setGeometry(QRect(0, 6 * L / 24, 5 * L / 24, L / 24));
+  m_twist_side->setGeometry(
+      QRect(0 + m_tx, 5 * L / 24 + m_ty, 5 * L / 24, 2 * L / 24));
 
-  spin_north->setGeometry(
-      QRect(L / 2 - L / 24 + m_tx, 0 + m_ty, 5 * L / 24, L / 24));
-  spin_east->setGeometry(
-      QRect(L - 3 * L / 24 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
-  spin_west->setGeometry(QRect(0 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
+  if (m_allow_play) {
+    m_spin_north->setGeometry(
+        QRect(L / 2 - 2 * L / 24 + m_tx, 0 + m_ty, 5 * L / 24, L / 24));
+    m_spin_east->setGeometry(
+        QRect(L - 3 * L / 24 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
+    m_spin_west->setGeometry(QRect(0 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
+
+    double h = get_height_button_bottom();
+    double w = get_width_button_bottom();
+
+    m_start_btn->setGeometry(QRect(0 * w, m_win_height - h, w, h));
+    m_reset_btn->setGeometry(QRect(1 * w, m_win_height - h, w, h));
+    m_load_btn->setGeometry(QRect(2 * w, m_win_height - h, w, h));
+    m_save_btn->setGeometry(QRect(3 * w, m_win_height - h, w, h));
+
+    m_load_records_btn->setGeometry(QRect(
+        0, 0, (8.0 * 10.0 - 2.0) / 10.0 * L / 24.0, 17.0 / 10.0 * L / 24.0));
+    QPalette pal = m_load_records_btn->palette();
+    pal.setColor(QPalette::Button, QColor(Qt::gray));
+    m_load_records_btn->setAutoFillBackground(true);
+    m_load_records_btn->setPalette(pal);
+    m_load_records_btn->update();
+  }
 }
 
 void SpinPuzzleWidget::next_section(QPainter &painter, int angle) const {
@@ -224,25 +582,56 @@ void SpinPuzzleWidget::paint_puzzle_section(QPainter &painter, QColor color,
                   2 * (internalRadius - 2 * width),
                   2 * (internalRadius - 2 * width), 0, 360 * 8);
 
-  painter.setBrush((primary) ? Qt::cyan : Qt::darkCyan);
+  auto originalBrush = painter.brush();
+  const QPoint center = QPoint(L / 2, (2 * std::sqrt(3) + 3) * L / 12);
+  QRadialGradient radialGrad(center, 3 / 2 * L);
+  radialGrad.setColorAt(0, (primary) ? Qt::cyan : Qt::lightGray);
+  radialGrad.setColorAt(1, Qt::black);
+  painter.setBrush(radialGrad);
+  // painter.setBrush((primary) ? Qt::cyan : Qt::darkCyan);
   painter.drawPolygon(m_polygon);
 
-  painter.setBrush(color_body);
+  QRadialGradient radialGrad2(centerTop, 2 * R);
+  radialGrad2.setColorAt(0, color_body);
+  radialGrad2.setColorAt(1, Qt::white);
+  painter.setBrush(radialGrad2);
   painter.drawPie(R + (R - internalRadius), (R - internalRadius),
                   2 * internalRadius, 2 * internalRadius, 360 * 8, 360 * 8);
 
   painter.drawLine(L / 2 - R, L / 4, L / 2 + R, L / 4);
+
+  painter.setBrush(originalBrush);
 }
 
-void SpinPuzzleWidget::paintEvent(QPaintEvent *) {
+void SpinPuzzleWidget::paint_border() {
+  const int L = this->m_length;
+  QPainter painter(this);
+  painter.setBrush(
+      (m_allow_play)
+          ? QColor(
+                208, 228,
+                225) // * abs(std::cos(10 * qDegreesToRadians(m_elapsed_time)))
+          :
+          // QColor(0xb5d5c3)
+          QColor(0xf0eb9a));
+  painter.drawRect(0, 0, m_win_width - 1, m_win_height - 1);
+}
 
+void SpinPuzzleWidget::paintEvent(QPaintEvent *event) {
+  paint_border();
+  paint_status();
+  paint_game();
+  paint_timer();
+}
+
+void SpinPuzzleWidget::paint_game() {
   auto &game_side = m_game.get_side(m_game.get_active_side());
   const int L = this->m_length;
   const QPoint center = QPoint(L / 2, (2 * std::sqrt(3) + 3) * L / 12);
 
-  paint_status();
   QPainter painter(this);
   painter.translate(QPoint(m_tx, m_ty));
+  next_section(painter, m_rotation_congratulation);
   painter.save();
   // ====================================================================== //
   // NORTH
@@ -266,9 +655,16 @@ void SpinPuzzleWidget::paintEvent(QPaintEvent *) {
 
   painter.restore();
   painter.save();
+  auto originalBrush = painter.brush();
   const int internalRadius = get_radius_internal() + width / 2;
-  painter.setBrush(Qt::magenta);
+  QRadialGradient radialGrad(center, internalRadius);
+  radialGrad.setColorAt((color_side) % 2, Qt::magenta);
+  radialGrad.setColorAt((color_side + 1) % 2, Qt::darkMagenta);
+  // radialGrad.setColorAt(1, Qt::magenta);
+  painter.setBrush(radialGrad);
+  // painter.setBrush(Qt::magenta);
   painter.drawEllipse(center, internalRadius, internalRadius);
+  painter.setBrush(originalBrush);
 
   painter.restore();
   painter.save();
@@ -403,18 +799,42 @@ QColor SpinPuzzleWidget::toQtColor(puzzle::Color value) {
   return Qt::black;
 }
 
+QColor SpinPuzzleWidget::toMarbleColor(puzzle::Color value) {
+  switch (value) {
+  case puzzle::blue:
+    return QColor(0x2654a5);
+  case puzzle::green:
+    return QColor(0x39a526);
+  case puzzle::magenta:
+    return QColor(0xe170f2);
+  case puzzle::cyan:
+    return QColor(0x29c6c8);
+  case puzzle::red:
+    return QColor(0xfc2b2b);
+  case puzzle::yellow:
+    return QColor(0xf2f270);
+  default:
+    return toQtColor(value);
+  }
+}
+
 void SpinPuzzleWidget::paint_marble(double shift_local, QPainter &painter,
                                     puzzle::SpinPuzzleSide<>::iterator it,
                                     const QPoint center, size_t n,
                                     const int r) {
-  painter.setBrush(toQtColor(it->color()));
   const auto position =
       center + QPoint(r * cos(shift_local + M_PI_2 + n * M_PI / 5),
                       r * sin(shift_local + M_PI_2 + n * M_PI / 5));
+  auto originalBrush = painter.brush();
+  QRadialGradient radialGrad(position, r);
+  radialGrad.setColorAt(0, toMarbleColor(it->color()));
+  radialGrad.setColorAt(1, Qt::black);
+  painter.setBrush(radialGrad);
   painter.drawEllipse(position, radius_marble, radius_marble);
 #if DEBUG_MARBLES == 1
   painter.drawText(position, QString::number(it->id()));
 #endif
+  painter.setBrush(originalBrush);
 }
 
 void SpinPuzzleWidget::paint_marbles_on_leaf(QPainter &painter,
@@ -484,9 +904,10 @@ void SpinPuzzleWidget::create_polygon(QPolygon &polygon) {
   (sin(11pi/30) - sin(13pi/10))^2 with origin (0,0) bottom left a = 1/4, b =
   1/4;    -> center left c = 1/2, d = sqrt(3)/2 + 1/4 -> center
 */
-int SpinPuzzleWidget::get_radius_internal() const {
+double SpinPuzzleWidget::get_radius_internal() const {
   const int L = this->m_length;
   // return 0.19945 * L;
+  // return (m_allow_play) ? 0.185 * L : 0.2 * L;
   return 0.185 * L;
 }
 
@@ -510,27 +931,29 @@ SpinPuzzleWidget::paint_internal_circular_guide(QPainter &painter,
 }
 
 void SpinPuzzleWidget::mousePressEvent(QMouseEvent *e) {
-#if DEBUG_EVENT == 1
-  qDebug() << "[DEBUG][mousePessEvent] position: " << e->pos();
-#endif
+  if (!m_allow_play) {
+    return;
+  }
+
+  if (m_paint_congratulations) {
+    const int L = this->m_length;
+    auto rec = QRect(L / 4 + m_tx, L / 2 - L / 16 + m_ty, L / 2, L / 8);
+    if (rec.contains(e->pos())) {
+      reset();
+    }
+  }
 
 #if HIDDEN_BUTTON == 1
   const int L = this->m_length;
   if (e->pos().x() > m_win_width - L / 24 &&
       e->pos().y() > m_win_height - L / 24) {
-    QMessageBox msgBox;
-    msgBox.setText("Serialize game to console");
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Cancel);
-    if (msgBox.exec() == QMessageBox::Ok) {
-      qDebug() << "[DEBUG][GAME]";
-      qDebug() << m_game.to_string().c_str();
-      std::stringstream sstr;
-      for (auto c : m_game.current_time_step()) {
-        sstr << c << ", ";
-      }
-      qDebug() << "[DEBUG][CUURENT_TIME_STAMP]";
-      qDebug() << "array: [" << sstr.str().c_str() << "]";
+    int pirate =
+        QMessageBox(QMessageBox::Question, "pirate", "Fake resolution of game",
+                    QMessageBox::Ok | QMessageBox::Cancel)
+            .exec();
+    if (pirate == QMessageBox::Ok) {
+      m_game.reset();
+      do_spin_east();
     }
   }
 #endif
@@ -539,9 +962,9 @@ void SpinPuzzleWidget::mousePressEvent(QMouseEvent *e) {
 }
 
 void SpinPuzzleWidget::mouseMoveEvent(QMouseEvent *ev) {
-#if DEBUG_EVENT == 1
-  qDebug() << "[DEBUG][mouseMoveEvent] position: " << ev->pos();
-#endif
+  if (!m_allow_play) {
+    return;
+  }
   const int L = this->m_length;
   const QPoint center_north = QPoint(L / 2, L / 4);
   const QPoint center_west = QPoint(L / 4, (sqrt(3) + 1) / 4 * L);
@@ -555,26 +978,12 @@ void SpinPuzzleWidget::mouseMoveEvent(QMouseEvent *ev) {
              mouse_event_inside_leaf(pos, center_west, puzzle::LEAF::WEST)) {
     update();
   }
-#ifdef DEBUG_CONSISTENCY
-  if (!m_game.check_consistency()) {
-    qDebug() << "[DEBUG][mouseMoveEvent] marbles are in an invalid state mouse "
-                "at position "
-             << ev->pos();
-    qDebug() << "[DEBUG][mouseMoveEvent] GAME:";
-    qDebug() << m_game.to_string().c_str();
-    assert(false);
-  }
-#endif
 }
 
 bool SpinPuzzleWidget::can_rotate_internal() { return true; }
 
 bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QPoint pos) {
   if (!can_rotate_internal()) {
-#if DEBUG_EVENT == 1
-    qDebug()
-        << "[DEBUG][mouse_event_inside_internal_circle] cannot rotate internal";
-#endif
     return false;
   }
 
@@ -603,12 +1012,6 @@ bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QPoint pos) {
   // shift += (angle_new - angle_old) * internalRadius / 2;
   double delta_alpha = signum(angle_new - angle_old) * 360.0 * get_speed();
   m_lastPositionMause = pos;
-
-#if DEBUG_EVENT == 1
-  qDebug()
-      << "[DEBUG][mouse_event_inside_internal_circle] rotate internal disk by "
-      << delta_alpha;
-#endif
   m_game.rotate_internal_disk(delta_alpha);
   // check if we move from rotating marbles in outer circles to moving internal
   // circle update the marbles sequence:
@@ -657,15 +1060,10 @@ bool SpinPuzzleWidget::is_mause_on_leaf_marbles(QPoint pos, QPoint center) {
 }
 
 void SpinPuzzleWidget::keyPressEvent(QKeyEvent *e) {
+  if (!m_allow_play) {
+    return;
+  }
   if (processKey(e->key(), 1.0 / 4.0)) {
-#ifdef DEBUG_CONSISTENCY
-    if (!m_game.check_consistency()) {
-      qDebug() << "[DEBUG][keyPressEvent] marbles are in an invalid state";
-      qDebug() << "[DEBUG][KeyPressEvent] GAME:";
-      qDebug() << m_game.to_string().c_str();
-      assert(false);
-    }
-#endif
     update();
     this->setFocus();
   }
@@ -674,6 +1072,25 @@ void SpinPuzzleWidget::keyPressEvent(QKeyEvent *e) {
 void SpinPuzzleWidget::resizeEvent(QResizeEvent *e) {
   this->set_size(e->size().width(), e->size().height());
   update();
+}
+
+void SpinPuzzleWidget::set_game(int time, const puzzle::SpinPuzzleGame &game) {
+  m_elapsed_time = time;
+  m_game = game;
+}
+
+void SpinPuzzleWidget::delete_history_popup() {
+  m_history_widget->deleteLater();
+  m_history_widget = nullptr;
+}
+void SpinPuzzleWidget::set_elapsed_time(int t) { m_elapsed_time = t; }
+
+puzzle::SpinPuzzleGame &SpinPuzzleWidget::get_game() { return m_game; }
+
+void SpinPuzzleWidget::closeEvent(QCloseEvent *event) {
+  if (m_history_widget) {
+    m_history_widget->deleteLater();
+  }
 }
 
 bool SpinPuzzleWidget::processKey(int key, double fraction_angle) {
@@ -696,39 +1113,86 @@ bool SpinPuzzleWidget::processKey(int key, double fraction_angle) {
 
 void SpinPuzzleWidget::reset() {
   int do_reset = QMessageBox::Cancel;
-  if (timer->isActive() || m_elapsed_time > 0) {
-    QMessageBox msgBox;
-    msgBox.setText("Are you sure you waht to reset the puzzle?");
-    msgBox.setInformativeText("You will loose yuor progress");
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Cancel);
-    do_reset = msgBox.exec();
+  if ((m_timer->isActive() || m_elapsed_time > 0) && !m_solved) {
+    auto msg = QMessageBox(QMessageBox::Question, "reset",
+                           "Are you sure you waht to reset the puzzle?",
+                           QMessageBox::Ok | QMessageBox::Cancel);
+    msg.setInformativeText("You will lose yuor progress");
+    if (msg.exec() == QMessageBox::Ok) {
+      // Save was clicked
+      m_paint_congratulations = false;
+      stop_spinning_winning();
+      m_elapsed_time = 0;
+      m_timer->stop();
+      m_game = puzzle::SpinPuzzleGame();
+      reset_leaf_colors();
+    }
   }
-  if (do_reset == QMessageBox::Ok) {
-    // Save was clicked
-    m_elapsed_time = 0;
-    timer->stop();
-    m_game = puzzle::SpinPuzzleGame();
-    reset_leaf_colors();
-  }
+  m_paint_congratulations = false;
+  stop_spinning_winning();
   update();
 }
 
-void SpinPuzzleWidget::shuffle() {
-  if (timer->isActive()) {
+void create_dir() {
+  auto path =
+      QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  auto dir = QDir(path);
+  // qDebug() << "[DEBUG][PATH] path: " << dir;
+  if (!dir.exists()) {
+    dir.mkpath(".");
+  }
+}
+
+std::string SpinPuzzleWidget::get_current_puzzle_file() {
+  auto path =
+      QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  auto filename = QDir(path + "/current_pruzzle.txt");
+  return filename.path().toStdString();
+}
+
+std::string SpinPuzzleWidget::get_puzzle_file() {
+  auto path =
+      QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  auto filename = QDir(path + "/pruzzle.txt");
+  return filename.path().toStdString();
+}
+
+std::string SpinPuzzleWidget::get_records_puzzle_file() {
+  auto path =
+      QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  auto filename = QDir(path + "/records.txt");
+  return filename.path().toStdString();
+}
+
+void SpinPuzzleWidget::stop_spinning_winning() {
+  if (m_congratulation_timer->isActive()) {
+    m_congratulation_timer->stop();
+    m_rotation_congratulation = 0;
+  }
+}
+
+void SpinPuzzleWidget::start_game() {
+  m_paint_congratulations = false;
+  stop_spinning_winning();
+  if (m_timer->isActive()) {
     return;
   }
+
   m_elapsed_time = 0;
-  timer->start(1000);
+  m_solved = false;
+  m_timer->start(1000);
   m_game.shuffle();
-#ifdef DEBUG_CONSISTENCY
-  if (!m_game.check_consistency()) {
-    qDebug() << "[DEBUG][keyPressEvent] marbles are in an invalid state";
-    qDebug() << "[DEBUG][KeyPressEvent] GAME:";
-    qDebug() << m_game.to_string().c_str();
-    assert(false);
+  if (m_allow_play) {
+    create_dir();
+    store_puzzle_begin();
+    save_progress();
   }
-#endif
+
   update();
   this->setFocus();
+}
+
+void SpinPuzzleWidget::start_with_game(const puzzle::SpinPuzzleGame &game) {
+  set_game(0, game);
+  start_game();
 }

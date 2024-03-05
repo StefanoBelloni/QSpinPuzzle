@@ -110,6 +110,43 @@ public:
         ROTATION::OK, ROTATION::OK, ROTATION::OK, ROTATION::INVALID};
 
   public:
+    template <typename Buffer> Buffer &serialize(Buffer &buffer) {
+      // buffer.write(reinterpret_cast<const char*>(&status.m_shifts_leaves[0]),
+      // sizeof(double)),
+      auto n1 = static_cast<int32_t>(m_trefoil_status[0]);
+      auto n2 = static_cast<int32_t>(m_trefoil_status[1]);
+      auto n3 = static_cast<int32_t>(m_rotation_status[0]);
+      auto n4 = static_cast<int32_t>(m_rotation_status[1]);
+      auto n5 = static_cast<int32_t>(m_rotation_status[2]);
+      auto n6 = static_cast<int32_t>(m_rotation_status[3]);
+      buffer << m_shifts_leaves[0] << " " << m_shifts_leaves[1] << " "
+             << m_shifts_leaves[2] << " " << m_shift_cdisk << " " << n1 << " "
+             << n2 << " " << n3 << " " << n4 << " " << n5 << " " << n6 << " ";
+      return buffer;
+    }
+
+    template <typename Buffer> Buffer &load(Buffer &buffer) {
+      uint32_t n1;
+      uint32_t n2;
+      uint32_t n3;
+      uint32_t n4;
+      uint32_t n5;
+      uint32_t n6;
+
+      buffer >> m_shifts_leaves[0] >> m_shifts_leaves[1] >>
+          m_shifts_leaves[2] >> m_shift_cdisk >> n1 >> n2 >> n3 >> n4 >> n5 >>
+          n6;
+
+      m_trefoil_status[0] = static_cast<TREFOIL>(n1);
+      m_trefoil_status[1] = static_cast<TREFOIL>(n2);
+      m_rotation_status[0] = static_cast<ROTATION>(n3);
+      m_rotation_status[1] = static_cast<ROTATION>(n4);
+      m_rotation_status[2] = static_cast<ROTATION>(n5);
+      m_rotation_status[3] = static_cast<ROTATION>(n6);
+      return buffer;
+    }
+
+  public:
     //!< getter for the local shift in degree of the first marble of the section
     double get_shift_of_leaf(LEAF leaf) const {
       return m_shifts_leaves[static_cast<uint8_t>(leaf)];
@@ -607,6 +644,28 @@ public:
 
   void current_time_step(size_t start_index,
                          std::array<Color, puzzle::SIZE_STEP_ARRAY> &out);
+
+  /**
+   * @brief  function to serialize the side to save it
+   * @note
+   * @param  buffer: location where to save the data
+   * @retval
+   */
+  template <typename Buffer> Buffer &serialize(Buffer &buffer) {
+    m_status.serialize(buffer);
+    for (auto &m : m_marbles) {
+      m.serialize(buffer);
+    }
+    return buffer;
+  }
+
+  template <typename Buffer> Buffer &load(Buffer &buffer) {
+    m_status.load(buffer);
+    for (auto &m : m_marbles) {
+      m.load(buffer);
+    }
+    return buffer;
+  }
 
 private:
   static_assert(N_LEAVES == static_cast<std::size_t>(LEAF::TREFOIL));

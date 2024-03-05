@@ -12,8 +12,8 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self._debug = False
         self._hidden_btn = False
         # =============== #
-        self.reset_btn = QtWidgets.QPushButton("reset", self)
-        self.reset_btn.clicked.connect(self.reset)
+        self.m_reset_btn = QtWidgets.QPushButton("reset", self)
+        self.m_reset_btn.clicked.connect(self.reset)
         # =============== #
         self.shuffle_btn = QtWidgets.QPushButton("START", self)
         self.shuffle_btn.clicked.connect(self.shuffle)
@@ -88,7 +88,7 @@ class QSpinPuzzleWidget(QtWidgets.QWidget):
         self._radius_marble = r * math.sin(math.pi / 5) / 2
         self._polygon = self._create_polygon()
 
-        self.reset_btn.setGeometry     (0, 4 * self._length / 24, 3 * self._length / 24, self._length / 24)
+        self.m_reset_btn.setGeometry     (0, 4 * self._length / 24, 3 * self._length / 24, self._length / 24)
         self.shuffle_btn.setGeometry   (0, 6 * self._length / 24, 3 * self._length / 24, self._length / 24)
         self.twist_btn.setGeometry     (0, 8 * self._length / 24, 3 * self._length / 24, self._length / 24)
 

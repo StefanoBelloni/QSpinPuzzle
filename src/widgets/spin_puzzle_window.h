@@ -11,6 +11,10 @@ public:
   SpinPuzzleWindow(QWidget *parent = nullptr);
   ~SpinPuzzleWindow();
 
+  void closeEvent(QCloseEvent *event) override {
+    m_spinPuzzleWidget->closeEvent(event);
+  }
+
 private:
   SpinPuzzleWidget *m_spinPuzzleWidget;
 };

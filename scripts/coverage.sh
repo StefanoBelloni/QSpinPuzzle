@@ -13,7 +13,7 @@ cd ./build_coverage
 # cmake --build . --target clean
 # cmake -D RUN_COVERAGE=TRUE -D EXCLUDE='gtest,usr/include/'..
 
-cmake -DCMAKE_BUILD_TYPE=Debug -DRUN_COVERAGE=TRUE ..
+cmake -DCMAKE_BUILD_TYPE=Debug -DRUN_COVERAGE=TRUE -DUSE_QT=no ..
 cmake --build .
 
 # ctest --progress
