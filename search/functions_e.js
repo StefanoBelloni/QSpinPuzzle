@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7espinpuzzlewindow_222',['~SpinPuzzleWindow',['../class_spin_puzzle_window.html#a0bc5c9ea8c21c41e7508b05c64fae8d3',1,'SpinPuzzleWindow']]]
+  ['update_5fshift_5ffor_5fleaf_272',['update_shift_for_leaf',['../classpuzzle_1_1_spin_puzzle_side_1_1_status.html#aa0fdfe2afc3d65508c1c5c4c7979b094',1,'puzzle::SpinPuzzleSide::Status']]]
 ];

@@ -83,14 +83,22 @@ $(function() {
 <li>check_consistency()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#afe4fa0a2c1adf785f50695e1ea7daca6">puzzle::SpinPuzzleGame</a>
 </li>
+<li>closeEvent()
+: <a class="el" href="class_spin_puzzle_widget.html#a5a9bbcc067c187fa468aef09c6c453fc">SpinPuzzleWidget</a>
+, <a class="el" href="class_spin_puzzle_window.html#ad8b600a1e651e7d5dbaa257e08b44ec1">SpinPuzzleWindow</a>
+</li>
 <li>color()
-: <a class="el" href="classpuzzle_1_1_spin_marble.html#a1894c412142d08f8fd95e1f688f8ef4f">puzzle::SpinMarble</a>
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#a6a7a51d839541e2ea215658a840641c6">puzzle::SpinMarble</a>
 </li>
 <li>createBackMarbles()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#af04d3df7698e6e60c01f315f7e05143a">puzzle::SpinPuzzleGame</a>
 </li>
 <li>createFrontMarbles()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#aef2f8b0c633335535bd57f01f2bca79f">puzzle::SpinPuzzleGame</a>
+</li>
+<li>current_time_step()
+: <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#af1ef2c9beeef06d0b492c68183976596">puzzle::SpinPuzzleGame</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a9722c665dc618d80484c69efe538e758">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
 </li>
 </ul>
 
@@ -103,9 +111,6 @@ $(function() {
 
 
 <h3><a id="index_g"></a>- g -</h3><ul>
-<li>game_as_stirng()
-: <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#afb84e13ebd0de6b8427beed993b38301">puzzle::SpinPuzzleGame</a>
-</li>
 <li>get_active_side()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a35d7350685f238c026bd14acbd303c3b">puzzle::SpinPuzzleGame</a>
 </li>
@@ -158,6 +163,9 @@ $(function() {
 <li>is_border_rotation_possible()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a3f2a7027827d94b9a61f4c7497fcd745">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
 </li>
+<li>is_game_solved()
+: <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a8afd179d9836ab24b1ffa1e9e6b3da74">puzzle::SpinPuzzleGame</a>
+</li>
 <li>is_internal_disk_rotation_possible()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a4897ca40169051eb1fd39b9b8dc41756">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
 , <a class="el" href="classpuzzle_1_1_spin_puzzle_side_1_1_status.html#ae858132b82e007ed87fdda71030b2fb2">puzzle::SpinPuzzleSide&lt; N, M &gt;::Status</a>
@@ -184,6 +192,16 @@ $(function() {
 </ul>
 
 
+<h3><a id="index_l"></a>- l -</h3><ul>
+<li>load()
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#abaf8b59684d892794bdbfa7fc77c746f">puzzle::SpinMarble</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a09d378d79770ed406a4c7a7b2b916e4e">puzzle::SpinPuzzleGame</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a94e9ce445a16939059a817a04a8e7139">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side_1_1_status.html#a36b28b210c4aa75d605597df48041eda">puzzle::SpinPuzzleSide&lt; N, M &gt;::Status</a>
+</li>
+</ul>
+
+
 <h3><a id="index_m"></a>- m -</h3><ul>
 <li>marbles()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#ae0096d22ad06bce95631a507ce1f5e13">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
@@ -198,9 +216,11 @@ $(function() {
 
 
 <h3><a id="index_o"></a>- o -</h3><ul>
+<li>operator Color()
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#a3a7c576cccdeddb9008f7fd6d84c7d9e">puzzle::SpinMarble</a>
+</li>
 <li>operator!=()
 : <a class="el" href="classpuzzle_1_1_spin_marble.html#a7a1c2f540c876616b37b24cbd6e0dcd0">puzzle::SpinMarble</a>
-, <a class="el" href="class_q_color.html#afad5c376cd0a67acb96b11d8b70e4a14">QColor</a>
 </li>
 <li>operator*()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#ac80f067f4e2307b8b90b6289719b3614">puzzle::SpinPuzzleSide&lt; N, M &gt;::iterator</a>
@@ -227,12 +247,11 @@ $(function() {
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a1a7b05d8efff2555ff1b0527657915af">puzzle::SpinPuzzleSide&lt; N, M &gt;::iterator</a>
 </li>
 <li>operator=()
-: <a class="el" href="classpuzzle_1_1_spin_marble.html#a78aea815de652e766711b97692a0cc9c">puzzle::SpinMarble</a>
-, <a class="el" href="class_q_color.html#a23e9b6aaca950558da2947d93e82347c">QColor</a>
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#a948d463d6a0bba79792ca63e2f68ff95">puzzle::SpinMarble</a>
 </li>
 <li>operator==()
 : <a class="el" href="classpuzzle_1_1_spin_marble.html#a4e2926cb5c2c9b0666fecfbaf35d9e38">puzzle::SpinMarble</a>
-, <a class="el" href="class_q_color.html#a178e62e4b450fdd1ca5b91f7635b94f5">QColor</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side_1_1iterator.html#a81fc4612e13ea886a4d7322ae7a94469">puzzle::SpinPuzzleSide&lt; N, M &gt;::iterator</a>
 </li>
 </ul>
 
@@ -247,16 +266,12 @@ $(function() {
 </ul>
 
 
-<h3><a id="index_q"></a>- q -</h3><ul>
-<li>QColor()
-: <a class="el" href="class_q_color.html#a4f93910763bf58a4b434c0a857983c82">QColor</a>
-</li>
-</ul>
-
-
 <h3><a id="index_r"></a>- r -</h3><ul>
 <li>reset()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#ae43ad193fce79a38131cdc3d5e2114dd">puzzle::SpinPuzzleGame</a>
+</li>
+<li>resizeEvent()
+: <a class="el" href="class_spin_puzzle_widget.html#a8c315a5067ce03d786b4c06dcd526a90">SpinPuzzleWidget</a>
 </li>
 <li>rotate_internal_disk()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a660b684f4acbe9e362bff4302cf4982f">puzzle::SpinPuzzleGame</a>
@@ -270,6 +285,12 @@ $(function() {
 
 
 <h3><a id="index_s"></a>- s -</h3><ul>
+<li>serialize()
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#aabfcf15f04d26e37a6f2dcebeb713b16">puzzle::SpinMarble</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#ac7a1bec1f7fc3b433b5a30d7d6d1b480">puzzle::SpinPuzzleGame</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a39cc63df4ce165ae13981c3cb0046433">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side_1_1_status.html#a5d8d1492864e993aa48773e87e96f5f2">puzzle::SpinPuzzleSide&lt; N, M &gt;::Status</a>
+</li>
 <li>set_active_side()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#af9470b6372a62500fa966745abac6026">puzzle::SpinPuzzleGame</a>
 </li>
@@ -289,19 +310,22 @@ $(function() {
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a224bc10eed9572162736ea3b1123a3f9">puzzle::SpinPuzzleGame</a>
 </li>
 <li>spin_leaf()
-: <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a3a4bd3ac34667732a21b4ef1cb2ad0d8">puzzle::SpinPuzzleGame</a>
+: <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a9d27e4cc3b06532ef91d40b2b49b4365">puzzle::SpinPuzzleGame</a>
 </li>
 <li>SpinMarble()
-: <a class="el" href="classpuzzle_1_1_spin_marble.html#a9135eb114dfe90100b4db52dac9b00d5">puzzle::SpinMarble</a>
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#afe41b8e438e8caac239600326cbe0546">puzzle::SpinMarble</a>
 </li>
 <li>SpinPuzzleGame()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a5bd4092fba5b8c29ce7c019222e91554">puzzle::SpinPuzzleGame</a>
+</li>
+<li>SpinPuzzleHistoryWidget()
+: <a class="el" href="class_spin_puzzle_history_widget.html#ae9ae1ada36e29fabddbef368e66733a9">SpinPuzzleHistoryWidget</a>
 </li>
 <li>SpinPuzzleSide()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#ad3faa0dbd016bb366c8e2367d215aff5">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
 </li>
 <li>SpinPuzzleWidget()
-: <a class="el" href="class_spin_puzzle_widget.html#ae49b8bae5160b172d69fe3a3548b6194">SpinPuzzleWidget</a>
+: <a class="el" href="class_spin_puzzle_widget.html#aababaf19d8b276edfc4e10517606bb8d">SpinPuzzleWidget</a>
 </li>
 <li>SpinPuzzleWindow()
 : <a class="el" href="class_spin_puzzle_window.html#ad468b8bfaedebafb68310d486d21d6b4">SpinPuzzleWindow</a>
@@ -314,6 +338,15 @@ $(function() {
 </li>
 <li>swap_side()
 : <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a31befe6e5023afcf37b58fdcd8e79ca0">puzzle::SpinPuzzleGame</a>
+</li>
+</ul>
+
+
+<h3><a id="index_t"></a>- t -</h3><ul>
+<li>to_string()
+: <a class="el" href="classpuzzle_1_1_spin_marble.html#ab0c4ce6afd7f6a2ab62bbd44fa91d948">puzzle::SpinMarble</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_game.html#a749b88b832d556c4dd0547efcdb1f0d7">puzzle::SpinPuzzleGame</a>
+, <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a56353bde63a46842226e6ec409a38263">puzzle::SpinPuzzleSide&lt; N, M &gt;</a>
 </li>
 </ul>
 

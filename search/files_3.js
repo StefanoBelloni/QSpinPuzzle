@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['spin_5faction_5fprovider_2ecpp_177',['spin_action_provider.cpp',['../spin__action__provider_8cpp.html',1,'']]],
+  ['spin_5faction_5fprovider_2eh_178',['spin_action_provider.h',['../spin__action__provider_8h.html',1,'']]],
+  ['spin_5fmarble_2ecpp_179',['spin_marble.cpp',['../spin__marble_8cpp.html',1,'']]],
+  ['spin_5fmarble_2eh_180',['spin_marble.h',['../spin__marble_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fdefinitions_2ecpp_181',['spin_puzzle_definitions.cpp',['../spin__puzzle__definitions_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fdefinitions_2eh_182',['spin_puzzle_definitions.h',['../spin__puzzle__definitions_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fgame_2ecpp_183',['spin_puzzle_game.cpp',['../spin__puzzle__game_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fgame_2eh_184',['spin_puzzle_game.h',['../spin__puzzle__game_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fhistory_5fwidget_2ecpp_185',['spin_puzzle_history_widget.cpp',['../spin__puzzle__history__widget_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fhistory_5fwidget_2eh_186',['spin_puzzle_history_widget.h',['../spin__puzzle__history__widget_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fmatrix_2ecpp_187',['spin_puzzle_matrix.cpp',['../spin__puzzle__matrix_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fmatrix_2eh_188',['spin_puzzle_matrix.h',['../spin__puzzle__matrix_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fside_2ecpp_189',['spin_puzzle_side.cpp',['../spin__puzzle__side_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fside_2eh_190',['spin_puzzle_side.h',['../spin__puzzle__side_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fwidget_2ecpp_191',['spin_puzzle_widget.cpp',['../spin__puzzle__widget_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fwidget_2eh_192',['spin_puzzle_widget.h',['../spin__puzzle__widget_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fwindow_2ecpp_193',['spin_puzzle_window.cpp',['../spin__puzzle__window_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fwindow_2eh_194',['spin_puzzle_window.h',['../spin__puzzle__window_8h.html',1,'']]]
+];

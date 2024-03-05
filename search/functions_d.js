@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update_5fshift_5ffor_5fleaf_221',['update_shift_for_leaf',['../classpuzzle_1_1_spin_puzzle_side_1_1_status.html#aa0fdfe2afc3d65508c1c5c4c7979b094',1,'puzzle::SpinPuzzleSide::Status']]]
+  ['to_5fstring_271',['to_string',['../classpuzzle_1_1_spin_marble.html#ab0c4ce6afd7f6a2ab62bbd44fa91d948',1,'puzzle::SpinMarble::to_string()'],['../classpuzzle_1_1_spin_puzzle_game.html#a749b88b832d556c4dd0547efcdb1f0d7',1,'puzzle::SpinPuzzleGame::to_string()'],['../classpuzzle_1_1_spin_puzzle_side.html#a56353bde63a46842226e6ec409a38263',1,'puzzle::SpinPuzzleSide::to_string()']]]
 ];

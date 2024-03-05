@@ -68,31 +68,31 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">spin_puzzle_definitions.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
 </div>
 <p><a href="spin__puzzle__definitions_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_q_color.html">QColor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_q_color.html" title="The QColor class is a mock for the Qt version, in case is not available.">QColor</a> class is a mock for the <a class="el" href="namespace_qt.html" title="Mock of the namespace Qt and its constants.">Qt</a> version, in case is not available.  <a href="class_q_color.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespace_qt"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_qt.html">Qt</a></td></tr>
-<tr class="memdesc:namespace_qt"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mock of the namespace <a class="el" href="namespace_qt.html" title="Mock of the namespace Qt and its constants.">Qt</a> and its constants. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespacepuzzle"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html">puzzle</a></td></tr>
+<tr class="memdesc:namespacepuzzle"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mock of the namespace Qt and its constants. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ac21ebe36a7316ba41fa6b4ed0b9caded"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#ac21ebe36a7316ba41fa6b4ed0b9caded">puzzle::Color</a> = int</td></tr>
+<tr class="memdesc:ac21ebe36a7316ba41fa6b4ed0b9caded"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Color class is a mock for the Qt version, in case is not available.  <a href="namespacepuzzle.html#ac21ebe36a7316ba41fa6b4ed0b9caded">More...</a><br /></td></tr>
+<tr class="separator:ac21ebe36a7316ba41fa6b4ed0b9caded"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -131,20 +131,70 @@ Enumerations</h2></td></tr>
 <tr class="memdesc:a4e14d3670124a5513145d4e59fcad858"><td class="mdescLeft">&#160;</td><td class="mdescRight">enumeration to identify the side of a trefoil  <a href="namespacepuzzle.html#a4e14d3670124a5513145d4e59fcad858">More...</a><br /></td></tr>
 <tr class="separator:a4e14d3670124a5513145d4e59fcad858"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ae9e23325c49c582c8325dfdc9d00d185"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#ae9e23325c49c582c8325dfdc9d00d185">puzzle::color_to_str</a> (int color)</td></tr>
+<tr class="separator:ae9e23325c49c582c8325dfdc9d00d185"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a1e73f5bc63f2150776b7b7e648ebd779"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_qt.html#a1e73f5bc63f2150776b7b7e648ebd779">Qt::black</a> = 2</td></tr>
-<tr class="memdesc:a1e73f5bc63f2150776b7b7e648ebd779"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a href="https://doc.qt.io/qt-6/qt.html">https://doc.qt.io/qt-6/qt.html</a>  <a href="namespace_qt.html#a1e73f5bc63f2150776b7b7e648ebd779">More...</a><br /></td></tr>
-<tr class="separator:a1e73f5bc63f2150776b7b7e648ebd779"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a475ce434523a41e00fe2c6ba09d0d9f8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_qt.html#a475ce434523a41e00fe2c6ba09d0d9f8">Qt::red</a> = 7</td></tr>
-<tr class="memdesc:a475ce434523a41e00fe2c6ba09d0d9f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a href="https://doc.qt.io/qt-6/qt.html">https://doc.qt.io/qt-6/qt.html</a>  <a href="namespace_qt.html#a475ce434523a41e00fe2c6ba09d0d9f8">More...</a><br /></td></tr>
-<tr class="separator:a475ce434523a41e00fe2c6ba09d0d9f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a604159dcd51cfcb9675778e0f8af7ef2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_qt.html#a604159dcd51cfcb9675778e0f8af7ef2">Qt::green</a> = 8</td></tr>
-<tr class="memdesc:a604159dcd51cfcb9675778e0f8af7ef2"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a href="https://doc.qt.io/qt-6/qt.html">https://doc.qt.io/qt-6/qt.html</a>  <a href="namespace_qt.html#a604159dcd51cfcb9675778e0f8af7ef2">More...</a><br /></td></tr>
-<tr class="separator:a604159dcd51cfcb9675778e0f8af7ef2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afebb998b225d90ee51b3de2de76e07a5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_qt.html#afebb998b225d90ee51b3de2de76e07a5">Qt::Key_T</a> = 0x54</td></tr>
-<tr class="memdesc:afebb998b225d90ee51b3de2de76e07a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a href="https://doc.qt.io/qt-6/qt.html">https://doc.qt.io/qt-6/qt.html</a>  <a href="namespace_qt.html#afebb998b225d90ee51b3de2de76e07a5">More...</a><br /></td></tr>
-<tr class="separator:afebb998b225d90ee51b3de2de76e07a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83a5310d2f8b2231279205e69db51f47"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a83a5310d2f8b2231279205e69db51f47">puzzle::Key_N</a> = 0x4e</td></tr>
+<tr class="separator:a83a5310d2f8b2231279205e69db51f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae11fba07ed0611eaaaa8cb53a40da886"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#ae11fba07ed0611eaaaa8cb53a40da886">puzzle::Key_P</a> = 0x50</td></tr>
+<tr class="separator:ae11fba07ed0611eaaaa8cb53a40da886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67c085ebec0eda58d3f2ae0ed47a5998"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a67c085ebec0eda58d3f2ae0ed47a5998">puzzle::Key_E</a> = 0x45</td></tr>
+<tr class="separator:a67c085ebec0eda58d3f2ae0ed47a5998"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10a16c53084091ca985d24d06cacf552"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a10a16c53084091ca985d24d06cacf552">puzzle::Key_W</a> = 0x57</td></tr>
+<tr class="separator:a10a16c53084091ca985d24d06cacf552"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbd0976889c9df12fcfdb4932d26e5bd"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#abbd0976889c9df12fcfdb4932d26e5bd">puzzle::Key_Left</a> = 0x01000012</td></tr>
+<tr class="separator:abbd0976889c9df12fcfdb4932d26e5bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1de31d93c8f7d97d08d0feb1c499c7ed"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a1de31d93c8f7d97d08d0feb1c499c7ed">puzzle::Key_Right</a> = 0x01000014</td></tr>
+<tr class="separator:a1de31d93c8f7d97d08d0feb1c499c7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78cafe8e43defb063311ae57782c9784"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a78cafe8e43defb063311ae57782c9784">puzzle::Key_PageUp</a> = 0x01000016</td></tr>
+<tr class="separator:a78cafe8e43defb063311ae57782c9784"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3af27ecf02da08d4607810472f9a0cf"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#ab3af27ecf02da08d4607810472f9a0cf">puzzle::Key_PageDown</a> = 0x01000017</td></tr>
+<tr class="separator:ab3af27ecf02da08d4607810472f9a0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f699f122d11c5ae669ac5883bd11a41"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a5f699f122d11c5ae669ac5883bd11a41">puzzle::Key_I</a> = 0x49</td></tr>
+<tr class="separator:a5f699f122d11c5ae669ac5883bd11a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6081155b5875db99555d3b7d08f5063"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#aa6081155b5875db99555d3b7d08f5063">puzzle::white</a> = 3</td></tr>
+<tr class="separator:aa6081155b5875db99555d3b7d08f5063"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a294ea24cbd3a4f930c385c8af612db20"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a294ea24cbd3a4f930c385c8af612db20">puzzle::black</a> = 2</td></tr>
+<tr class="separator:a294ea24cbd3a4f930c385c8af612db20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa669152af0d9bd0ba55457d798031d0e"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#aa669152af0d9bd0ba55457d798031d0e">puzzle::red</a> = 7</td></tr>
+<tr class="separator:aa669152af0d9bd0ba55457d798031d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae86bc7d94b911e1a7e1fb5062d9c5b4f"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#ae86bc7d94b911e1a7e1fb5062d9c5b4f">puzzle::darkRed</a> = 13</td></tr>
+<tr class="separator:ae86bc7d94b911e1a7e1fb5062d9c5b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a246519b4f41a974785f19058944dfd92"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a246519b4f41a974785f19058944dfd92">puzzle::green</a> = 8</td></tr>
+<tr class="separator:a246519b4f41a974785f19058944dfd92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0decb39113cad1e381c16b1c25ad89b"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#aa0decb39113cad1e381c16b1c25ad89b">puzzle::darkGreen</a> = 14</td></tr>
+<tr class="separator:aa0decb39113cad1e381c16b1c25ad89b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65a5ccc3c048f19fdfafb6fb4bcfbb35"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a65a5ccc3c048f19fdfafb6fb4bcfbb35">puzzle::blue</a> = 9</td></tr>
+<tr class="separator:a65a5ccc3c048f19fdfafb6fb4bcfbb35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5492fffee191f9661d0828d9c3145d59"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a5492fffee191f9661d0828d9c3145d59">puzzle::darkBlue</a> = 15</td></tr>
+<tr class="separator:a5492fffee191f9661d0828d9c3145d59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af28919203737d79a5252b80ff6769f61"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#af28919203737d79a5252b80ff6769f61">puzzle::cyan</a> = 10</td></tr>
+<tr class="separator:af28919203737d79a5252b80ff6769f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0cc4ac3c50ae9b7784bcf4df2d21fe7"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#af0cc4ac3c50ae9b7784bcf4df2d21fe7">puzzle::darkCyan</a> = 16</td></tr>
+<tr class="separator:af0cc4ac3c50ae9b7784bcf4df2d21fe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87510a7747c5865d649d1ef904044fa5"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a87510a7747c5865d649d1ef904044fa5">puzzle::magenta</a> = 11</td></tr>
+<tr class="separator:a87510a7747c5865d649d1ef904044fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a389fad97aa552611fb7803e63e138f98"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a389fad97aa552611fb7803e63e138f98">puzzle::darkMagenta</a> = 17</td></tr>
+<tr class="separator:a389fad97aa552611fb7803e63e138f98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d1d72f912f856752ac418b9164bf98b"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a3d1d72f912f856752ac418b9164bf98b">puzzle::yellow</a> = 12</td></tr>
+<tr class="separator:a3d1d72f912f856752ac418b9164bf98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a982cbc65831cae27effbad34e41dafe5"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a982cbc65831cae27effbad34e41dafe5">puzzle::darkYellow</a> = 18</td></tr>
+<tr class="separator:a982cbc65831cae27effbad34e41dafe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8ab772022744d1962f6d2d9ec86668"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a1c8ab772022744d1962f6d2d9ec86668">puzzle::gray</a> = 5</td></tr>
+<tr class="separator:a1c8ab772022744d1962f6d2d9ec86668"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad76a4589e63f9a5331d4e02363b9f6ee"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#ad76a4589e63f9a5331d4e02363b9f6ee">puzzle::darkGray</a> = 4</td></tr>
+<tr class="separator:ad76a4589e63f9a5331d4e02363b9f6ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a6bce57a5d921ef7ee7a891bf842ed3"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a3a6bce57a5d921ef7ee7a891bf842ed3">puzzle::lightGray</a> = 6</td></tr>
+<tr class="separator:a3a6bce57a5d921ef7ee7a891bf842ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f3b15e34ddd3bdf6e3666273c3fb506"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a6f3b15e34ddd3bdf6e3666273c3fb506">puzzle::Key_T</a> = 0x54</td></tr>
+<tr class="memdesc:a6f3b15e34ddd3bdf6e3666273c3fb506"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a href="https://doc.qt.io/qt-6/qt.html">https://doc.qt.io/qt-6/qt.html</a>  <a href="namespacepuzzle.html#a6f3b15e34ddd3bdf6e3666273c3fb506">More...</a><br /></td></tr>
+<tr class="separator:a6f3b15e34ddd3bdf6e3666273c3fb506"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91c209598499dfc8ead4bf6f0eca6977"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepuzzle.html#a91c209598499dfc8ead4bf6f0eca6977">puzzle::SIZE_STEP_ARRAY</a> = 1 + 2 * 3 * (10 + 3)</td></tr>
+<tr class="separator:a91c209598499dfc8ead4bf6f0eca6977"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

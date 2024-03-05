@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['spinpuzzlesmatrix_5fh_257',['SPINPUZZLESMATRIX_H',['../spin__puzzle__matrix_8h.html#ae0ed4d311b60c08aaf8fc77c19e6001d',1,'spin_puzzle_matrix.h']]]
+  ['hidden_5fbutton_332',['HIDDEN_BUTTON',['../spin__puzzle__widget_8cpp.html#a58eb4cab6e2fb1bf465d2ce6c1f1207d',1,'spin_puzzle_widget.cpp']]]
 ];

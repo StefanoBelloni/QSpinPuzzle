@@ -141,6 +141,17 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4897ca40169051eb1fd39b9b8dc41756"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3aa32bfaaf84dbce27df2270808139d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#ac3aa32bfaaf84dbce27df2270808139d">is_rotation_possible</a> (<a class="el" href="namespacepuzzle.html#a1caafedb40c4cafa587c246b8d53f449">LEAF</a> leaf) const</td></tr>
 <tr class="separator:ac3aa32bfaaf84dbce27df2270808139d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56353bde63a46842226e6ec409a38263"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a56353bde63a46842226e6ec409a38263">to_string</a> ()</td></tr>
+<tr class="separator:a56353bde63a46842226e6ec409a38263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9722c665dc618d80484c69efe538e758"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a9722c665dc618d80484c69efe538e758">current_time_step</a> (size_t start_index, std::array&lt; <a class="el" href="namespacepuzzle.html#ac21ebe36a7316ba41fa6b4ed0b9caded">Color</a>, <a class="el" href="namespacepuzzle.html#a91c209598499dfc8ead4bf6f0eca6977">puzzle::SIZE_STEP_ARRAY</a> &gt; &amp;out)</td></tr>
+<tr class="separator:a9722c665dc618d80484c69efe538e758"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39cc63df4ce165ae13981c3cb0046433"><td class="memTemplParams" colspan="2">template&lt;typename Buffer &gt; </td></tr>
+<tr class="memitem:a39cc63df4ce165ae13981c3cb0046433"><td class="memTemplItemLeft" align="right" valign="top">Buffer &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a39cc63df4ce165ae13981c3cb0046433">serialize</a> (Buffer &amp;buffer)</td></tr>
+<tr class="memdesc:a39cc63df4ce165ae13981c3cb0046433"><td class="mdescLeft">&#160;</td><td class="mdescRight">function to serialize the side to save it  <a href="classpuzzle_1_1_spin_puzzle_side.html#a39cc63df4ce165ae13981c3cb0046433">More...</a><br /></td></tr>
+<tr class="separator:a39cc63df4ce165ae13981c3cb0046433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94e9ce445a16939059a817a04a8e7139"><td class="memTemplParams" colspan="2">template&lt;typename Buffer &gt; </td></tr>
+<tr class="memitem:a94e9ce445a16939059a817a04a8e7139"><td class="memTemplItemLeft" align="right" valign="top">Buffer &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpuzzle_1_1_spin_puzzle_side.html#a94e9ce445a16939059a817a04a8e7139">load</a> (Buffer &amp;buffer)</td></tr>
+<tr class="separator:a94e9ce445a16939059a817a04a8e7139"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -339,6 +350,36 @@ The first marble is the first (clockwise) marble after the common part with the 
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a9722c665dc618d80484c69efe538e758"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9722c665dc618d80484c69efe538e758">&#9670;&nbsp;</a></span>current_time_step()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t N, std::size_t M&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html">puzzle::SpinPuzzleSide</a>&lt; N, M &gt;::current_time_step </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>start_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::array&lt; <a class="el" href="namespacepuzzle.html#ac21ebe36a7316ba41fa6b4ed0b9caded">Color</a>, <a class="el" href="namespacepuzzle.html#a91c209598499dfc8ead4bf6f0eca6977">puzzle::SIZE_STEP_ARRAY</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -611,6 +652,36 @@ template&lt;std::size_t N = 10ul, std::size_t M = 3ul&gt; </div>
 
 </div>
 </div>
+<a id="a94e9ce445a16939059a817a04a8e7139"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94e9ce445a16939059a817a04a8e7139">&#9670;&nbsp;</a></span>load()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t N = 10ul, std::size_t M = 3ul&gt; </div>
+<div class="memtemplate">
+template&lt;typename Buffer &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Buffer&amp; <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html">puzzle::SpinPuzzleSide</a>&lt; N, M &gt;::load </td>
+          <td>(</td>
+          <td class="paramtype">Buffer &amp;&#160;</td>
+          <td class="paramname"><em>buffer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae0096d22ad06bce95631a507ce1f5e13"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae0096d22ad06bce95631a507ce1f5e13">&#9670;&nbsp;</a></span>marbles()</h2>
 
@@ -773,6 +844,51 @@ the way the rotation is executed, i.e. if the starting position is updated or on
 
 </div>
 </div>
+<a id="a39cc63df4ce165ae13981c3cb0046433"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39cc63df4ce165ae13981c3cb0046433">&#9670;&nbsp;</a></span>serialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t N = 10ul, std::size_t M = 3ul&gt; </div>
+<div class="memtemplate">
+template&lt;typename Buffer &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Buffer&amp; <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html">puzzle::SpinPuzzleSide</a>&lt; N, M &gt;::serialize </td>
+          <td>(</td>
+          <td class="paramtype">Buffer &amp;&#160;</td>
+          <td class="paramname"><em>buffer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>function to serialize the side to save it </p>
+<dl class="section note"><dt>Note</dt><dd></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>location where to save the data </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname"></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a88e8eaa4fd71e05c80b92b6705e57964"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a88e8eaa4fd71e05c80b92b6705e57964">&#9670;&nbsp;</a></span>start_rotating_central_disk()</h2>
 
@@ -848,6 +964,33 @@ template&lt;std::size_t N = 10ul, std::size_t M = 3ul&gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a56353bde63a46842226e6ec409a38263"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56353bde63a46842226e6ec409a38263">&#9670;&nbsp;</a></span>to_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t N = 10ul, std::size_t M = 3ul&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string <a class="el" href="classpuzzle_1_1_spin_puzzle_side.html">puzzle::SpinPuzzleSide</a>&lt; N, M &gt;::to_string </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

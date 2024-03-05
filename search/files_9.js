@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['sample1_2eh_2139',['sample1.h',['../sample1_8h.html',1,'']]],
+  ['sample2_2eh_2140',['sample2.h',['../sample2_8h.html',1,'']]],
+  ['sample3_2dinl_2eh_2141',['sample3-inl.h',['../sample3-inl_8h.html',1,'']]],
+  ['sample4_2eh_2142',['sample4.h',['../sample4_8h.html',1,'']]],
+  ['samples_2emd_2143',['samples.md',['../samples_8md.html',1,'']]],
+  ['spin_5faction_5fprovider_2ecpp_2144',['spin_action_provider.cpp',['../spin__action__provider_8cpp.html',1,'']]],
+  ['spin_5faction_5fprovider_2eh_2145',['spin_action_provider.h',['../spin__action__provider_8h.html',1,'']]],
+  ['spin_5fmarble_2ecpp_2146',['spin_marble.cpp',['../spin__marble_8cpp.html',1,'']]],
+  ['spin_5fmarble_2eh_2147',['spin_marble.h',['../spin__marble_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fdefinitions_2ecpp_2148',['spin_puzzle_definitions.cpp',['../spin__puzzle__definitions_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fdefinitions_2eh_2149',['spin_puzzle_definitions.h',['../spin__puzzle__definitions_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fgame_2ecpp_2150',['spin_puzzle_game.cpp',['../spin__puzzle__game_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fgame_2eh_2151',['spin_puzzle_game.h',['../spin__puzzle__game_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fhistory_5fwidget_2ecpp_2152',['spin_puzzle_history_widget.cpp',['../spin__puzzle__history__widget_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fhistory_5fwidget_2eh_2153',['spin_puzzle_history_widget.h',['../spin__puzzle__history__widget_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fmatrix_2ecpp_2154',['spin_puzzle_matrix.cpp',['../spin__puzzle__matrix_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fmatrix_2eh_2155',['spin_puzzle_matrix.h',['../spin__puzzle__matrix_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fside_2ecpp_2156',['spin_puzzle_side.cpp',['../spin__puzzle__side_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fside_2eh_2157',['spin_puzzle_side.h',['../spin__puzzle__side_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fwidget_2ecpp_2158',['spin_puzzle_widget.cpp',['../spin__puzzle__widget_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fwidget_2eh_2159',['spin_puzzle_widget.h',['../spin__puzzle__widget_8h.html',1,'']]],
+  ['spin_5fpuzzle_5fwindow_2ecpp_2160',['spin_puzzle_window.cpp',['../spin__puzzle__window_8cpp.html',1,'']]],
+  ['spin_5fpuzzle_5fwindow_2eh_2161',['spin_puzzle_window.h',['../spin__puzzle__window_8h.html',1,'']]]
+];

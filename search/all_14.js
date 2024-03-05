@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7espinpuzzlewindow_124',['~SpinPuzzleWindow',['../class_spin_puzzle_window.html#a0bc5c9ea8c21c41e7508b05c64fae8d3',1,'SpinPuzzleWindow']]]
+  ['yellow_161',['yellow',['../namespacepuzzle.html#a3d1d72f912f856752ac418b9164bf98b',1,'puzzle']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['puzzle_135',['puzzle',['../namespacepuzzle.html',1,'']]]
+  ['puzzle_173',['puzzle',['../namespacepuzzle.html',1,'']]]
 ];

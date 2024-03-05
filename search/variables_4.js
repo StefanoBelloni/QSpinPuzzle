@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['n_230',['N',['../class_action_provider.html#a64e4e350c5c8f26b85b8d4a6ff44c1ea',1,'ActionProvider']]],
-  ['n_5fmarbles_231',['N_MARBLES',['../classpuzzle_1_1_spin_puzzle_side.html#a22c61035572049f9d4e3b8b23852fa2d',1,'puzzle::SpinPuzzleSide']]]
+  ['invalid_5fcolor_287',['INVALID_COLOR',['../classpuzzle_1_1_spin_marble.html#ad4aee068af0b7bb2feb3d8744c68c1bd',1,'puzzle::SpinMarble']]],
+  ['invalid_5fid_288',['INVALID_ID',['../classpuzzle_1_1_spin_marble.html#a7965cd9b24432a0bff0a16a1a5d28ec4',1,'puzzle::SpinMarble']]]
 ];

@@ -64,7 +64,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">SpinPuzzleWidget Class Reference</div>  </div>
 </div><!--header-->
@@ -83,8 +84,8 @@ Inheritance diagram for SpinPuzzleWidget:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae49b8bae5160b172d69fe3a3548b6194"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#ae49b8bae5160b172d69fe3a3548b6194">SpinPuzzleWidget</a> (uint32_t length, QWidget *parent=nullptr)</td></tr>
-<tr class="separator:ae49b8bae5160b172d69fe3a3548b6194"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aababaf19d8b276edfc4e10517606bb8d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#aababaf19d8b276edfc4e10517606bb8d">SpinPuzzleWidget</a> (int win_width, int win_heigth, bool m_allow_play=true, QWidget *parent=nullptr)</td></tr>
+<tr class="separator:aababaf19d8b276edfc4e10517606bb8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77ac0d084baac3df88bd1fd8c8e010d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#a77ac0d084baac3df88bd1fd8c8e010d5">paintEvent</a> (QPaintEvent *ev) override</td></tr>
 <tr class="separator:a77ac0d084baac3df88bd1fd8c8e010d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11353a4aefa667d9dbae0bb24614212b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#a11353a4aefa667d9dbae0bb24614212b">mouseMoveEvent</a> (QMouseEvent *ev) override</td></tr>
@@ -93,6 +94,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af975b5301738a0bb981b7703d0d0aa06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae603aac413c28b6bc53563b53835dc88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#ae603aac413c28b6bc53563b53835dc88">keyPressEvent</a> (QKeyEvent *e) override</td></tr>
 <tr class="separator:ae603aac413c28b6bc53563b53835dc88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c315a5067ce03d786b4c06dcd526a90"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#a8c315a5067ce03d786b4c06dcd526a90">resizeEvent</a> (QResizeEvent *e) override</td></tr>
+<tr class="separator:a8c315a5067ce03d786b4c06dcd526a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a9bbcc067c187fa468aef09c6c453fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#a5a9bbcc067c187fa468aef09c6c453fc">closeEvent</a> (QCloseEvent *event) override</td></tr>
+<tr class="separator:a5a9bbcc067c187fa468aef09c6c453fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a3674f9627d3f77694e4237190017c44d"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spin_puzzle_widget.html#a3674f9627d3f77694e4237190017c44d">SpinPuzzleHistoryWidget</a></td></tr>
+<tr class="separator:a3674f9627d3f77694e4237190017c44d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to display the SpinPuzzle Game. </p>
@@ -116,8 +126,8 @@ Public Member Functions</h2></td></tr>
 </li>
 </ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae49b8bae5160b172d69fe3a3548b6194"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae49b8bae5160b172d69fe3a3548b6194">&#9670;&nbsp;</a></span>SpinPuzzleWidget()</h2>
+<a id="aababaf19d8b276edfc4e10517606bb8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aababaf19d8b276edfc4e10517606bb8d">&#9670;&nbsp;</a></span>SpinPuzzleWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -125,8 +135,20 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">SpinPuzzleWidget::SpinPuzzleWidget </td>
           <td>(</td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>length</em>, </td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>win_width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>win_heigth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>m_allow_play</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -145,6 +167,32 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a5a9bbcc067c187fa468aef09c6c453fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a9bbcc067c187fa468aef09c6c453fc">&#9670;&nbsp;</a></span>closeEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SpinPuzzleWidget::closeEvent </td>
+          <td>(</td>
+          <td class="paramtype">QCloseEvent *&#160;</td>
+          <td class="paramname"><em>event</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae603aac413c28b6bc53563b53835dc88"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae603aac413c28b6bc53563b53835dc88">&#9670;&nbsp;</a></span>keyPressEvent()</h2>
 
@@ -243,6 +291,55 @@ Public Member Functions</h2></td></tr>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8c315a5067ce03d786b4c06dcd526a90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c315a5067ce03d786b4c06dcd526a90">&#9670;&nbsp;</a></span>resizeEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SpinPuzzleWidget::resizeEvent </td>
+          <td>(</td>
+          <td class="paramtype">QResizeEvent *&#160;</td>
+          <td class="paramname"><em>e</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="a3674f9627d3f77694e4237190017c44d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3674f9627d3f77694e4237190017c44d">&#9670;&nbsp;</a></span>SpinPuzzleHistoryWidget</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="class_spin_puzzle_history_widget.html">SpinPuzzleHistoryWidget</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

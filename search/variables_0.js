@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['black_223',['black',['../namespace_qt.html#a1e73f5bc63f2150776b7b7e648ebd779',1,'Qt']]]
+  ['black_274',['black',['../namespacepuzzle.html#a294ea24cbd3a4f930c385c8af612db20',1,'puzzle']]],
+  ['blue_275',['blue',['../namespacepuzzle.html#a65a5ccc3c048f19fdfafb6fb4bcfbb35',1,'puzzle']]]
 ];

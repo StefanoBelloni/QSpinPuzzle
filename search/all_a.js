@@ -1,9 +1,8 @@
 var searchData=
 [
-  ['main_50',['main',['../main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
-  ['main_2ecpp_51',['main.cpp',['../main_8cpp.html',1,'']]],
-  ['marbles_52',['marbles',['../classpuzzle_1_1_spin_puzzle_side.html#ae0096d22ad06bce95631a507ce1f5e13',1,'puzzle::SpinPuzzleSide']]],
-  ['matrixoperation_53',['MatrixOperation',['../classpuzzle_1_1_matrix_operation.html',1,'puzzle']]],
-  ['mousemoveevent_54',['mouseMoveEvent',['../class_spin_puzzle_widget.html#a11353a4aefa667d9dbae0bb24614212b',1,'SpinPuzzleWidget']]],
-  ['mousepressevent_55',['mousePressEvent',['../class_spin_puzzle_widget.html#af975b5301738a0bb981b7703d0d0aa06',1,'SpinPuzzleWidget']]]
+  ['leaf_70',['LEAF',['../namespacepuzzle.html#a1caafedb40c4cafa587c246b8d53f449',1,'puzzle']]],
+  ['leaf_5frotation_71',['LEAF_ROTATION',['../namespacepuzzle.html#a1142cf19bfe1a55047d25762e8e8ca67ab4e3473d4033e21b11ecb596a0c220d5',1,'puzzle']]],
+  ['leaf_5fspinning_72',['LEAF_SPINNING',['../namespacepuzzle.html#a1142cf19bfe1a55047d25762e8e8ca67aa172c9a7cc4d4324f691194c9fb3295f',1,'puzzle']]],
+  ['lightgray_73',['lightGray',['../namespacepuzzle.html#a3a6bce57a5d921ef7ee7a891bf842ed3',1,'puzzle']]],
+  ['load_74',['load',['../classpuzzle_1_1_spin_marble.html#abaf8b59684d892794bdbfa7fc77c746f',1,'puzzle::SpinMarble::load()'],['../classpuzzle_1_1_spin_puzzle_game.html#a09d378d79770ed406a4c7a7b2b916e4e',1,'puzzle::SpinPuzzleGame::load(Buffer &amp;buffer)'],['../classpuzzle_1_1_spin_puzzle_game.html#ae8a3ae8975a1f09593080d66a1377cfa',1,'puzzle::SpinPuzzleGame::load(std::FILE *file)'],['../classpuzzle_1_1_spin_puzzle_side_1_1_status.html#a36b28b210c4aa75d605597df48041eda',1,'puzzle::SpinPuzzleSide::Status::load()'],['../classpuzzle_1_1_spin_puzzle_side.html#a94e9ce445a16939059a817a04a8e7139',1,'puzzle::SpinPuzzleSide::load()']]]
 ];

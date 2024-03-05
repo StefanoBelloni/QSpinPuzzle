@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['spin_20puzzle_258',['SPIN PUZZLE',['../index.html',1,'']]]
+  ['spinpuzzle_335',['SpinPuzzle',['../index.html',1,'']]]
 ];

@@ -77,21 +77,26 @@ $(function() {
 <div class="textblock"><code>#include &quot;<a class="el" href="spin__puzzle__widget_8h_source.html">spin_puzzle_widget.h</a>&quot;</code><br />
 <code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &lt;QBrush&gt;</code><br />
+<code>#include &lt;QDir&gt;</code><br />
 <code>#include &lt;QGridLayout&gt;</code><br />
+<code>#include &lt;QMessageBox&gt;</code><br />
 <code>#include &lt;QMouseEvent&gt;</code><br />
 <code>#include &lt;QPainter&gt;</code><br />
 <code>#include &lt;QPen&gt;</code><br />
-<code>#include &lt;QPushButton&gt;</code><br />
+<code>#include &lt;QRadialGradient&gt;</code><br />
+<code>#include &lt;QStandardPaths&gt;</code><br />
+<code>#include &lt;QStyleOption&gt;</code><br />
+<code>#include &lt;QTimer&gt;</code><br />
 <code>#include &lt;QtMath&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;sstream&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a6cbdc8a4b1cfab4db2f6ac32138c59a7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spin__puzzle__widget_8cpp.html#a6cbdc8a4b1cfab4db2f6ac32138c59a7">DEBUG_EVENT</a>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:a6cbdc8a4b1cfab4db2f6ac32138c59a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e13114e1763f4d575d2f50fb8be724a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spin__puzzle__widget_8cpp.html#a7e13114e1763f4d575d2f50fb8be724a">DEBUG_MARBLES</a>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:a7e13114e1763f4d575d2f50fb8be724a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade726c6826896bebac41cc71e8fbe05f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spin__puzzle__widget_8cpp.html#ade726c6826896bebac41cc71e8fbe05f">DEBUG_CONSISTENCY</a>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:ade726c6826896bebac41cc71e8fbe05f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58eb4cab6e2fb1bf465d2ce6c1f1207d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spin__puzzle__widget_8cpp.html#a58eb4cab6e2fb1bf465d2ce6c1f1207d">HIDDEN_BUTTON</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a58eb4cab6e2fb1bf465d2ce6c1f1207d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -104,36 +109,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a4761435ab54306df78fcba4fd156e3fd"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a4761435ab54306df78fcba4fd156e3fd"><td class="memTemplItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="spin__puzzle__widget_8cpp.html#a4761435ab54306df78fcba4fd156e3fd">signum</a> (T x)</td></tr>
 <tr class="separator:a4761435ab54306df78fcba4fd156e3fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab84a0bcf35fd0964ca5883459c78031f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spin__puzzle__widget_8cpp.html#ab84a0bcf35fd0964ca5883459c78031f">create_dir</a> ()</td></tr>
+<tr class="separator:ab84a0bcf35fd0964ca5883459c78031f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="ade726c6826896bebac41cc71e8fbe05f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade726c6826896bebac41cc71e8fbe05f">&#9670;&nbsp;</a></span>DEBUG_CONSISTENCY</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DEBUG_CONSISTENCY&#160;&#160;&#160;0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6cbdc8a4b1cfab4db2f6ac32138c59a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cbdc8a4b1cfab4db2f6ac32138c59a7">&#9670;&nbsp;</a></span>DEBUG_EVENT</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DEBUG_EVENT&#160;&#160;&#160;0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a7e13114e1763f4d575d2f50fb8be724a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7e13114e1763f4d575d2f50fb8be724a">&#9670;&nbsp;</a></span>DEBUG_MARBLES</h2>
 
@@ -148,7 +127,38 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a58eb4cab6e2fb1bf465d2ce6c1f1207d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58eb4cab6e2fb1bf465d2ce6c1f1207d">&#9670;&nbsp;</a></span>HIDDEN_BUTTON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HIDDEN_BUTTON&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ab84a0bcf35fd0964ca5883459c78031f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab84a0bcf35fd0964ca5883459c78031f">&#9670;&nbsp;</a></span>create_dir()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void create_dir </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4761435ab54306df78fcba4fd156e3fd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4761435ab54306df78fcba4fd156e3fd">&#9670;&nbsp;</a></span>signum() <span class="overload">[1/3]</span></h2>
 
