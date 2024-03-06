@@ -20,20 +20,6 @@
 #define DEBUG_MARBLES 0
 #define HIDDEN_BUTTON 1
 
-template <typename T>
-inline constexpr int signum(T x, std::false_type is_signed) {
-  return T(0) < x;
-}
-
-template <typename T>
-inline constexpr int signum(T x, std::true_type is_signed) {
-  return (T(0) < x) - (x < T(0));
-}
-
-template <typename T> inline constexpr int signum(T x) {
-  return signum(x, std::is_signed<T>());
-}
-
 SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
                                    bool save_files, QWidget *parent)
     : QWidget(parent), m_allow_play(save_files) {
@@ -900,7 +886,7 @@ void SpinPuzzleWidget::create_polygon(QPolygon &polygon) {
 
 /*
    Solve with wolfwamalpha:
-    4*R^2sin(pi/5) = (a - c + (cos(11pi/30) - cos(13pi/10))^2 + (a - c +
+    4*R^2sin^2(pi/5) = (a - c + (cos(11pi/30) - cos(13pi/10))^2 + (a - c +
   (sin(11pi/30) - sin(13pi/10))^2 with origin (0,0) bottom left a = 1/4, b =
   1/4;    -> center left c = 1/2, d = sqrt(3)/2 + 1/4 -> center
 */
@@ -1009,12 +995,9 @@ bool SpinPuzzleWidget::mouse_event_inside_internal_circle(QPoint pos) {
     angle_old = fmod(angle_old + M_PI, 2 * M_PI);
   }
 
-  // shift += (angle_new - angle_old) * internalRadius / 2;
-  double delta_alpha = signum(angle_new - angle_old) * 360.0 * get_speed();
+  double delta_alpha = get_scaled_angle(angle_new, angle_old);
   m_lastPositionMause = pos;
   m_game.rotate_internal_disk(delta_alpha);
-  // check if we move from rotating marbles in outer circles to moving internal
-  // circle update the marbles sequence:
   return true;
 }
 
@@ -1037,7 +1020,7 @@ bool SpinPuzzleWidget::mouse_event_inside_leaf(QPoint pos, QPoint center,
     angle_old = fmod(angle_old + M_PI, 2 * M_PI);
   }
 
-  double delta_angle = signum(angle_new - angle_old) * 360.0 * get_speed();
+  const double delta_angle = get_scaled_angle(angle_new, angle_old);
 
   auto &side = m_game.get_side(m_game.get_active_side());
   side.rotate_marbles(leaf, delta_angle);
@@ -1046,7 +1029,9 @@ bool SpinPuzzleWidget::mouse_event_inside_leaf(QPoint pos, QPoint center,
   return true;
 }
 
-double SpinPuzzleWidget::get_speed() { return 1.5 / this->m_length; }
+double SpinPuzzleWidget::get_scaled_angle(double a1, double a2) {
+  return (a1 - a2) * 11.0 * M_PI;
+}
 
 bool SpinPuzzleWidget::is_mause_on_leaf_marbles(QPoint pos, QPoint center) {
   const double internalRadius = get_radius_internal();

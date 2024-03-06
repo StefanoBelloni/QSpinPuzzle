@@ -113,7 +113,7 @@ private:
 
   bool can_rotate_internal();
   bool is_mause_on_leaf_marbles(QPoint pos, QPoint center);
-  double get_speed();
+  double get_scaled_angle(double a1, double a2);
   QColor toQtColor(puzzle::Color value);
   QColor toMarbleColor(puzzle::Color value);
 
