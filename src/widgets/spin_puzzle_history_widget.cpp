@@ -157,8 +157,8 @@ SpinPuzzleHistoryWidget::get_puzzle(int time,
       return;
     }
     if (QMessageBox(QMessageBox::Question, "info",
-                    "Are you sure to delete this puzzle?", 
-                    QMessageBox::Ok|QMessageBox::Cancel)
+                    "Are you sure to delete this puzzle?",
+                    QMessageBox::Ok | QMessageBox::Cancel)
             .exec() != QMessageBox::Ok) {
       return;
     }

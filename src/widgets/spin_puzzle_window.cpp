@@ -14,7 +14,7 @@ SpinPuzzleWindow::SpinPuzzleWindow(QWidget *parent) : QMainWindow(parent) {
 #else
       screenGeometry.width() / 2, screenGeometry.height() / 2,
 #endif
-      this);
+      true, this);
   this->setCentralWidget(m_spinPuzzleWidget);
   m_spinPuzzleWidget->setFocus();
 }

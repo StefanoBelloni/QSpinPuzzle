@@ -161,7 +161,6 @@ public:
     //!< set the local shift for the given leaf
     double set_shift_for_leaf(LEAF leaf, double angle) {
       uint8_t n = static_cast<uint8_t>(leaf);
-      const double alpha = get_shift_of_leaf(leaf);
       m_shifts_leaves[n] = std::fmod(angle + 360.0, 360.0);
       return m_shifts_leaves[n];
     }
@@ -698,7 +697,7 @@ private:
   void reorder_marbles_after_border_reset();
 
   //!< rotate the marbles around the outer ring
-  bool rotate_border(LEAF leaf, double alpha) {
+  bool rotate_border(LEAF /*leaf*/, double alpha) {
     m_status.update_shift_for_leaf(LEAF::NORTH, alpha);
     m_status.update_shift_for_leaf(LEAF::EAST, alpha);
     m_status.update_shift_for_leaf(LEAF::WEST, alpha);
@@ -773,7 +772,6 @@ bool SpinPuzzleSide<N, M>::rotate_marbles(LEAF leaf, double angle) {
 
 template <std::size_t N, std::size_t M>
 void SpinPuzzleSide<N, M>::update_rotation_status(LEAF leaf) {
-  uint8_t n = static_cast<uint8_t>(leaf);
   double alpha = std::fmod(
       std::fmod(m_status.get_shift_of_leaf(leaf) + 360.0, 360.0), DTHETA);
   double dtheta = DTHETA;

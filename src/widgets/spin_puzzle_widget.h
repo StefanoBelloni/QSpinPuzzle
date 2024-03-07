@@ -59,20 +59,21 @@ private:
 
   void next_section(QPainter &painter, int angle = 120) const;
 
+  void paint_background();
+  void paint_status();
+  void paint_marbles();
+  void paint_timer();
+  void paint_game();
+
   void paint_internal_circular_guide(QPainter &painter, QColor color) const;
-  void paint_marbles(QPainter &painter);
   void do_paint_marbles(QPainter &painter);
   void do_paint_marbles_on_border(QPainter &painter);
 
-  void paint_border();
-  void paint_status();
   void paint_marbles_on_leaf(QPainter &painter, puzzle::LEAF leaf);
   void paint_marbles_on_internal_circle(QPainter &painter, puzzle::LEAF leaf);
   void paint_marble(double shift_local, QPainter &painter,
                     puzzle::SpinPuzzleSide<>::iterator it, const QPoint center,
                     size_t n, const int r);
-  void paint_timer();
-  void paint_game();
   void paint_congratulation(QPainter &painter);
 
   bool mouse_event_inside_internal_circle(QPoint position);

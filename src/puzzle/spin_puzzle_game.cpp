@@ -152,24 +152,25 @@ bool SpinPuzzleGame::is_game_solved() {
 }
 
 bool SpinPuzzleGame::check_consistency_side(SIDE side, bool verbose) {
+  using namespace puzzle;
   if (verbose) {
     std::cout << ((side == SIDE::BACK) ? "BACK" : "FRONT") << "\n";
   }
   auto &puzzle = m_sides[static_cast<int8_t>(side)];
   int errors = 0;
-  for (int i = 0; i < puzzle::SpinPuzzleSide<>::N_MARBLES * 2; ++i) {
+  for (size_t i = 0; i < SpinPuzzleSide<>::N_MARBLES * 2; ++i) {
     int count = 0;
-    auto it = puzzle.begin(puzzle::LEAF::TREFOIL);
-    for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::N_MARBLES; ++n, ++it) {
+    auto it = puzzle.begin(LEAF::TREFOIL);
+    for (size_t n = 0; n < SpinPuzzleSide<>::N_MARBLES; ++n, ++it) {
       if (it->id() == it->INVALID_ID || it->id() < 0 ||
-          it->id() > puzzle::SpinPuzzleSide<>::N_MARBLES * 2) {
+          it->id() > static_cast<int32_t>(SpinPuzzleSide<>::N_MARBLES * 2)) {
         if (verbose) {
           std::cout << "ERROR at it->id() " << it->id() << "\n";
           return false;
         }
         ++errors;
       }
-      if (it->id() == i) {
+      if (it->id() == static_cast<int32_t>(i)) {
         ++count;
       }
     }
@@ -270,8 +271,8 @@ std::array<SpinMarble, 30> SpinPuzzleGame::createBackMarbles() {
 
 void SpinPuzzleGame::reset() {
   m_active_side = SIDE::FRONT;
-  m_sides[0] = SpinPuzzleSide(std::move(createFrontMarbles()));
-  m_sides[1] = SpinPuzzleSide(std::move(createBackMarbles()));
+  m_sides[0] = SpinPuzzleSide(createFrontMarbles());
+  m_sides[1] = SpinPuzzleSide(createBackMarbles());
 }
 
 bool SpinPuzzleGame::process_key(int key, double fraction_angle) {
