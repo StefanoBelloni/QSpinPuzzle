@@ -13,6 +13,8 @@
 #include <QStyleOption>
 #include <QTimer>
 #include <QtMath>
+#include <QInputDialog>
+#include <QLineEdit>
 
 #include <fstream>
 #include <sstream>
@@ -61,7 +63,7 @@ void SpinPuzzleWidget::create_play_buttons() {
   m_start_btn = new QPushButton("START", this);
   m_load_btn = new QPushButton("LOAD", this);
   m_save_btn = new QPushButton("SAVE", this);
-  m_load_records_btn = new QPushButton("PUZZLE RECORDS", this);
+  // m_load_records_btn = new QPushButton("PUZZLE RECORDS", this);
 }
 
 void SpinPuzzleWidget::connect_play_buttons() {
@@ -88,7 +90,7 @@ void SpinPuzzleWidget::connect_play_buttons() {
   connect(m_load_btn, &QPushButton::released, this, [this] {
     m_paint_congratulations = false;
     stop_spinning_winning();
-    load();
+    load_latest_game();
     update();
   });
 
@@ -104,7 +106,7 @@ void SpinPuzzleWidget::connect_play_buttons() {
     }
   });
 
-  connect(m_load_records_btn, &QPushButton::released, this, &SpinPuzzleWidget::exec_puzzle_records_dialog);
+  // connect(m_load_records_btn, &QPushButton::released, this, &SpinPuzzleWidget::exec_puzzle_records_dialog);
 }
 
 void SpinPuzzleWidget::exec_puzzle_records_dialog() {
@@ -173,6 +175,24 @@ bool SpinPuzzleWidget::save_progress() {
     return true;
   }
   return false;
+}
+
+bool SpinPuzzleWidget::quit()
+{
+  if (m_elapsed_time > 0 && !m_solved) {
+    int save =
+        QMessageBox(QMessageBox::Question, "save?", "Do you want to save your progress?",
+                    QMessageBox::Ok | QMessageBox::Cancel)
+            .exec();
+    if (save == QMessageBox::Ok) {
+      save_progress();
+    }
+  }
+  int do_quit =
+      QMessageBox(QMessageBox::Question, "quit?", "Do you want to quit the app?",
+                  QMessageBox::Ok | QMessageBox::Cancel)
+          .exec();
+  return do_quit == QMessageBox::Ok;
 }
 
 void SpinPuzzleWidget::store_puzzle_begin() {
@@ -325,7 +345,7 @@ void SpinPuzzleWidget::load(int index, puzzle::SpinPuzzleGame &game) {
 
 void SpinPuzzleWidget::load(int index) { load(index, m_game); }
 
-void SpinPuzzleWidget::load() {
+void SpinPuzzleWidget::load_latest_game() {
 
   m_solved = false;
   int do_load = QMessageBox::Cancel;
@@ -360,6 +380,42 @@ void SpinPuzzleWidget::load() {
     f.close();
   }
   m_timer->start(1000);
+}
+
+bool SpinPuzzleWidget::import_game() {
+  bool ok;
+  QString text = QInputDialog::getText(this, tr("import"), tr("game:"),
+                                       QLineEdit::Normal, "", &ok);
+  if (ok && !text.isEmpty()) {
+    std::stringstream s;
+    s << text.toStdString();
+    std::string prefix;
+    s >> prefix;
+    bool error = false;
+    if (prefix != "spinpuzzlegame") {
+      error = true;
+    }
+    if (error) {
+      QMessageBox(QMessageBox::Warning, "error", "Not a valid game",
+                  QMessageBox::Ok)
+          .exec();
+      return false;
+    }
+    int time;
+    s >> time;
+    puzzle::SpinPuzzleGame game;
+    game.load(s);
+    bool inserted = store_puzzle_record(time, game);
+    if (!inserted) {
+      QMessageBox(QMessageBox::Information, "info", "Game already present",
+                  QMessageBox::Ok)
+          .exec();
+      return false;
+    }
+    start_with_game(game);
+    return true;
+  }
+  return false;
 }
 
 void SpinPuzzleWidget::do_spin_north() {
@@ -422,7 +478,7 @@ void SpinPuzzleWidget::paint_status() {
   }
 
   auto s = get_length_status_square();
-  painter_status.translate(0, s);
+  // painter_status.translate(0, s);
   painter_status.drawRect(0, s, s - 1, s - 1);
 
   painter_status.setBrush(
@@ -529,13 +585,13 @@ void SpinPuzzleWidget::set_size(int win_width, int win_height) {
     m_load_btn->setGeometry(QRect(2 * w, m_win_height - h, w, h));
     m_save_btn->setGeometry(QRect(3 * w, m_win_height - h, w, h));
 
-    m_load_records_btn->setGeometry(QRect(
-        0, 0, (8.0 * 10.0 - 2.0) / 10.0 * L / 24.0, 17.0 / 10.0 * L / 24.0));
-    QPalette pal = m_load_records_btn->palette();
-    pal.setColor(QPalette::Button, QColor(Qt::gray));
-    m_load_records_btn->setAutoFillBackground(true);
-    m_load_records_btn->setPalette(pal);
-    m_load_records_btn->update();
+    // m_load_records_btn->setGeometry(QRect(
+    //    0, 0, (8.0 * 10.0 - 2.0) / 10.0 * L / 24.0, 17.0 / 10.0 * L / 24.0));
+    // QPalette pal = m_load_records_btn->palette();
+    // pal.setColor(QPalette::Button, QColor(Qt::gray));
+    // m_load_records_btn->setAutoFillBackground(true);
+    // m_load_records_btn->setPalette(pal);
+    // m_load_records_btn->update();
   }
 }
 

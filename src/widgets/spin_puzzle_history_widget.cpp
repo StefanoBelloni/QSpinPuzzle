@@ -61,32 +61,7 @@ void SpinPuzzleHistoryWidget::import_game() {
   bool ok;
   QString text = QInputDialog::getText(this, tr("import"), tr("game:"),
                                        QLineEdit::Normal, "", &ok);
-  if (ok && !text.isEmpty()) {
-    std::stringstream s;
-    s << text.toStdString();
-    std::string prefix;
-    s >> prefix;
-    bool error = false;
-    if (prefix != "spinpuzzlegame") {
-      error = true;
-    }
-    if (error) {
-      QMessageBox(QMessageBox::Warning, "error", "Not a valid game",
-                  QMessageBox::Ok)
-          .exec();
-    }
-    int time;
-    s >> time;
-    puzzle::SpinPuzzleGame game;
-    game.load(s);
-    bool inserted = m_parent->store_puzzle_record(time, game);
-    if (!inserted) {
-      QMessageBox(QMessageBox::Information, "info", "Game already present",
-                  QMessageBox::Ok)
-          .exec();
-      return;
-    }
-    m_parent->start_with_game(game);
+  if (m_parent->import_game()) {
     m_parent->delete_history_popup();
   }
 }

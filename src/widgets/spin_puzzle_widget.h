@@ -51,6 +51,14 @@ public:
   void closeEvent(QCloseEvent *event) override;
 
   void exec_puzzle_records_dialog();
+  void reset_file_app();
+  bool import_game();
+
+  void start_game();
+  void reset();
+  void load_latest_game();
+  bool save_progress();
+  bool quit();
 
 private:
   void set_size(int win_width, int win_height);
@@ -92,20 +100,15 @@ private:
 
   void delete_history_popup();
   void stop_spinning_winning();
-  void reset_file_app();
   void set_game(int time, const puzzle::SpinPuzzleGame &game);
   void start_timer();
   void set_elapsed_time(int t);
   puzzle::SpinPuzzleGame &get_game();
 
-  void start_game();
   void start_with_game(const puzzle::SpinPuzzleGame &game);
-  void reset();
   void reset_leaf_colors();
-  void load();
   void load(int index);
   void load(int index, puzzle::SpinPuzzleGame &game);
-  bool save_progress();
   void store_puzzle_begin();
   bool store_puzzle_record();
   bool store_puzzle_record(int elapsed_time, puzzle::SpinPuzzleGame game);
@@ -150,7 +153,7 @@ private:
 
   QPushButton *m_load_btn = nullptr;
   QPushButton *m_save_btn = nullptr;
-  QPushButton *m_load_records_btn = nullptr;
+  // QPushButton *m_load_records_btn = nullptr;
 
   // maybe use a shared_pointer ...
   SpinPuzzleHistoryWidget *m_history_widget = nullptr;
