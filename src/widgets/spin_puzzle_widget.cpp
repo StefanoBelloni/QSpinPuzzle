@@ -104,7 +104,10 @@ void SpinPuzzleWidget::connect_play_buttons() {
     }
   });
 
-  connect(m_load_records_btn, &QPushButton::released, this, [this] {
+  connect(m_load_records_btn, &QPushButton::released, this, &SpinPuzzleWidget::exec_puzzle_records_dialog);
+}
+
+void SpinPuzzleWidget::exec_puzzle_records_dialog() {
     std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
     load_records(games);
     /*
@@ -120,7 +123,7 @@ void SpinPuzzleWidget::connect_play_buttons() {
     m_history_widget->setFixedSize(m_length, m_length);
     m_history_widget->show();
     m_history_widget->setVisible(true);
-  });
+
 }
 
 double SpinPuzzleWidget::get_height_button_bottom() const {
@@ -653,7 +656,6 @@ void SpinPuzzleWidget::paint_game() {
   painter.setBrush(originalBrush);
 
   painter.restore();
-  painter.save();
   // NORTH
   next_section(painter, game_side.get_phase_shift_internal_disk());
   painter.setBrush(Qt::darkBlue);
@@ -665,15 +667,12 @@ void SpinPuzzleWidget::paint_game() {
   next_section(painter);
   paint_internal_circular_guide(painter, Qt::darkBlue);
   // ====================================================================== //
-  painter.restore();
-  // ====================================================================== //
 }
 
 void SpinPuzzleWidget::paint_marbles() {
   QPainter painter(this);
   painter.translate(QPoint(m_tx, m_ty));
   next_section(painter, m_rotation_congratulation);
-  painter.save();
 
   painter.save();
   auto &game_side = m_game.get_side(m_game.get_active_side());

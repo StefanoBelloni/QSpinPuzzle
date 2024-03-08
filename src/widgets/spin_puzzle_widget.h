@@ -50,6 +50,8 @@ public:
   void resizeEvent(QResizeEvent *e) override;
   void closeEvent(QCloseEvent *event) override;
 
+  void exec_puzzle_records_dialog();
+
 private:
   void set_size(int win_width, int win_height);
   double get_radius_internal() const;
