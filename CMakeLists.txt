@@ -6,8 +6,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-option(USE_QT "Enable this if you want to use QT" no)
 # option(USE_QT "Enable this if you want to use QT" yes)
+option(USE_QT "Enable this if you want to use QT" no)
 
 if(NOT DEFINED ANDROID)
     add_subdirectory(extern/pybind11)
@@ -44,6 +44,7 @@ if (USE_QT)
         COMPONENTS Widgets LinguistTools
     )
     # set(CMAKE_INCLUDE_CURRENT_DIR YES)
+    set(CMAKE_AUTORCC ON)
 endif(USE_QT)
 
 # find_package (
@@ -52,17 +53,6 @@ endif(USE_QT)
 # )
 
 set(TS_FILES resources/QSpinPuzzle_en_IE.ts)
-
-set(PROJECT_SOURCES
-        # =========================== #
-        src/main.cpp
-        # =========================== #
-        src/widgets/spin_puzzle_window.cpp
-        src/widgets/spin_puzzle_window.h
-        # =========================== #
-        ${TS_FILES}
-        # =========================== #
-)
 
 # ============================================== #
 # LIBRARY FOR SPIN PUZZLE GAME
@@ -168,6 +158,20 @@ endif()
 # https://scythe-studio.com/en/blog/how-to-interface-qt-with-android-java-code-2023
 # ============================================================================ #
 if (USE_QT)
+    set(PROJECT_SOURCES
+        # =========================== #
+        src/main.cpp
+        # =========================== #
+        src/widgets/spin_puzzle_window.cpp
+        src/widgets/spin_puzzle_window.h
+        # =========================== #
+        ${TS_FILES}
+        # =========================== #
+    )
+    qt_add_resources(
+        PROJECT_SOURCES 
+        resources/images.qrc
+    )
     if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         qt_add_executable(QSpinPuzzle
             MANUAL_FINALIZATION
@@ -182,7 +186,13 @@ if (USE_QT)
             # =========================== #
             images/spin_puzzle.png
             images/QSpinPuzzle_Front.png
+            # resources/swap.png
+            # ${PROJECT_RESOURCES}
             # =========================== #
+            # android/AndroidManifest.xml
+            # MANUAL_FINALIZATION
+
+
         )
 
         target_include_directories(
@@ -201,6 +211,7 @@ if (USE_QT)
     # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
         qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+
     else()
         if(ANDROID)
             add_library(QSpinPuzzle SHARED

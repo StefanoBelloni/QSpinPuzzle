@@ -26,7 +26,7 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
                                    bool save_files, QWidget *parent)
     : QWidget(parent), m_allow_play(save_files) {
 
-  m_twist_side = new QPushButton("twist", this);
+  m_twist_side = new QPushButton(this);
   connect(m_twist_side, &QPushButton::released, this, [this] {
     this->m_game.swap_side();
     update();
@@ -56,9 +56,9 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
 }
 
 void SpinPuzzleWidget::create_play_buttons() {
-  m_spin_north = new QPushButton("SPIN", this);
-  m_spin_east = new QPushButton("SPIN", this);
-  m_spin_west = new QPushButton("SPIN", this);
+  m_spin_north = new QPushButton(this);
+  m_spin_east = new QPushButton(this);
+  m_spin_west = new QPushButton(this);
   m_reset_btn = new QPushButton("RESET", this);
   m_start_btn = new QPushButton("START", this);
   m_load_btn = new QPushButton("LOAD", this);
@@ -566,24 +566,40 @@ void SpinPuzzleWidget::set_size(int win_width, int win_height) {
   create_polygon(this->m_polygon);
   const int L = this->m_length;
 
-  // pb->setGeometry(QRect(0, 6 * L / 24, 5 * L / 24, L / 24));
+  QPixmap pixmap(":/images/swap_side.png");
+  QIcon ButtonIcon(pixmap);
+  m_twist_side->setIcon(ButtonIcon);
   m_twist_side->setGeometry(
       QRect(0 + m_tx, 5 * L / 24 + m_ty, 5 * L / 24, 2 * L / 24));
+  m_twist_side->setIconSize(QSize(5 * L / 24, 2 * L / 24));
 
   if (m_allow_play) {
-    m_spin_north->setGeometry(
-        QRect(L / 2 - 2 * L / 24 + m_tx, 0 + m_ty, 5 * L / 24, L / 24));
-    m_spin_east->setGeometry(
-        QRect(L - 3 * L / 24 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
-    m_spin_west->setGeometry(QRect(0 + m_tx, L / 2 + m_ty, 5 * L / 24, L / 24));
+    double s = 3 * L / 48;
+
+    auto pixmap = QPixmap(":/images/spin_leaf.png");
+    QIcon spinIcon(pixmap.scaled(s, s));
+
+    m_spin_north->setIcon(spinIcon);
+    m_spin_east->setIcon(spinIcon);
+    m_spin_west->setIcon(spinIcon);
+
+    m_spin_north->setIconSize(QSize(5 * L / 24, L / 24));
+    m_spin_east->setIconSize(QSize(5 * L / 24, L / 24));
+    m_spin_west->setIconSize(QSize(5 * L / 24, L / 24));
+
+    m_spin_north->setGeometry(QRect(L / 2 + m_tx,             0 + m_ty, s, s));
+    m_spin_east->setGeometry( QRect(L - s + m_tx, 2 * L / 3 + m_ty, s, s));
+    m_spin_west->setGeometry( QRect(0 + m_tx,         2 * L / 3 + m_ty, s, s));
 
     double h = get_height_button_bottom();
     double w = get_width_button_bottom();
 
-    m_start_btn->setGeometry(QRect(0 * w, m_win_height - h, w, h));
-    m_reset_btn->setGeometry(QRect(1 * w, m_win_height - h, w, h));
-    m_load_btn->setGeometry(QRect(2 * w, m_win_height - h, w, h));
-    m_save_btn->setGeometry(QRect(3 * w, m_win_height - h, w, h));
+    double t = (m_win_width - 4 * w) / 2;   // center buttons
+
+    m_start_btn->setGeometry(QRect(t + 0 * w, m_win_height - h, w, h));
+    m_reset_btn->setGeometry(QRect(t + 1 * w, m_win_height - h, w, h));
+    m_load_btn->setGeometry(QRect(t + 2 * w, m_win_height - h, w, h));
+    m_save_btn->setGeometry(QRect(t + 3 * w, m_win_height - h, w, h));
 
     // m_load_records_btn->setGeometry(QRect(
     //    0, 0, (8.0 * 10.0 - 2.0) / 10.0 * L / 24.0, 17.0 / 10.0 * L / 24.0));
