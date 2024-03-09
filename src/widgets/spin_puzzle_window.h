@@ -19,7 +19,6 @@ public:
   }
 
 private:
-
   void create_actions();
   void create_menus();
 

@@ -1,13 +1,13 @@
 #include "spin_puzzle_window.h"
 
+#include <QAction>
 #include <QGridLayout>
 #include <QGuiApplication>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QScreen>
-#include <QAction>
-#include <QMenuBar>
-#include <QMenu>
-#include <QMessageBox>
 
 SpinPuzzleWindow::SpinPuzzleWindow(QWidget *parent) : QMainWindow(parent) {
   QScreen *screen = QGuiApplication::primaryScreen();
@@ -29,29 +29,35 @@ SpinPuzzleWindow::SpinPuzzleWindow(QWidget *parent) : QMainWindow(parent) {
 SpinPuzzleWindow::~SpinPuzzleWindow() {}
 
 void SpinPuzzleWindow::create_actions() {
-    m_records_action = new QAction(tr("Records"), this);
-    m_import = new QAction(tr("Import Game"), this);
+  m_records_action = new QAction(tr("Records"), this);
+  m_import = new QAction(tr("Import Game"), this);
 
-    m_start_game = new QAction(tr("Start Game"), this);
-    m_reset_game = new QAction(tr("Reset Game"), this);
-    m_save_game = new QAction(tr("Save Game"), this);
-    m_load_game = new QAction(tr("Load Game"), this);
+  m_start_game = new QAction(tr("Start Game"), this);
+  m_reset_game = new QAction(tr("Reset Game"), this);
+  m_save_game = new QAction(tr("Save Progress"), this);
+  m_load_game = new QAction(tr("Load Latest Game"), this);
 
-    m_about = new QAction(tr("About"), this);
-    m_quit = new QAction(tr("Quit"), this);
+  m_about = new QAction(tr("About"), this);
+  m_quit = new QAction(tr("Quit"), this);
 
-    m_reset_application = new QAction(tr("Reset App"), this);
+  m_reset_application = new QAction(tr("Reset App"), this);
 
-    connect(m_records_action, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::exec_puzzle_records_dialog);
-    connect(m_import, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::import_game);
+  connect(m_records_action, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::exec_puzzle_records_dialog);
+  connect(m_import, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::import_game);
 
-    connect(m_start_game, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::start_game);
-    connect(m_reset_game, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::reset);
-    connect(m_save_game, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::save_progress);
-    connect(m_load_game, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::load_latest_game);
+  connect(m_start_game, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::start_game);
+  connect(m_reset_game, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::reset);
+  connect(m_save_game, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::save_progress);
+  connect(m_load_game, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::load_latest_game);
 
-    connect(m_about, &QAction::triggered, this, [this] {
-      QMessageBox::about(this, "QSpinPuzzle", R"(
+  connect(m_about, &QAction::triggered, this, [this] {
+    QMessageBox::about(this, "QSpinPuzzle", R"(
 QSpinPuzzle is a strategic solitaire game 
 played on a unique board where the objective 
 is to group a set of marbles according to 
@@ -79,30 +85,29 @@ in the 6 leaves, 3 for each side:
 
                 HAVE FUN !!! 
 )");
+  });
+  connect(m_quit, &QAction::triggered, this, [this] {
+    if (m_spinPuzzleWidget->quit()) {
+      close();
     }
-    );
-    connect(m_quit, &QAction::triggered, this, [this] {
-      if (m_spinPuzzleWidget->quit()) {
-            close();
-      }
-    });
+  });
 
-    connect(m_reset_application, &QAction::triggered, m_spinPuzzleWidget, &SpinPuzzleWidget::reset_file_app);
+  connect(m_reset_application, &QAction::triggered, m_spinPuzzleWidget,
+          &SpinPuzzleWidget::reset_file_app);
 }
 
-void SpinPuzzleWindow::create_menus()
-{
-    m_menu= menuBar()->addMenu(tr("Menu"));
-    m_menu->addAction(m_start_game);
-    m_menu->addAction(m_reset_game);
-    m_menu->addAction(m_save_game);
-    m_menu->addAction(m_load_game);
-    m_menu->addSeparator();
-    m_menu->addAction(m_records_action);
-    m_menu->addAction(m_import);
-    m_menu->addSeparator();
-    m_menu->addAction(m_about);
-    m_menu->addSeparator();
-    m_menu->addAction(m_quit);
-    // m_menu->addAction(m_reset_application);
+void SpinPuzzleWindow::create_menus() {
+  m_menu = menuBar()->addMenu(tr("Menu"));
+  m_menu->addAction(m_start_game);
+  m_menu->addAction(m_reset_game);
+  m_menu->addAction(m_save_game);
+  m_menu->addAction(m_load_game);
+  m_menu->addSeparator();
+  m_menu->addAction(m_records_action);
+  m_menu->addAction(m_import);
+  m_menu->addSeparator();
+  m_menu->addAction(m_about);
+  m_menu->addSeparator();
+  m_menu->addAction(m_quit);
+  // m_menu->addAction(m_reset_application);
 }

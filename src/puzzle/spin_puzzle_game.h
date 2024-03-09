@@ -37,6 +37,8 @@ public:
       std::array<SpinMarble, 30> front = SpinPuzzleGame::createFrontMarbles(),
       std::array<SpinMarble, 30> back = SpinPuzzleGame::createBackMarbles());
 
+  SpinPuzzleGame(const SpinPuzzleGame &game) = default;
+
   /**
    * @brief  reset the game configuration to the initial one
    *
@@ -200,6 +202,12 @@ public:
     std::fputs(s.str().c_str(), file);
     return file;
   }
+  std::string serialize(std::string &string) {
+    std::stringstream s;
+    serialize(s);
+    string = s.str();
+    return string;
+  }
 
   template <typename Buffer> Buffer &load(Buffer &buffer) {
     std::string version;
@@ -240,6 +248,13 @@ public:
     }
     load(s);
     return file;
+  }
+
+  std::string load(std::string &string) {
+    std::stringstream s;
+    s << string;
+    load(s);
+    return string;
   }
 
 private:

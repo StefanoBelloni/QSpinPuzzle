@@ -11,7 +11,10 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 
+#include "puzzle/spin_puzzle_cipher.h"
 #include "spin_puzzle_widget.h"
+
+#define DEBUG_CIPHER 0
 
 SpinPuzzleHistoryWidget::SpinPuzzleHistoryWidget(
     int win_width, int win_heigth, SpinPuzzleWidget *parent,
@@ -58,9 +61,6 @@ SpinPuzzleHistoryWidget::SpinPuzzleHistoryWidget(
 }
 
 void SpinPuzzleHistoryWidget::import_game() {
-  bool ok;
-  QString text = QInputDialog::getText(this, tr("import"), tr("game:"),
-                                       QLineEdit::Normal, "", &ok);
   if (m_parent->import_game()) {
     m_parent->delete_history_popup();
   }
@@ -118,8 +118,21 @@ SpinPuzzleHistoryWidget::get_puzzle(int time,
     std::stringstream s;
     auto &time_game = m_games[m_stackedWidget->currentIndex()];
     QClipboard *clipboard = QGuiApplication::clipboard();
-    s << "spinpuzzlegame " << time_game.first << " ";
-    time_game.second.serialize(s);
+    puzzle::Cipher::VERSION version = puzzle::Cipher::VERSION::v0;
+    puzzle::Cipher cipher(version);
+    std::string number = cipher.encrypt(std::to_string(time_game.first));
+    s << "spinpuzzlegame " << static_cast<int>(version) << " " << number << " ";
+    std::stringstream game_s;
+    time_game.second.serialize(game_s);
+    std::string g = game_s.str();
+#if DEBUG_CIPHER == 1
+    qDebug() << "DECRYPT: " << g << "\n";
+#endif
+    std::string out = cipher.encrypt(g);
+    s << out << "|";
+#if DEBUG_CIPHER == 1
+    qDebug() << "ENCRYPT: " << out << "\n";
+#endif
     clipboard->setText(QString(s.str().c_str()));
     auto m = QMessageBox(QMessageBox::Information, "copyed",
                          "game copied to clipboard", QMessageBox::Ok);

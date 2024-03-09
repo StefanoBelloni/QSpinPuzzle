@@ -173,6 +173,14 @@ problem when compiling, due to the limit of the maximum length of _paths_
 - [x] export game to clipboard
 - [x] import game (from clipboard)
 - [x] delete game from records
+- [x] use image for gae-button
+- [x] cipher (caeser) export to avoid to manipulate export
+- [ ] add settings
+    - [ ] difficult level
+    - [ ] difficult colors(?)
+    - [ ] autosave
+    - [ ] cipher
+- [ ] inform user if new solution is a record of the time is worse then previous
 - [ ] remove spin button and use mouse or improve them
 - [ ] save/load etc. port to python
 - [ ] processKey is not sincronized with swap leaf color by spin: fix it!

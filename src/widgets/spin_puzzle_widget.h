@@ -92,6 +92,7 @@ private:
   void do_spin_north();
   void do_spin_east();
   void do_spin_west();
+  void do_start_game(int shuffle_level);
 
   void connect_play_buttons();
   void create_play_buttons();
@@ -101,6 +102,7 @@ private:
   void delete_history_popup();
   void stop_spinning_winning();
   void set_game(int time, const puzzle::SpinPuzzleGame &game);
+  void set_game(const puzzle::SpinPuzzleGame &game);
   void start_timer();
   void set_elapsed_time(int t);
   puzzle::SpinPuzzleGame &get_game();

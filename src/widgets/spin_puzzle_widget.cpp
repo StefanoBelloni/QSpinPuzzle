@@ -4,6 +4,8 @@
 #include <QBrush>
 #include <QDir>
 #include <QGridLayout>
+#include <QInputDialog>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
@@ -13,13 +15,14 @@
 #include <QStyleOption>
 #include <QTimer>
 #include <QtMath>
-#include <QInputDialog>
-#include <QLineEdit>
 
 #include <fstream>
 #include <sstream>
 
+#include "puzzle/spin_puzzle_cipher.h"
+
 #define DEBUG_MARBLES 0
+#define DEBUG_CIPHER 0
 #define HIDDEN_BUTTON 1
 
 SpinPuzzleWidget::SpinPuzzleWidget(int win_width, int win_heigth,
@@ -61,7 +64,7 @@ void SpinPuzzleWidget::create_play_buttons() {
   m_spin_west = new QPushButton(this);
   m_reset_btn = new QPushButton("RESET", this);
   m_start_btn = new QPushButton("START", this);
-  m_load_btn = new QPushButton("LOAD", this);
+  m_load_btn = new QPushButton("LATEST", this);
   m_save_btn = new QPushButton("SAVE", this);
   // m_load_records_btn = new QPushButton("PUZZLE RECORDS", this);
 }
@@ -106,26 +109,26 @@ void SpinPuzzleWidget::connect_play_buttons() {
     }
   });
 
-  // connect(m_load_records_btn, &QPushButton::released, this, &SpinPuzzleWidget::exec_puzzle_records_dialog);
+  // connect(m_load_records_btn, &QPushButton::released, this,
+  // &SpinPuzzleWidget::exec_puzzle_records_dialog);
 }
 
 void SpinPuzzleWidget::exec_puzzle_records_dialog() {
-    std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
-    load_records(games);
-    /*
-    if (games.size() == 0) {
-      QMessageBox(QMessageBox::Warning, "records",
-                  "No record could be loaded.")
-          .exec();
-      return;
-    }
-    */
-    m_history_widget =
-        new SpinPuzzleHistoryWidget(m_length, m_length, this, games);
-    m_history_widget->setFixedSize(m_length, m_length);
-    m_history_widget->show();
-    m_history_widget->setVisible(true);
-
+  std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
+  load_records(games);
+  /*
+  if (games.size() == 0) {
+    QMessageBox(QMessageBox::Warning, "records",
+                "No record could be loaded.")
+        .exec();
+    return;
+  }
+  */
+  m_history_widget =
+      new SpinPuzzleHistoryWidget(m_length, m_length, this, games);
+  m_history_widget->setFixedSize(m_length, m_length);
+  m_history_widget->show();
+  m_history_widget->setVisible(true);
 }
 
 double SpinPuzzleWidget::get_height_button_bottom() const {
@@ -167,7 +170,7 @@ void SpinPuzzleWidget::reset_file_app() {
 
 bool SpinPuzzleWidget::save_progress() {
   auto file_name = get_current_puzzle_file();
-  std::ofstream f(get_current_puzzle_file(), std::ios::trunc);
+  std::ofstream f(file_name, std::ios::trunc);
   if (f.is_open()) {
     f << m_elapsed_time << " ";
     m_game.serialize(f);
@@ -177,21 +180,20 @@ bool SpinPuzzleWidget::save_progress() {
   return false;
 }
 
-bool SpinPuzzleWidget::quit()
-{
+bool SpinPuzzleWidget::quit() {
   if (m_elapsed_time > 0 && !m_solved) {
-    int save =
-        QMessageBox(QMessageBox::Question, "save?", "Do you want to save your progress?",
-                    QMessageBox::Ok | QMessageBox::Cancel)
-            .exec();
+    int save = QMessageBox(QMessageBox::Question, "save?",
+                           "Do you want to save your progress?",
+                           QMessageBox::Ok | QMessageBox::Cancel)
+                   .exec();
     if (save == QMessageBox::Ok) {
       save_progress();
     }
   }
-  int do_quit =
-      QMessageBox(QMessageBox::Question, "quit?", "Do you want to quit the app?",
-                  QMessageBox::Ok | QMessageBox::Cancel)
-          .exec();
+  int do_quit = QMessageBox(QMessageBox::Question, "quit?",
+                            "Do you want to quit the app?",
+                            QMessageBox::Ok | QMessageBox::Cancel)
+                    .exec();
   return do_quit == QMessageBox::Ok;
 }
 
@@ -350,11 +352,11 @@ void SpinPuzzleWidget::load_latest_game() {
   m_solved = false;
   int do_load = QMessageBox::Cancel;
   QMessageBox msgBox(QMessageBox::Question, "load",
-                     "Are you sure you what to load the puzzle?");
+                     "Are you sure you what to reload the puzzle?");
   QAbstractButton *pButtonLatest =
-      msgBox.addButton(tr("latest"), QMessageBox::YesRole);
+      msgBox.addButton(tr("latest progress"), QMessageBox::YesRole);
   QAbstractButton *pButtonBegin =
-      msgBox.addButton(tr("start"), QMessageBox::YesRole);
+      msgBox.addButton(tr("starting configuration"), QMessageBox::YesRole);
   msgBox.setInformativeText("You will lose yuor progress");
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -383,6 +385,14 @@ void SpinPuzzleWidget::load_latest_game() {
 }
 
 bool SpinPuzzleWidget::import_game() {
+  if (m_timer->isActive()) {
+    QMessageBox(
+        QMessageBox::Information, "info",
+        "A game is running: press first RESET before importing a new puzzle",
+        QMessageBox::Ok)
+        .exec();
+    return false;
+  }
   bool ok;
   QString text = QInputDialog::getText(this, tr("import"), tr("game:"),
                                        QLineEdit::Normal, "", &ok);
@@ -395,16 +405,42 @@ bool SpinPuzzleWidget::import_game() {
     if (prefix != "spinpuzzlegame") {
       error = true;
     }
+    int cipher_version;
+    if (!error) {
+      s >> cipher_version;
+      error = error || static_cast<puzzle::Cipher::VERSION>(cipher_version) >=
+                           puzzle::Cipher::VERSION::INVALID;
+    }
     if (error) {
       QMessageBox(QMessageBox::Warning, "error", "Not a valid game",
                   QMessageBox::Ok)
           .exec();
       return false;
     }
+    puzzle::Cipher::VERSION v = puzzle::Cipher::VERSION(cipher_version);
+    puzzle::Cipher cipher(v);
+    std::string time_str;
+    s >> time_str;
     int time;
-    s >> time;
+    try {
+      time = std::stoi(cipher.decrypt(time_str));
+    } catch (std::invalid_argument &ex) {
+      QMessageBox(QMessageBox::Warning, "error", "Not a valid game",
+                  QMessageBox::Ok)
+          .exec();
+      return false;
+    }
+    std::string game_str;
+    std::getline(s, game_str, '|');
+#if DEBUG_CIPHER == 1
+    qDebug() << "ENCRYPT: " << game_str << "\n";
+#endif
+    game_str = cipher.decrypt(game_str);
+#if DEBUG_CIPHER == 1
+    qDebug() << "DECRYPT TO LOAD: " << game_str << "\n";
+#endif
     puzzle::SpinPuzzleGame game;
-    game.load(s);
+    game.load(game_str);
     bool inserted = store_puzzle_record(time, game);
     if (!inserted) {
       QMessageBox(QMessageBox::Information, "info", "Game already present",
@@ -587,14 +623,14 @@ void SpinPuzzleWidget::set_size(int win_width, int win_height) {
     m_spin_east->setIconSize(QSize(5 * L / 24, L / 24));
     m_spin_west->setIconSize(QSize(5 * L / 24, L / 24));
 
-    m_spin_north->setGeometry(QRect(L / 2 + m_tx,             0 + m_ty, s, s));
-    m_spin_east->setGeometry( QRect(L - s + m_tx, 2 * L / 3 + m_ty, s, s));
-    m_spin_west->setGeometry( QRect(0 + m_tx,         2 * L / 3 + m_ty, s, s));
+    m_spin_north->setGeometry(QRect(L / 2 + m_tx, 0 + m_ty, s, s));
+    m_spin_east->setGeometry(QRect(L - s + m_tx, 2 * L / 3 + m_ty, s, s));
+    m_spin_west->setGeometry(QRect(0 + m_tx, 2 * L / 3 + m_ty, s, s));
 
     double h = get_height_button_bottom();
     double w = get_width_button_bottom();
 
-    double t = (m_win_width - 4 * w) / 2;   // center buttons
+    double t = (m_win_width - 4 * w) / 2; // center buttons
 
     m_start_btn->setGeometry(QRect(t + 0 * w, m_win_height - h, w, h));
     m_reset_btn->setGeometry(QRect(t + 1 * w, m_win_height - h, w, h));
@@ -1150,6 +1186,10 @@ void SpinPuzzleWidget::resizeEvent(QResizeEvent *e) {
   update();
 }
 
+void SpinPuzzleWidget::set_game(const puzzle::SpinPuzzleGame &game) {
+  set_game(m_elapsed_time, game);
+}
+
 void SpinPuzzleWidget::set_game(int time, const puzzle::SpinPuzzleGame &game) {
   m_elapsed_time = time;
   m_game = game;
@@ -1221,14 +1261,14 @@ void create_dir() {
 std::string SpinPuzzleWidget::get_current_puzzle_file() {
   auto path =
       QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto filename = QDir(path + "/current_pruzzle.txt");
+  auto filename = QDir(path + "/current_puzzle.txt");
   return filename.path().toStdString();
 }
 
 std::string SpinPuzzleWidget::get_puzzle_file() {
   auto path =
       QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto filename = QDir(path + "/pruzzle.txt");
+  auto filename = QDir(path + "/puzzle.txt");
   return filename.path().toStdString();
 }
 
@@ -1246,17 +1286,25 @@ void SpinPuzzleWidget::stop_spinning_winning() {
   }
 }
 
-void SpinPuzzleWidget::start_game() {
+void SpinPuzzleWidget::start_game() { do_start_game(1); }
+
+void SpinPuzzleWidget::do_start_game(int shuffle_level) {
   m_paint_congratulations = false;
   stop_spinning_winning();
   if (m_timer->isActive()) {
+    QMessageBox(QMessageBox::Information, "info",
+                "A game is running: press first RESET to start a new puzzle",
+                QMessageBox::Ok)
+        .exec();
     return;
   }
 
   m_elapsed_time = 0;
   m_solved = false;
   m_timer->start(1000);
-  m_game.shuffle();
+  if (shuffle_level > 0) {
+    m_game.shuffle();
+  }
   if (m_allow_play) {
     create_dir();
     store_puzzle_begin();
@@ -1268,6 +1316,6 @@ void SpinPuzzleWidget::start_game() {
 }
 
 void SpinPuzzleWidget::start_with_game(const puzzle::SpinPuzzleGame &game) {
-  set_game(0, game);
-  start_game();
+  set_game(game);
+  do_start_game(0);
 }

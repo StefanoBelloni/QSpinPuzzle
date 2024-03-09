@@ -68,6 +68,8 @@ add_library(spinpuzzle SHARED
     src/puzzle/spin_puzzle_definitions.cpp
     src/puzzle/spin_action_provider.cpp
     src/puzzle/spin_action_provider.h
+    src/puzzle/spin_puzzle_cipher.h
+    src/puzzle/spin_puzzle_cipher.cpp
 )
 
 # ============================================================================ #
