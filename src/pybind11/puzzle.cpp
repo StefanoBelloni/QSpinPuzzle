@@ -212,6 +212,25 @@ PYBIND11_MODULE(spinbind11_puzzle, m)
     // =================================================================== //
     .value("OK", puzzle::ROTATION::OK)
     .value("INVALID", puzzle::ROTATION::INVALID);
+  // =================================================================== //
+  py::enum_<puzzle::COMMANDS>(m, "COMMANDS")
+    // =================================================================== //
+    .value("NORTH_LEFT", puzzle::COMMANDS::NORTH_LEFT)
+    .value("NORTH_RIGHT", puzzle::COMMANDS::NORTH_RIGHT)
+    .value("NORTH_SPIN", puzzle::COMMANDS::NORTH_SPIN)
+    // ----------------------------------------------- //
+    .value("EAST_LEFT", puzzle::COMMANDS::EAST_LEFT)
+    .value("EAST_RIGHT", puzzle::COMMANDS::EAST_RIGHT)
+    .value("EAST_SPIN", puzzle::COMMANDS::EAST_SPIN)
+    // ----------------------------------------------- //
+    .value("WEST_LEFT", puzzle::COMMANDS::WEST_LEFT)
+    .value("WEST_RIGHT", puzzle::COMMANDS::WEST_RIGHT)
+    .value("WEST_SPIN", puzzle::COMMANDS::WEST_SPIN)
+    // ----------------------------------------------- //
+    .value("INTERNAL_LEFT", puzzle::COMMANDS::INTERNAL_LEFT)
+    .value("INTERNAL_RIGHT", puzzle::COMMANDS::INTERNAL_RIGHT)
+    // ----------------------------------------------- //
+    .value("SWAP_SIDE", puzzle::COMMANDS::SWAP_SIDE);
 
   // =================================================================== //
   // CONSTANTS

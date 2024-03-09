@@ -185,7 +185,7 @@ problem when compiling, due to the limit of the maximum length of _paths_
 - [ ] save/load etc. port to python
 - [ ] processKey is not sincronized with swap leaf color by spin: fix it!
       the workaround fails when shuffle is called.
-  [ ] add internal history of commands
+- [ ] add internal history of commands
 
 ### References
 

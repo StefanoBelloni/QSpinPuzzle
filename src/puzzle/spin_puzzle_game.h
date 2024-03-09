@@ -57,13 +57,15 @@ public:
    */
   bool process_key(int key, double fraction_angle);
 
+  bool process_command(puzzle::COMMANDS commands);
+
   /**
    * @brief  shuffle the marbles with a sequence of operations
    * @note
    * @param  seed: seed to be used
    * @param  commands: number of commands
    */
-  void shuffle(int seed = 0, int commands = 10000, bool check = false);
+  void shuffle(int seed = 0, int commands = 20000, bool check = false);
 
   /**
    * @brief  setter of the active side

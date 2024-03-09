@@ -341,6 +341,71 @@ SpinPuzzleGame::reset()
 }
 
 bool
+SpinPuzzleGame::process_command(puzzle::COMMANDS command)
+{
+  using namespace puzzle;
+  switch (command) {
+    // --------------------------------------------- //
+    case COMMANDS::NORTH_RIGHT:
+      process_key(Key_N, 1);
+      process_key(Key_Right, 1);
+      break;
+    case COMMANDS::NORTH_LEFT:
+      process_key(Key_N, 1);
+      process_key(Key_Left, 1);
+      break;
+    case COMMANDS::NORTH_SPIN:
+      process_key(Key_N, 1);
+      process_key(Key_PageDown, 1);
+      break;
+    // --------------------------------------------- //
+    case COMMANDS::EAST_RIGHT:
+      process_key(Key_E, 1);
+      process_key(Key_Right, 1);
+      break;
+    case COMMANDS::EAST_LEFT:
+      process_key(Key_E, 1);
+      process_key(Key_Left, 1);
+      break;
+    case COMMANDS::EAST_SPIN:
+      process_key(Key_E, 1);
+      process_key(Key_PageDown, 1);
+      break;
+    // --------------------------------------------- //
+    case COMMANDS::WEST_RIGHT:
+      process_key(Key_W, 1);
+      process_key(Key_Right, 1);
+      break;
+    case COMMANDS::WEST_LEFT:
+      process_key(Key_W, 1);
+      process_key(Key_Left, 1);
+      break;
+    case COMMANDS::WEST_SPIN:
+      process_key(Key_W, 1);
+      process_key(Key_PageDown, 1);
+      break;
+    // --------------------------------------------- //
+    case COMMANDS::INTERNAL_RIGHT:
+      process_key(Key_I, 1);
+      process_key(Key_Right, 0);
+      break;
+    case COMMANDS::INTERNAL_LEFT:
+      process_key(Key_I, 1);
+      process_key(Key_Left, 0);
+      break;
+    // --------------------------------------------- //
+    case COMMANDS::SWAP_SIDE:
+      process_key(Key_P, 1);
+      break;
+    // --------------------------------------------- //
+    default:
+      return false;
+      break;
+  }
+  return true;
+}
+
+bool
 SpinPuzzleGame::process_key(int key, double fraction_angle)
 {
   switch (key) {
@@ -403,7 +468,7 @@ SpinPuzzleGame::shuffle(int seed, int commands, bool check)
 {
   int command = 0;
   ActionProvider ap;
-  auto vec = ap.getSequenceOfCommands(seed, commands);
+  auto vec = ap.getSequenceOfKeyboardInputs(seed, commands);
   for (int key : vec) {
     process_key(key, 1);
     if (check && !check_consistency()) {

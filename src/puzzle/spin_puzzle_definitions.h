@@ -112,6 +112,31 @@ enum class SIDE : uint8_t
   BACK = 1,  //!< back side in a trefoil
 };
 
+/**
+ * @brief  enumeration of allowed commands
+ * @note  This is a **complete** enumeration of commands
+ */
+enum class COMMANDS : uint8_t
+{
+  NORTH_RIGHT = 0,
+  EAST_RIGHT = 1,
+  WEST_RIGHT = 2,
+  // ------------------- //
+  NORTH_LEFT = 3,
+  EAST_LEFT = 4,
+  WEST_LEFT = 5,
+  // ------------------- //
+  NORTH_SPIN = 6,
+  EAST_SPIN = 7,
+  WEST_SPIN = 8,
+  // ------------------- //
+  INTERNAL_LEFT = 9,
+  INTERNAL_RIGHT = 10,
+  // ------------------- //
+  SWAP_SIDE = 11,
+  N_COMMANDS = 12,
+};
+
 } // namespace puzzle
 
 #endif // SPIN_PUZZLE_DEFINITIONS_H
