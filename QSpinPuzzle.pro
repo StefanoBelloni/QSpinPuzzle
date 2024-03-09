@@ -29,6 +29,7 @@ SOURCES += \
     src/puzzle/spin_puzzle_game.cpp \
     src/puzzle/spin_puzzle_matrix.cpp \
     src/puzzle/spin_puzzle_side.cpp \
+    src/puzzle/spin_puzzle_cipher.cpp \
     src/widgets/spin_puzzle_history_widget.cpp \
     src/widgets/spin_puzzle_widget.cpp \
     src/widgets/spin_puzzle_window.cpp \
@@ -41,6 +42,8 @@ HEADERS  += \
     src/puzzle/spin_puzzle_game.h \
     src/puzzle/spin_puzzle_matrix.h \
     src/puzzle/spin_puzzle_side.h \
+    src/puzzle/spin_puzzle_cipher.h \
+    src/widgets/spin_puzzle_history_widget.cpp \
     src/widgets/spin_puzzle_history_widget.h \
     src/widgets/spin_puzzle_widget.h \
     src/widgets/spin_puzzle_window.h \
