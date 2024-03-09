@@ -8,75 +8,43 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(spinbind11_puzzle, m) {
-
+PYBIND11_MODULE(spinbind11_puzzle, m)
+{
   // =================================================================== //
   py::class_<puzzle::SpinMarble>(m, "SpinMarble")
-      // =================================================================== //
-      .def(py::init<>())
-      .def(py::init<int, puzzle::Color>())
-      .def("color", &puzzle::SpinMarble::color)
-      .def("id", &puzzle::SpinMarble::id)
-      .def("is_valid", &puzzle::SpinMarble::is_valid)
-      .def("__str__", &puzzle::SpinMarble::to_string)
-      .def("__repr__", &puzzle::SpinMarble::to_string)
-      .def(py::self == py::self)
-      .def(py::self != py::self);
+    // =================================================================== //
+    .def(py::init<>())
+    .def(py::init<int, puzzle::Color>())
+    .def("color", &puzzle::SpinMarble::color)
+    .def("id", &puzzle::SpinMarble::id)
+    .def("is_valid", &puzzle::SpinMarble::is_valid)
+    .def("__str__", &puzzle::SpinMarble::to_string)
+    .def("__repr__", &puzzle::SpinMarble::to_string)
+    .def(py::self == py::self)
+    .def(py::self != py::self);
 
   // =================================================================== //
   py::class_<puzzle::SpinPuzzleSide<>>(m, "SpinPuzzleSide")
-      // =================================================================== //
-      .def(py::init<std::array<puzzle::SpinMarble, 30>>())
-      .def("__str__", &puzzle::SpinPuzzleSide<>::to_string)
-      .def("is_border_rotation_possible",
-           &puzzle::SpinPuzzleSide<>::is_border_rotation_possible)
-      .def("is_rotation_possible",
-           &puzzle::SpinPuzzleSide<>::is_rotation_possible)
-      .def("__repr__", &puzzle::SpinPuzzleSide<>::to_string)
-      .def("trifoild_status", &puzzle::SpinPuzzleSide<>::get_trifoild_status)
-      .def("rotate_marbles", &puzzle::SpinPuzzleSide<>::rotate_marbles)
-      .def("rotate_internal_disk",
-           &puzzle::SpinPuzzleSide<>::rotate_internal_disk)
-      // https://pybind11.readthedocs.io/en/stable/classes.html
-      .def("begin",
-           py::overload_cast<puzzle::LEAF>(&puzzle::SpinPuzzleSide<>::begin))
-      .def("begin", py::overload_cast<>(&puzzle::SpinPuzzleSide<>::begin))
-      .def("marbles",
-           [](puzzle::SpinPuzzleSide<> &spinSide) {
-             if (spinSide.get_trifoild_status() ==
-                 puzzle::TREFOIL::BORDER_ROTATION) {
-               std::vector<puzzle::SpinMarble> marbles;
-               auto it = spinSide.begin(puzzle::LEAF::TREFOIL);
-               for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::N_MARBLES;
-                    ++n, ++it) {
-                 marbles.emplace_back(*it);
-               }
-               return marbles;
-             }
-             std::vector<puzzle::SpinMarble> marbles;
-             auto it = spinSide.begin(puzzle::LEAF::NORTH);
-             for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
-                  ++n, ++it) {
-               marbles.emplace_back(*it);
-             }
-             it = spinSide.begin(puzzle::LEAF::EAST);
-             for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
-                  ++n, ++it) {
-               marbles.emplace_back(*it);
-             }
-             it = spinSide.begin(puzzle::LEAF::WEST);
-             for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
-                  ++n, ++it) {
-               marbles.emplace_back(*it);
-             }
-             return marbles;
-           })
-      .def("border",
-           [](puzzle::SpinPuzzleSide<> &spinSide) {
-             if (spinSide.get_trifoild_status() !=
-                 puzzle::TREFOIL::BORDER_ROTATION) {
-               return std::vector<puzzle::SpinMarble>();
-             }
+    // =================================================================== //
+    .def(py::init<std::array<puzzle::SpinMarble, 30>>())
+    .def("__str__", &puzzle::SpinPuzzleSide<>::to_string)
+    .def("is_border_rotation_possible",
+         &puzzle::SpinPuzzleSide<>::is_border_rotation_possible)
+    .def("is_rotation_possible",
+         &puzzle::SpinPuzzleSide<>::is_rotation_possible)
+    .def("__repr__", &puzzle::SpinPuzzleSide<>::to_string)
+    .def("trifoild_status", &puzzle::SpinPuzzleSide<>::get_trifoild_status)
+    .def("rotate_marbles", &puzzle::SpinPuzzleSide<>::rotate_marbles)
+    .def("rotate_internal_disk",
+         &puzzle::SpinPuzzleSide<>::rotate_internal_disk)
+    // https://pybind11.readthedocs.io/en/stable/classes.html
+    .def("begin",
+         py::overload_cast<puzzle::LEAF>(&puzzle::SpinPuzzleSide<>::begin))
+    .def("begin", py::overload_cast<>(&puzzle::SpinPuzzleSide<>::begin))
+    .def("marbles",
+         [](puzzle::SpinPuzzleSide<>& spinSide) {
+           if (spinSide.get_trifoild_status() ==
+               puzzle::TREFOIL::BORDER_ROTATION) {
              std::vector<puzzle::SpinMarble> marbles;
              auto it = spinSide.begin(puzzle::LEAF::TREFOIL);
              for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::N_MARBLES;
@@ -84,133 +52,166 @@ PYBIND11_MODULE(spinbind11_puzzle, m) {
                marbles.emplace_back(*it);
              }
              return marbles;
-           })
-      .def("north",
-           [](puzzle::SpinPuzzleSide<> &spinSide) {
-             if (spinSide.get_trifoild_status() ==
-                 puzzle::TREFOIL::BORDER_ROTATION) {
-               return std::vector<puzzle::SpinMarble>();
-             }
-             std::vector<puzzle::SpinMarble> marbles;
-             auto it = spinSide.begin(puzzle::LEAF::NORTH);
-             for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
-                  ++n, ++it) {
-               marbles.emplace_back(*it);
-             }
-             return marbles;
-           })
-      .def("east",
-           [](puzzle::SpinPuzzleSide<> &spinSide) {
-             if (spinSide.get_trifoild_status() ==
-                 puzzle::TREFOIL::BORDER_ROTATION) {
-               return std::vector<puzzle::SpinMarble>();
-             }
-             std::vector<puzzle::SpinMarble> marbles;
-             auto it = spinSide.begin(puzzle::LEAF::EAST);
-             for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
-                  ++n, ++it) {
-               marbles.emplace_back(*it);
-             }
-             return marbles;
-           })
-      .def("west", [](puzzle::SpinPuzzleSide<> &spinSide) {
-        if (spinSide.get_trifoild_status() ==
-            puzzle::TREFOIL::BORDER_ROTATION) {
-          return std::vector<puzzle::SpinMarble>();
-        }
-        std::vector<puzzle::SpinMarble> marbles;
-        auto it = spinSide.begin(puzzle::LEAF::WEST);
-        for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
-             ++n, ++it) {
-          marbles.emplace_back(*it);
-        }
-        return marbles;
-      });
+           }
+           std::vector<puzzle::SpinMarble> marbles;
+           auto it = spinSide.begin(puzzle::LEAF::NORTH);
+           for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
+                ++n, ++it) {
+             marbles.emplace_back(*it);
+           }
+           it = spinSide.begin(puzzle::LEAF::EAST);
+           for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
+                ++n, ++it) {
+             marbles.emplace_back(*it);
+           }
+           it = spinSide.begin(puzzle::LEAF::WEST);
+           for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
+                ++n, ++it) {
+             marbles.emplace_back(*it);
+           }
+           return marbles;
+         })
+    .def("border",
+         [](puzzle::SpinPuzzleSide<>& spinSide) {
+           if (spinSide.get_trifoild_status() !=
+               puzzle::TREFOIL::BORDER_ROTATION) {
+             return std::vector<puzzle::SpinMarble>();
+           }
+           std::vector<puzzle::SpinMarble> marbles;
+           auto it = spinSide.begin(puzzle::LEAF::TREFOIL);
+           for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::N_MARBLES;
+                ++n, ++it) {
+             marbles.emplace_back(*it);
+           }
+           return marbles;
+         })
+    .def("north",
+         [](puzzle::SpinPuzzleSide<>& spinSide) {
+           if (spinSide.get_trifoild_status() ==
+               puzzle::TREFOIL::BORDER_ROTATION) {
+             return std::vector<puzzle::SpinMarble>();
+           }
+           std::vector<puzzle::SpinMarble> marbles;
+           auto it = spinSide.begin(puzzle::LEAF::NORTH);
+           for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
+                ++n, ++it) {
+             marbles.emplace_back(*it);
+           }
+           return marbles;
+         })
+    .def("east",
+         [](puzzle::SpinPuzzleSide<>& spinSide) {
+           if (spinSide.get_trifoild_status() ==
+               puzzle::TREFOIL::BORDER_ROTATION) {
+             return std::vector<puzzle::SpinMarble>();
+           }
+           std::vector<puzzle::SpinMarble> marbles;
+           auto it = spinSide.begin(puzzle::LEAF::EAST);
+           for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE;
+                ++n, ++it) {
+             marbles.emplace_back(*it);
+           }
+           return marbles;
+         })
+    .def("west", [](puzzle::SpinPuzzleSide<>& spinSide) {
+      if (spinSide.get_trifoild_status() == puzzle::TREFOIL::BORDER_ROTATION) {
+        return std::vector<puzzle::SpinMarble>();
+      }
+      std::vector<puzzle::SpinMarble> marbles;
+      auto it = spinSide.begin(puzzle::LEAF::WEST);
+      for (size_t n = 0; n < puzzle::SpinPuzzleSide<>::GROUP_SIZE; ++n, ++it) {
+        marbles.emplace_back(*it);
+      }
+      return marbles;
+    });
 
   // =================================================================== //
   py::class_<puzzle::SpinPuzzleSide<>::iterator>(m, "MarbleItem")
-      // =================================================================== //
-      .def(py::init<>())
-      .def(py::self += int())
-      .def(py::self -= int())
-      .def(py::self == py::self)
-      .def("id",
-           [](const puzzle::SpinPuzzleSide<>::iterator &iter) {
-             return iter->id();
-           })
-      .def("color",
-           [](const puzzle::SpinPuzzleSide<>::iterator &iter) {
-             return iter->color();
-           })
-      .def("get_angle",
-           [](const puzzle::SpinPuzzleSide<>::iterator &iter) {
-             return iter.get_angle();
-           })
-      .def("__str__",
-           [](puzzle::SpinPuzzleSide<>::iterator &iter) {
-             return iter->to_string();
-           })
-      .def("__repr__", [](puzzle::SpinPuzzleSide<>::iterator &iter) {
-        return iter->to_string();
-      });
+    // =================================================================== //
+    .def(py::init<>())
+    .def(py::self += int())
+    .def(py::self -= int())
+    .def(py::self == py::self)
+    .def(
+      "id",
+      [](const puzzle::SpinPuzzleSide<>::iterator& iter) { return iter->id(); })
+    .def("color",
+         [](const puzzle::SpinPuzzleSide<>::iterator& iter) {
+           return iter->color();
+         })
+    .def("get_angle",
+         [](const puzzle::SpinPuzzleSide<>::iterator& iter) {
+           return iter.get_angle();
+         })
+    .def("__str__",
+         [](puzzle::SpinPuzzleSide<>::iterator& iter) {
+           return iter->to_string();
+         })
+    .def("__repr__", [](puzzle::SpinPuzzleSide<>::iterator& iter) {
+      return iter->to_string();
+    });
 
   // =================================================================== //
   py::class_<puzzle::SpinPuzzleGame>(m, "SpinPuzzleGame")
-      // =================================================================== //
-      .def(py::init<>())
-      .def("is_game_solved", &puzzle::SpinPuzzleGame::is_game_solved)
-      .def("process_key", &puzzle::SpinPuzzleGame::process_key)
-      .def("get_keybord_state", &puzzle::SpinPuzzleGame::get_keybord_state)
-      .def("rotate_marbles", &puzzle::SpinPuzzleGame::rotate_marbles)
-      .def("rotate_internal_disk",
-           &puzzle::SpinPuzzleGame::rotate_internal_disk)
-      .def("spin_leaf", py::overload_cast<puzzle::LEAF, double>(
-                            &puzzle::SpinPuzzleGame::spin_leaf))
-      .def("spin_leaf",
-           py::overload_cast<puzzle::LEAF>(&puzzle::SpinPuzzleGame::spin_leaf))
-      .def("swap_side", &puzzle::SpinPuzzleGame::swap_side)
-      .def("get_side", py::overload_cast<>(&puzzle::SpinPuzzleGame::get_side),
-           py::return_value_policy::reference)
-      .def("get_side",
-           py::overload_cast<puzzle::SIDE>(&puzzle::SpinPuzzleGame::get_side),
-           py::return_value_policy::reference)
-      .def("get_active_side", &puzzle::SpinPuzzleGame::get_active_side)
-      .def("get_phase_shift_internal_disk",
-           [](puzzle::SpinPuzzleGame &game) {
-             return game.get_side().get_phase_shift_internal_disk();
-           })
-      .def("reset", &puzzle::SpinPuzzleGame::reset)
-      .def("shuffle", &puzzle::SpinPuzzleGame::shuffle, py::arg("seed") = 0,
-           py::arg("commands") = 10000, py::arg("check") = false)
-      .def("__str__", &puzzle::SpinPuzzleGame::to_string)
-      .def("__repr__", &puzzle::SpinPuzzleGame::to_string)
-      .def("current_time_step", &puzzle::SpinPuzzleGame::current_time_step);
+    // =================================================================== //
+    .def(py::init<>())
+    .def("is_game_solved", &puzzle::SpinPuzzleGame::is_game_solved)
+    .def("process_key", &puzzle::SpinPuzzleGame::process_key)
+    .def("get_keybord_state", &puzzle::SpinPuzzleGame::get_keybord_state)
+    .def("rotate_marbles", &puzzle::SpinPuzzleGame::rotate_marbles)
+    .def("rotate_internal_disk", &puzzle::SpinPuzzleGame::rotate_internal_disk)
+    .def("spin_leaf",
+         py::overload_cast<puzzle::LEAF, double>(
+           &puzzle::SpinPuzzleGame::spin_leaf))
+    .def("spin_leaf",
+         py::overload_cast<puzzle::LEAF>(&puzzle::SpinPuzzleGame::spin_leaf))
+    .def("swap_side", &puzzle::SpinPuzzleGame::swap_side)
+    .def("get_side",
+         py::overload_cast<>(&puzzle::SpinPuzzleGame::get_side),
+         py::return_value_policy::reference)
+    .def("get_side",
+         py::overload_cast<puzzle::SIDE>(&puzzle::SpinPuzzleGame::get_side),
+         py::return_value_policy::reference)
+    .def("get_active_side", &puzzle::SpinPuzzleGame::get_active_side)
+    .def("get_phase_shift_internal_disk",
+         [](puzzle::SpinPuzzleGame& game) {
+           return game.get_side().get_phase_shift_internal_disk();
+         })
+    .def("reset", &puzzle::SpinPuzzleGame::reset)
+    .def("shuffle",
+         &puzzle::SpinPuzzleGame::shuffle,
+         py::arg("seed") = 0,
+         py::arg("commands") = 10000,
+         py::arg("check") = false)
+    .def("__str__", &puzzle::SpinPuzzleGame::to_string)
+    .def("__repr__", &puzzle::SpinPuzzleGame::to_string)
+    .def("current_time_step", &puzzle::SpinPuzzleGame::current_time_step);
 
   // =================================================================== //
   py::enum_<puzzle::LEAF>(m, "LEAF")
-      // =================================================================== //
-      .value("NORTH", puzzle::LEAF::NORTH)
-      .value("EAST", puzzle::LEAF::EAST)
-      .value("WEST", puzzle::LEAF::WEST)
-      .value("TREFOIL", puzzle::LEAF::TREFOIL)
-      .value("INVALID", puzzle::LEAF::INVALID);
+    // =================================================================== //
+    .value("NORTH", puzzle::LEAF::NORTH)
+    .value("EAST", puzzle::LEAF::EAST)
+    .value("WEST", puzzle::LEAF::WEST)
+    .value("TREFOIL", puzzle::LEAF::TREFOIL)
+    .value("INVALID", puzzle::LEAF::INVALID);
   // =================================================================== //
   py::enum_<puzzle::SIDE>(m, "SIDE")
-      // =================================================================== //
-      .value("FRONT", puzzle::SIDE::FRONT)
-      .value("BACK", puzzle::SIDE::BACK);
+    // =================================================================== //
+    .value("FRONT", puzzle::SIDE::FRONT)
+    .value("BACK", puzzle::SIDE::BACK);
   // =================================================================== //
   py::enum_<puzzle::TREFOIL>(m, "TREFOIL")
-      // =================================================================== //
-      .value("INVALID", puzzle::TREFOIL::INVALID)
-      .value("LEAF_ROTATION", puzzle::TREFOIL::LEAF_ROTATION)
-      .value("LEAF_SPINNING", puzzle::TREFOIL::LEAF_SPINNING)
-      .value("BORDER_ROTATION", puzzle::TREFOIL::BORDER_ROTATION);
+    // =================================================================== //
+    .value("INVALID", puzzle::TREFOIL::INVALID)
+    .value("LEAF_ROTATION", puzzle::TREFOIL::LEAF_ROTATION)
+    .value("LEAF_SPINNING", puzzle::TREFOIL::LEAF_SPINNING)
+    .value("BORDER_ROTATION", puzzle::TREFOIL::BORDER_ROTATION);
   // =================================================================== //
   py::enum_<puzzle::ROTATION>(m, "ROTATION")
-      // =================================================================== //
-      .value("OK", puzzle::ROTATION::OK)
-      .value("INVALID", puzzle::ROTATION::INVALID);
+    // =================================================================== //
+    .value("OK", puzzle::ROTATION::OK)
+    .value("INVALID", puzzle::ROTATION::INVALID);
 
   // =================================================================== //
   // CONSTANTS
@@ -226,7 +227,8 @@ PYBIND11_MODULE(spinbind11_puzzle, m) {
   m.attr("Key_PageDown") = py::int_(puzzle::Key_PageDown);
   m.attr("Key_I") = py::int_(puzzle::Key_I);
   // Colors
-  m.def("color_to_str", &puzzle::color_to_str,
+  m.def("color_to_str",
+        &puzzle::color_to_str,
         "convert a color from int to its string");
   m.attr("white") = py::int_(puzzle::white);
   m.attr("black") = py::int_(puzzle::black);

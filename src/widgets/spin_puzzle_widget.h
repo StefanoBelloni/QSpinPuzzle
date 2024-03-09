@@ -36,19 +36,22 @@ class SpinPuzzleHistoryWidget;
  *         - press the key P
  *
  */
-class SpinPuzzleWidget : public QWidget {
+class SpinPuzzleWidget : public QWidget
+{
   friend class SpinPuzzleHistoryWidget;
   Q_OBJECT
 public:
-  SpinPuzzleWidget(int win_width, int win_heigth, bool m_allow_play = true,
-                   QWidget *parent = nullptr);
+  SpinPuzzleWidget(int win_width,
+                   int win_heigth,
+                   bool m_allow_play = true,
+                   QWidget* parent = nullptr);
 
-  void paintEvent(QPaintEvent *ev) override;
-  void mouseMoveEvent(QMouseEvent *ev) override;
-  void mousePressEvent(QMouseEvent *e) override;
-  void keyPressEvent(QKeyEvent *e) override;
-  void resizeEvent(QResizeEvent *e) override;
-  void closeEvent(QCloseEvent *event) override;
+  void paintEvent(QPaintEvent* ev) override;
+  void mouseMoveEvent(QMouseEvent* ev) override;
+  void mousePressEvent(QMouseEvent* e) override;
+  void keyPressEvent(QKeyEvent* e) override;
+  void resizeEvent(QResizeEvent* e) override;
+  void closeEvent(QCloseEvent* event) override;
 
   void exec_puzzle_records_dialog();
   void reset_file_app();
@@ -63,11 +66,13 @@ public:
 private:
   void set_size(int win_width, int win_height);
   double get_radius_internal() const;
-  void create_polygon(QPolygon &polygon);
-  void paint_puzzle_section(QPainter &painter, QColor color,
-                            QColor color_internal, QColor color_body) const;
+  void create_polygon(QPolygon& polygon);
+  void paint_puzzle_section(QPainter& painter,
+                            QColor color,
+                            QColor color_internal,
+                            QColor color_body) const;
 
-  void next_section(QPainter &painter, int angle = 120) const;
+  void next_section(QPainter& painter, int angle = 120) const;
 
   void paint_background();
   void paint_status();
@@ -75,19 +80,23 @@ private:
   void paint_timer();
   void paint_game();
 
-  void paint_internal_circular_guide(QPainter &painter, QColor color) const;
-  void do_paint_marbles(QPainter &painter);
-  void do_paint_marbles_on_border(QPainter &painter);
+  void paint_internal_circular_guide(QPainter& painter, QColor color) const;
+  void do_paint_marbles(QPainter& painter);
+  void do_paint_marbles_on_border(QPainter& painter);
 
-  void paint_marbles_on_leaf(QPainter &painter, puzzle::LEAF leaf);
-  void paint_marbles_on_internal_circle(QPainter &painter, puzzle::LEAF leaf);
-  void paint_marble(double shift_local, QPainter &painter,
-                    puzzle::SpinPuzzleSide<>::iterator it, const QPoint center,
-                    size_t n, const int r);
-  void paint_congratulation(QPainter &painter);
+  void paint_marbles_on_leaf(QPainter& painter, puzzle::LEAF leaf);
+  void paint_marbles_on_internal_circle(QPainter& painter, puzzle::LEAF leaf);
+  void paint_marble(double shift_local,
+                    QPainter& painter,
+                    puzzle::SpinPuzzleSide<>::iterator it,
+                    const QPoint center,
+                    size_t n,
+                    const int r);
+  void paint_congratulation(QPainter& painter);
 
   bool mouse_event_inside_internal_circle(QPoint position);
-  bool mouse_event_inside_leaf(QPoint position, QPoint center,
+  bool mouse_event_inside_leaf(QPoint position,
+                               QPoint center,
                                puzzle::LEAF leaf);
   void do_spin_north();
   void do_spin_east();
@@ -101,23 +110,23 @@ private:
 
   void delete_history_popup();
   void stop_spinning_winning();
-  void set_game(int time, const puzzle::SpinPuzzleGame &game);
-  void set_game(const puzzle::SpinPuzzleGame &game);
+  void set_game(int time, const puzzle::SpinPuzzleGame& game);
+  void set_game(const puzzle::SpinPuzzleGame& game);
   void start_timer();
   void set_elapsed_time(int t);
-  puzzle::SpinPuzzleGame &get_game();
+  puzzle::SpinPuzzleGame& get_game();
 
-  void start_with_game(const puzzle::SpinPuzzleGame &game);
+  void start_with_game(const puzzle::SpinPuzzleGame& game);
   void reset_leaf_colors();
   void load(int index);
-  void load(int index, puzzle::SpinPuzzleGame &game);
+  void load(int index, puzzle::SpinPuzzleGame& game);
   void store_puzzle_begin();
   bool store_puzzle_record();
   bool store_puzzle_record(int elapsed_time, puzzle::SpinPuzzleGame game);
   bool store_puzzles_record(
-      std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games);
+    std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games);
   // return max time
-  int load_records(std::vector<std::pair<int, puzzle::SpinPuzzleGame>> &games);
+  int load_records(std::vector<std::pair<int, puzzle::SpinPuzzleGame>>& games);
 
   bool can_rotate_internal();
   bool is_mause_on_leaf_marbles(QPoint pos, QPoint center);
@@ -146,22 +155,22 @@ private:
 
   const double m_speed = 350.0;
 
-  QPushButton *m_reset_btn = nullptr;
-  QPushButton *m_start_btn = nullptr;
-  QPushButton *m_twist_side = nullptr;
-  QPushButton *m_spin_north = nullptr;
-  QPushButton *m_spin_east = nullptr;
-  QPushButton *m_spin_west = nullptr;
+  QPushButton* m_reset_btn = nullptr;
+  QPushButton* m_start_btn = nullptr;
+  QPushButton* m_twist_side = nullptr;
+  QPushButton* m_spin_north = nullptr;
+  QPushButton* m_spin_east = nullptr;
+  QPushButton* m_spin_west = nullptr;
 
-  QPushButton *m_load_btn = nullptr;
-  QPushButton *m_save_btn = nullptr;
+  QPushButton* m_load_btn = nullptr;
+  QPushButton* m_save_btn = nullptr;
   // QPushButton *m_load_records_btn = nullptr;
 
   // maybe use a shared_pointer ...
-  SpinPuzzleHistoryWidget *m_history_widget = nullptr;
+  SpinPuzzleHistoryWidget* m_history_widget = nullptr;
 
-  QTimer *m_timer;
-  QTimer *m_congratulation_timer;
+  QTimer* m_timer;
+  QTimer* m_congratulation_timer;
   int m_elapsed_time = 0;
 
   bool m_solved = false;

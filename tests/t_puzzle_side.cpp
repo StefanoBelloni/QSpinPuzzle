@@ -1,16 +1,19 @@
 #include <gtest/gtest.h>
 
-#include "puzzle/spin_marble.h"
-#include "puzzle/spin_puzzle_side.h"
-
 #include <array>
 #include <iostream>
 
-template <std::size_t N> auto getPuzzle() {
+#include "puzzle/spin_marble.h"
+#include "puzzle/spin_puzzle_side.h"
+
+template<std::size_t N>
+auto
+getPuzzle()
+{
   std::array<puzzle::SpinMarble, N * 3> marbles;
   int id = 0;
   puzzle::Color color = puzzle::black;
-  for (auto &m : marbles) {
+  for (auto& m : marbles) {
     m = puzzle::SpinMarble(id++, color);
     if (id == N) {
       color = puzzle::red;
@@ -194,7 +197,8 @@ void start_configuration(std::array<puzzle::SpinMarble, 30>& marbles) {
 // clang-format on
 
 // Test if with or without Qt the result is the same.
-TEST(PuzzleSide, iterate_leaf) {
+TEST(PuzzleSide, iterate_leaf)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   int id = 0;
@@ -217,7 +221,8 @@ TEST(PuzzleSide, iterate_leaf) {
   }
 }
 
-TEST(PuzzleSide, rotate_leaf_cw_fraction_next_marble) {
+TEST(PuzzleSide, rotate_leaf_cw_fraction_next_marble)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   // No rotation
@@ -244,7 +249,8 @@ TEST(PuzzleSide, rotate_leaf_cw_fraction_next_marble) {
   ASSERT_EQ(it_north_begin_2.get_angle(), -9);
 }
 
-TEST(PuzzleSide, rotate_leaf_cw_next_marble) {
+TEST(PuzzleSide, rotate_leaf_cw_next_marble)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   // No rotation
@@ -271,14 +277,15 @@ TEST(PuzzleSide, rotate_leaf_cw_next_marble) {
   ASSERT_EQ(it_north_begin_2.get_angle(), 0);
 }
 
-TEST(PuzzleSide, rotate_leaf_cw_multiple_next_marbles) {
+TEST(PuzzleSide, rotate_leaf_cw_multiple_next_marbles)
+{
   constexpr int N = 10;
   const int angle = 20;
   for (int k = 1; k < 2 * N; ++k) {
     auto puzzle = getPuzzle<N>();
     // rotate 20° after the marble k
     ASSERT_TRUE(
-        puzzle.rotate_marbles(puzzle::LEAF::NORTH, (k - 1) * 36 + angle));
+      puzzle.rotate_marbles(puzzle::LEAF::NORTH, (k - 1) * 36 + angle));
     auto it_north = puzzle.marbles(puzzle::LEAF::NORTH);
     auto it_north_begin_1 = puzzle.begin(puzzle::LEAF::NORTH);
     // the marble is (36 - 20)° before its baricenter
@@ -289,7 +296,8 @@ TEST(PuzzleSide, rotate_leaf_cw_multiple_next_marbles) {
   }
 }
 
-TEST(PuzzleSide, rotate_leaf_acw_fraction_next_marble) {
+TEST(PuzzleSide, rotate_leaf_acw_fraction_next_marble)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   // No rotation
@@ -316,7 +324,8 @@ TEST(PuzzleSide, rotate_leaf_acw_fraction_next_marble) {
   ASSERT_EQ(it_north_begin_2.get_angle(), 9);
 }
 
-TEST(PuzzleSide, rotate_leaf_acw_next_marble) {
+TEST(PuzzleSide, rotate_leaf_acw_next_marble)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   // No rotation
@@ -343,14 +352,15 @@ TEST(PuzzleSide, rotate_leaf_acw_next_marble) {
   ASSERT_EQ(it_north_begin_2.get_angle(), 0);
 }
 
-TEST(PuzzleSide, rotate_leaf_acw_multiple_next_marbles) {
+TEST(PuzzleSide, rotate_leaf_acw_multiple_next_marbles)
+{
   constexpr int N = 10;
   const int angle = 20;
   for (int k = 1; k < 2 * N; ++k) {
     auto puzzle = getPuzzle<N>();
     // rotate 20° after the marble k
     ASSERT_TRUE(
-        puzzle.rotate_marbles(puzzle::LEAF::NORTH, -(k - 1) * 36 - angle));
+      puzzle.rotate_marbles(puzzle::LEAF::NORTH, -(k - 1) * 36 - angle));
     auto it_north = puzzle.marbles(puzzle::LEAF::NORTH);
     auto it_north_begin_1 = puzzle.begin(puzzle::LEAF::NORTH);
     // the marble is (36 - 20)° before its baricenter
@@ -362,7 +372,8 @@ TEST(PuzzleSide, rotate_leaf_acw_multiple_next_marbles) {
 }
 
 //!< Check spinning block aother operations
-TEST(PuzzleSide, start_end_spinning_leaf) {
+TEST(PuzzleSide, start_end_spinning_leaf)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.start_spinning_leaf(puzzle::LEAF::NORTH));
@@ -376,7 +387,8 @@ TEST(PuzzleSide, start_end_spinning_leaf) {
 }
 
 //!< Check spinning block aother operations
-TEST(PuzzleSide, start_spinning_leaf_not_allowed) {
+TEST(PuzzleSide, start_spinning_leaf_not_allowed)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::NORTH, 18));
@@ -393,14 +405,16 @@ TEST(PuzzleSide, start_spinning_leaf_not_allowed) {
   ASSERT_TRUE(puzzle.get_trifoild_status() == puzzle::TREFOIL::LEAF_ROTATION);
 }
 
-TEST(PuzzleSide, central_disk_spinning_not_possible) {
+TEST(PuzzleSide, central_disk_spinning_not_possible)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::NORTH, 18));
   ASSERT_FALSE(puzzle.rotate_internal_disk(60));
 }
 
-TEST(PuzzleSide, central_disk_spinning_east) {
+TEST(PuzzleSide, central_disk_spinning_east)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_internal_disk(60));
@@ -414,7 +428,8 @@ TEST(PuzzleSide, central_disk_spinning_east) {
   ASSERT_FLOAT_EQ(0.0, puzzle.get_phase_shift_internal_disk());
 }
 
-TEST(PuzzleSide, central_disk_spinning_east_till_west) {
+TEST(PuzzleSide, central_disk_spinning_east_till_west)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_internal_disk(60));
@@ -428,7 +443,8 @@ TEST(PuzzleSide, central_disk_spinning_east_till_west) {
   ASSERT_FLOAT_EQ(-1.0, puzzle.get_phase_shift_internal_disk());
 }
 
-TEST(PuzzleSide, central_disk_spinning_west) {
+TEST(PuzzleSide, central_disk_spinning_west)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_internal_disk(-60));
@@ -442,7 +458,8 @@ TEST(PuzzleSide, central_disk_spinning_west) {
   ASSERT_FLOAT_EQ(0.0, puzzle.get_phase_shift_internal_disk());
 }
 
-TEST(PuzzleSide, central_disk_spinning_west_till_east) {
+TEST(PuzzleSide, central_disk_spinning_west_till_east)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_internal_disk(-60));
@@ -456,7 +473,8 @@ TEST(PuzzleSide, central_disk_spinning_west_till_east) {
   ASSERT_FLOAT_EQ(-1.0, puzzle.get_phase_shift_internal_disk());
 }
 
-TEST(PuzzleSide, central_disk_spinning_east_and_back) {
+TEST(PuzzleSide, central_disk_spinning_east_and_back)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   // rotation NORTH->EAST->WEST
@@ -486,7 +504,8 @@ TEST(PuzzleSide, central_disk_spinning_east_and_back) {
   ASSERT_FLOAT_EQ(-4.0, puzzle.get_phase_shift_internal_disk());
 }
 
-TEST(PuzzleSide, central_disk_spinning_west_and_back) {
+TEST(PuzzleSide, central_disk_spinning_west_and_back)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   // rotation NORTH->EAST->WEST
@@ -516,7 +535,8 @@ TEST(PuzzleSide, central_disk_spinning_west_and_back) {
   ASSERT_FLOAT_EQ(4.0, puzzle.get_phase_shift_internal_disk());
 }
 
-TEST(PuzzleSide, start_border_rotation_east_side) {
+TEST(PuzzleSide, start_border_rotation_east_side)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_internal_disk(60.0));
@@ -531,7 +551,8 @@ TEST(PuzzleSide, start_border_rotation_east_side) {
   check_marbles_border(expected, puzzle);
 }
 
-TEST(PuzzleSide, start_border_rotation_west_side) {
+TEST(PuzzleSide, start_border_rotation_west_side)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_TRUE(puzzle.rotate_internal_disk(-60.0));
@@ -546,7 +567,9 @@ TEST(PuzzleSide, start_border_rotation_west_side) {
   check_marbles_border(expected, puzzle);
 }
 
-puzzle::SpinMarble MRB(int32_t id) {
+puzzle::SpinMarble
+MRB(int32_t id)
+{
   if (id < 10) {
     return puzzle::SpinMarble(id, puzzle::black);
   } else if (id < 20) {
@@ -557,7 +580,8 @@ puzzle::SpinMarble MRB(int32_t id) {
   return puzzle::SpinMarble();
 }
 
-TEST(PuzzleSide, basic_move_sequence_0) {
+TEST(PuzzleSide, basic_move_sequence_0)
+{
   using namespace puzzle;
   constexpr int N = 10;
   constexpr double DTHETA = 36.0;
@@ -575,82 +599,84 @@ TEST(PuzzleSide, basic_move_sequence_0) {
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::WEST, 7 * DTHETA));
 
   north_expected = {
-      SpinMarble{7, puzzle::black}, {8, puzzle::black}, {9, puzzle::black},
-      {0, puzzle::black},           {1, puzzle::black}, {2, puzzle::black},
-      {3, puzzle::black},           {4, puzzle::black}, {5, puzzle::black},
-      {6, puzzle::black},
+    SpinMarble{ 7, puzzle::black }, { 8, puzzle::black }, { 9, puzzle::black },
+    { 0, puzzle::black },           { 1, puzzle::black }, { 2, puzzle::black },
+    { 3, puzzle::black },           { 4, puzzle::black }, { 5, puzzle::black },
+    { 6, puzzle::black },
   };
   east_expected = {
-      SpinMarble{16, puzzle::red}, {17, puzzle::red}, {18, puzzle::red},
-      {19, puzzle::red},           {10, puzzle::red}, {11, puzzle::red},
-      {12, puzzle::red},           {13, puzzle::red}, {14, puzzle::red},
-      {15, puzzle::red},
+    SpinMarble{ 16, puzzle::red }, { 17, puzzle::red }, { 18, puzzle::red },
+    { 19, puzzle::red },           { 10, puzzle::red }, { 11, puzzle::red },
+    { 12, puzzle::red },           { 13, puzzle::red }, { 14, puzzle::red },
+    { 15, puzzle::red },
   };
   west_expected = {
-      SpinMarble{23, puzzle::green}, {24, puzzle::green}, {25, puzzle::green},
-      {26, puzzle::green},           {27, puzzle::green}, {28, puzzle::green},
-      {29, puzzle::green},           {20, puzzle::green}, {21, puzzle::green},
-      {22, puzzle::green},
+    SpinMarble{ 23, puzzle::green }, { 24, puzzle::green },
+    { 25, puzzle::green },           { 26, puzzle::green },
+    { 27, puzzle::green },           { 28, puzzle::green },
+    { 29, puzzle::green },           { 20, puzzle::green },
+    { 21, puzzle::green },           { 22, puzzle::green },
   };
   check_marbles(north_expected, east_expected, west_expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_internal_disk(120));
-  north_expected = {MRB(7), MRB(8), MRB(9),  MRB(0),  MRB(1),
-                    MRB(2), MRB(3), MRB(20), MRB(21), MRB(22)};
-  east_expected = {MRB(16), MRB(17), MRB(18), MRB(19), MRB(10),
-                   MRB(11), MRB(12), MRB(4),  MRB(5),  MRB(6)};
-  west_expected = {MRB(23), MRB(24), MRB(25), MRB(26), MRB(27),
-                   MRB(28), MRB(29), MRB(13), MRB(14), MRB(15)};
+  north_expected = { MRB(7), MRB(8), MRB(9),  MRB(0),  MRB(1),
+                     MRB(2), MRB(3), MRB(20), MRB(21), MRB(22) };
+  east_expected = { MRB(16), MRB(17), MRB(18), MRB(19), MRB(10),
+                    MRB(11), MRB(12), MRB(4),  MRB(5),  MRB(6) };
+  west_expected = { MRB(23), MRB(24), MRB(25), MRB(26), MRB(27),
+                    MRB(28), MRB(29), MRB(13), MRB(14), MRB(15) };
   check_marbles(north_expected, east_expected, west_expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::NORTH, 3 * DTHETA));
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::EAST, -4 * DTHETA));
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::WEST, -7 * DTHETA));
-  north_expected = {MRB(20), MRB(21), MRB(22), MRB(7), MRB(8),
-                    MRB(9),  MRB(0),  MRB(1),  MRB(2), MRB(3)};
-  east_expected = {MRB(10), MRB(11), MRB(12), MRB(4),  MRB(5),
-                   MRB(6),  MRB(16), MRB(17), MRB(18), MRB(19)};
-  west_expected = {MRB(13), MRB(14), MRB(15), MRB(23), MRB(24),
-                   MRB(25), MRB(26), MRB(27), MRB(28), MRB(29)};
+  north_expected = { MRB(20), MRB(21), MRB(22), MRB(7), MRB(8),
+                     MRB(9),  MRB(0),  MRB(1),  MRB(2), MRB(3) };
+  east_expected = { MRB(10), MRB(11), MRB(12), MRB(4),  MRB(5),
+                    MRB(6),  MRB(16), MRB(17), MRB(18), MRB(19) };
+  west_expected = { MRB(13), MRB(14), MRB(15), MRB(23), MRB(24),
+                    MRB(25), MRB(26), MRB(27), MRB(28), MRB(29) };
   check_marbles(north_expected, east_expected, west_expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_internal_disk(180));
-  north_expected = {MRB(20), MRB(21), MRB(22), MRB(7),  MRB(8),
-                    MRB(9),  MRB(0),  MRB(27), MRB(28), MRB(29)};
-  east_expected = {MRB(10), MRB(11), MRB(12), MRB(4), MRB(5),
-                   MRB(6),  MRB(16), MRB(1),  MRB(2), MRB(3)};
-  west_expected = {MRB(13), MRB(14), MRB(15), MRB(23), MRB(24),
-                   MRB(25), MRB(26), MRB(17), MRB(18), MRB(19)};
+  north_expected = { MRB(20), MRB(21), MRB(22), MRB(7),  MRB(8),
+                     MRB(9),  MRB(0),  MRB(27), MRB(28), MRB(29) };
+  east_expected = { MRB(10), MRB(11), MRB(12), MRB(4), MRB(5),
+                    MRB(6),  MRB(16), MRB(1),  MRB(2), MRB(3) };
+  west_expected = { MRB(13), MRB(14), MRB(15), MRB(23), MRB(24),
+                    MRB(25), MRB(26), MRB(17), MRB(18), MRB(19) };
   check_marbles(north_expected, east_expected, west_expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::NORTH, DTHETA));
-  expected = {MRB(17), MRB(20), MRB(21), MRB(22), MRB(7),  MRB(8),
-              MRB(9),  MRB(0),  MRB(29), MRB(28), MRB(27), MRB(10),
-              MRB(11), MRB(12), MRB(4),  MRB(5),  MRB(6),  MRB(16),
-              MRB(3),  MRB(2),  MRB(1),  MRB(13), MRB(14), MRB(15),
-              MRB(23), MRB(24), MRB(25), MRB(26), MRB(19), MRB(18)};
+  expected = { MRB(17), MRB(20), MRB(21), MRB(22), MRB(7),  MRB(8),
+               MRB(9),  MRB(0),  MRB(29), MRB(28), MRB(27), MRB(10),
+               MRB(11), MRB(12), MRB(4),  MRB(5),  MRB(6),  MRB(16),
+               MRB(3),  MRB(2),  MRB(1),  MRB(13), MRB(14), MRB(15),
+               MRB(23), MRB(24), MRB(25), MRB(26), MRB(19), MRB(18) };
   check_marbles_border(expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_marbles(puzzle::LEAF::NORTH, -10 * DTHETA));
   expected = {
-      MRB(27), MRB(10), MRB(11), MRB(12), MRB(4),  MRB(5),  MRB(6),  MRB(16),
-      MRB(3),  MRB(2),  MRB(1),  MRB(13), MRB(14), MRB(15), MRB(23), MRB(24),
-      MRB(25), MRB(26), MRB(19), MRB(18), MRB(17), MRB(20), MRB(21), MRB(22),
-      MRB(7),  MRB(8),  MRB(9),  MRB(0),  MRB(29), MRB(28),
+    MRB(27), MRB(10), MRB(11), MRB(12), MRB(4),  MRB(5),  MRB(6),  MRB(16),
+    MRB(3),  MRB(2),  MRB(1),  MRB(13), MRB(14), MRB(15), MRB(23), MRB(24),
+    MRB(25), MRB(26), MRB(19), MRB(18), MRB(17), MRB(20), MRB(21), MRB(22),
+    MRB(7),  MRB(8),  MRB(9),  MRB(0),  MRB(29), MRB(28),
   };
   check_marbles_border(expected, puzzle);
   ASSERT_TRUE(puzzle.rotate_internal_disk(-60));
-  north_expected = {MRB(27), MRB(10), MRB(11), MRB(12), MRB(4),
-                    MRB(5),  MRB(6),  MRB(2),  MRB(3),  MRB(16)};
-  east_expected = {MRB(1),  MRB(13), MRB(14), MRB(15), MRB(23),
-                   MRB(24), MRB(25), MRB(18), MRB(19), MRB(26)};
-  west_expected = {MRB(17), MRB(20), MRB(21), MRB(22), MRB(7),
-                   MRB(8),  MRB(9),  MRB(28), MRB(29), MRB(0)};
+  north_expected = { MRB(27), MRB(10), MRB(11), MRB(12), MRB(4),
+                     MRB(5),  MRB(6),  MRB(2),  MRB(3),  MRB(16) };
+  east_expected = { MRB(1),  MRB(13), MRB(14), MRB(15), MRB(23),
+                    MRB(24), MRB(25), MRB(18), MRB(19), MRB(26) };
+  west_expected = { MRB(17), MRB(20), MRB(21), MRB(22), MRB(7),
+                    MRB(8),  MRB(9),  MRB(28), MRB(29), MRB(0) };
   check_marbles(north_expected, east_expected, west_expected, puzzle);
 }
 
-TEST(PuzzleSide, to_string) {
+TEST(PuzzleSide, to_string)
+{
   constexpr int N = 10;
   auto puzzle = getPuzzle<N>();
   ASSERT_EQ(
-      puzzle.to_string(),
-      "marbles: \nNORTH: (0:2), (1:2), (2:2), (3:2), (4:2), (5:2), (6:2), "
-      "(7:2), (8:2), (9:2)\nEAST: (10:7), (11:7), (12:7), (13:7), (14:7), "
-      "(15:7), (16:7), (17:7), (18:7), (19:7)\nWEST: (20:8), (21:8), (22:8), "
-      "(23:8), (24:8), (25:8), (26:8), (27:8), (28:8), (29:8)");
+    puzzle.to_string(),
+    "marbles: \nNORTH: (0:2), (1:2), (2:2), (3:2), (4:2), (5:2), (6:2), "
+    "(7:2), (8:2), (9:2)\nEAST: (10:7), (11:7), (12:7), (13:7), (14:7), "
+    "(15:7), (16:7), (17:7), (18:7), (19:7)\nWEST: (20:8), (21:8), (22:8), "
+    "(23:8), (24:8), (25:8), (26:8), (27:8), (28:8), (29:8)");
 }

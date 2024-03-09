@@ -9,16 +9,21 @@
 #include <QPushButton>
 #include <QScreen>
 
-SpinPuzzleWindow::SpinPuzzleWindow(QWidget *parent) : QMainWindow(parent) {
-  QScreen *screen = QGuiApplication::primaryScreen();
+SpinPuzzleWindow::SpinPuzzleWindow(QWidget* parent)
+  : QMainWindow(parent)
+{
+  QScreen* screen = QGuiApplication::primaryScreen();
   QRect screenGeometry = screen->geometry();
   m_spinPuzzleWidget = new SpinPuzzleWidget(
 #ifdef Q_OS_ANDROID
-      screenGeometry.width(), screenGeometry.height(),
+    screenGeometry.width(),
+    screenGeometry.height(),
 #else
-      screenGeometry.width() / 2, screenGeometry.height() / 2,
+    screenGeometry.width() / 2,
+    screenGeometry.height() / 2,
 #endif
-      true, this);
+    true,
+    this);
   this->setCentralWidget(m_spinPuzzleWidget);
 
   create_actions();
@@ -28,7 +33,9 @@ SpinPuzzleWindow::SpinPuzzleWindow(QWidget *parent) : QMainWindow(parent) {
 
 SpinPuzzleWindow::~SpinPuzzleWindow() {}
 
-void SpinPuzzleWindow::create_actions() {
+void
+SpinPuzzleWindow::create_actions()
+{
   m_records_action = new QAction(tr("Records"), this);
   m_import = new QAction(tr("Import Game"), this);
 
@@ -42,18 +49,30 @@ void SpinPuzzleWindow::create_actions() {
 
   m_reset_application = new QAction(tr("Reset App"), this);
 
-  connect(m_records_action, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_records_action,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::exec_puzzle_records_dialog);
-  connect(m_import, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_import,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::import_game);
 
-  connect(m_start_game, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_start_game,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::start_game);
-  connect(m_reset_game, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_reset_game,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::reset);
-  connect(m_save_game, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_save_game,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::save_progress);
-  connect(m_load_game, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_load_game,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::load_latest_game);
 
   connect(m_about, &QAction::triggered, this, [this] {
@@ -92,11 +111,15 @@ in the 6 leaves, 3 for each side:
     }
   });
 
-  connect(m_reset_application, &QAction::triggered, m_spinPuzzleWidget,
+  connect(m_reset_application,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
           &SpinPuzzleWidget::reset_file_app);
 }
 
-void SpinPuzzleWindow::create_menus() {
+void
+SpinPuzzleWindow::create_menus()
+{
   m_menu = menuBar()->addMenu(tr("Menu"));
   m_menu->addAction(m_start_game);
   m_menu->addAction(m_reset_game);

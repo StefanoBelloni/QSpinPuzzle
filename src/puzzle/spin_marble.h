@@ -1,8 +1,9 @@
 #ifndef SPINMARBLE_H
 #define SPINMARBLE_H
 
-#include "spin_puzzle_definitions.h"
 #include <string>
+
+#include "spin_puzzle_definitions.h"
 
 namespace puzzle {
 
@@ -14,7 +15,8 @@ namespace puzzle {
  *
  * The default constructor creates a marble with id '-1' and color '-1'
  */
-class SpinMarble {
+class SpinMarble
+{
 public:
   //! \brief invalid value
   static Color INVALID_COLOR;
@@ -35,23 +37,25 @@ public:
    *
    * @param  other: marble to be moved
    */
-  SpinMarble(SpinMarble &&other) {
+  SpinMarble(SpinMarble&& other)
+  {
     m_id = other.m_id;
     m_color = other.m_color;
     other.m_id = INVALID_ID;
     other.m_color = INVALID_COLOR;
   }
 
-  SpinMarble(const SpinMarble &other) = default;
+  SpinMarble(const SpinMarble& other) = default;
 
-  SpinMarble &operator=(const SpinMarble &other) = default;
+  SpinMarble& operator=(const SpinMarble& other) = default;
 
   /**
    * @brief Move assignment
    *
    * @param  other: marbled to be swap
    */
-  SpinMarble &operator=(SpinMarble &&other) {
+  SpinMarble& operator=(SpinMarble&& other)
+  {
     m_id = other.m_id;
     m_color = other.m_color;
     other.m_id = INVALID_ID;
@@ -81,23 +85,29 @@ public:
   //! \brief sanity check
   bool is_valid() const { return m_color != INVALID_COLOR && m_id != -1; }
 
-  bool operator==(const SpinMarble &other) const {
+  bool operator==(const SpinMarble& other) const
+  {
     return m_id == other.m_id && m_color == other.m_color;
   }
   operator Color() { return m_color; }
 
-  bool operator!=(const SpinMarble &other) const { return !(*this == other); }
+  bool operator!=(const SpinMarble& other) const { return !(*this == other); }
 
-  std::string to_string() {
+  std::string to_string()
+  {
     return '(' + std::to_string(m_id) + ':' + std::to_string(m_color) + ')';
   }
 
-  template <typename Buffer> Buffer &serialize(Buffer &buffer) {
+  template<typename Buffer>
+  Buffer& serialize(Buffer& buffer)
+  {
     buffer << m_id << " " << m_color << " ";
     return buffer;
   }
 
-  template <typename Buffer> Buffer &load(Buffer &buffer) {
+  template<typename Buffer>
+  Buffer& load(Buffer& buffer)
+  {
     buffer >> m_id >> m_color;
     return buffer;
   }

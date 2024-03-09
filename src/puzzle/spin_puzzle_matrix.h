@@ -1,12 +1,17 @@
 #ifndef SPINPUZZLEMATRIX_H
 #define SPINPUZZLESMATRIX_H
 
-#include <array>
 #include <stdint.h>
+
+#include <array>
 
 namespace puzzle {
 
-template <std::size_t N> class MatrixOperation { public: };
+template<std::size_t N>
+class MatrixOperation
+{
+public:
+};
 
 } // namespace puzzle
 

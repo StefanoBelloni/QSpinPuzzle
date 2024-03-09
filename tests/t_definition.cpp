@@ -1,11 +1,12 @@
 #include <gtest/gtest.h>
 
-#include "puzzle/spin_puzzle_definitions.h"
-
 #include <array>
 
+#include "puzzle/spin_puzzle_definitions.h"
+
 // Test if with or without Qt the result is the same.
-TEST(SpinPuzzleDefinition, Colors) {
+TEST(SpinPuzzleDefinition, Colors)
+{
   ASSERT_EQ(puzzle::color_to_str(puzzle::white), "white");
   ASSERT_EQ(puzzle::color_to_str(puzzle::black), "black");
   ASSERT_EQ(puzzle::color_to_str(puzzle::red), "red");

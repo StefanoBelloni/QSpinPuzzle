@@ -2,6 +2,7 @@
 #define SPIN_PUZZLE_DEFINITIONS_H
 
 #include <stdint.h>
+
 #include <string>
 
 /**
@@ -54,12 +55,14 @@ constexpr size_t SIZE_STEP_ARRAY = 1 + 2 * 3 * (10 + 3);
 
 using Color = int;
 
-std::string color_to_str(int color);
+std::string
+color_to_str(int color);
 
 /**
  * @brief enumeration to determine the leaf of a trefoil
  */
-enum class LEAF : uint8_t {
+enum class LEAF : uint8_t
+{
   NORTH = 0,   //!< leaf on the top (NORTH)
   EAST = 1,    //!< leaf on the right (EAST)
   WEST = 2,    //!< leaf on the left (WEST)
@@ -71,7 +74,8 @@ enum class LEAF : uint8_t {
 /**
  * @brief  enumeration to determine if a rotation (any kind) is possible
  */
-enum class ROTATION : uint8_t {
+enum class ROTATION : uint8_t
+{
   OK = 0,     //!< rotation is possible
   INVALID = 1 //!< rotation is NOT possible
 };
@@ -82,7 +86,8 @@ enum class ROTATION : uint8_t {
  *
  * @note
  */
-enum class TREFOIL : uint8_t {
+enum class TREFOIL : uint8_t
+{
   INVALID = 0,         //!< the central disk is rotating out of phase
   LEAF_ROTATION = 1,   //!< rotation of the leaf is possible
   LEAF_SPINNING = 2,   //!< the leaf is rotating on its axis
@@ -92,7 +97,8 @@ enum class TREFOIL : uint8_t {
 /**
  * @brief enumeration to take into account time evolution or time related states
  */
-enum class TIME : uint8_t {
+enum class TIME : uint8_t
+{
   PREVIOUS = 0, //!< index of previous state
   CURRENT = 1   //!< index of current state
 };
@@ -100,7 +106,8 @@ enum class TIME : uint8_t {
 /**
  * @brief  enumeration to identify the side of a trefoil
  */
-enum class SIDE : uint8_t {
+enum class SIDE : uint8_t
+{
   FRONT = 0, //!< front side of a trefoil
   BACK = 1,  //!< back side in a trefoil
 };

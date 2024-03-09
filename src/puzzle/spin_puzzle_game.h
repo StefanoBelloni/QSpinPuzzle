@@ -1,8 +1,9 @@
 #ifndef SPINPUZZLEGAME_H
 #define SPINPUZZLEGAME_H
 
-#include "spin_puzzle_side.h"
 #include <sstream>
+
+#include "spin_puzzle_side.h"
 
 namespace puzzle {
 
@@ -12,7 +13,8 @@ namespace puzzle {
  * It consist of two sides of type \ref SpinPuzzleSide
  * @note
  */
-class SpinPuzzleGame {
+class SpinPuzzleGame
+{
 public:
   /**
    * @brief create configuration for the front side of the trefoil
@@ -34,10 +36,10 @@ public:
    * @param  back: initial configuration for \ref SIDE::BACK side
    */
   SpinPuzzleGame(
-      std::array<SpinMarble, 30> front = SpinPuzzleGame::createFrontMarbles(),
-      std::array<SpinMarble, 30> back = SpinPuzzleGame::createBackMarbles());
+    std::array<SpinMarble, 30> front = SpinPuzzleGame::createFrontMarbles(),
+    std::array<SpinMarble, 30> back = SpinPuzzleGame::createBackMarbles());
 
-  SpinPuzzleGame(const SpinPuzzleGame &game) = default;
+  SpinPuzzleGame(const SpinPuzzleGame& game) = default;
 
   /**
    * @brief  reset the game configuration to the initial one
@@ -127,7 +129,8 @@ public:
    * @param  side: side to get
    * @retval returns a \ref SpinPuzzleSide for the side.
    */
-  puzzle::SpinPuzzleSide<10, 3> &get_side(SIDE side) {
+  puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side)
+  {
     uint8_t n = static_cast<uint8_t>(side);
     return m_sides[n];
   }
@@ -138,7 +141,8 @@ public:
    * @param  side: side to get
    * @retval returns a \ref SpinPuzzleSide for the side.
    */
-  puzzle::SpinPuzzleSide<10, 3> &get_side() {
+  puzzle::SpinPuzzleSide<10, 3>& get_side()
+  {
     return get_side(get_active_side());
   }
 
@@ -185,7 +189,9 @@ public:
    * @param  buffer: location where to save the data
    * @retval
    */
-  template <typename Buffer> Buffer &serialize(Buffer &buffer) {
+  template<typename Buffer>
+  Buffer& serialize(Buffer& buffer)
+  {
     buffer << "v0"
            << " " << static_cast<uint32_t>(m_active_side) << " "
            << m_spin_rotation[0] << " " << m_spin_rotation[1] << " "
@@ -196,20 +202,24 @@ public:
     return buffer;
   }
 
-  std::FILE *serialize(std::FILE *file) {
+  std::FILE* serialize(std::FILE* file)
+  {
     std::stringstream s;
     serialize(s);
     std::fputs(s.str().c_str(), file);
     return file;
   }
-  std::string serialize(std::string &string) {
+  std::string serialize(std::string& string)
+  {
     std::stringstream s;
     serialize(s);
     string = s.str();
     return string;
   }
 
-  template <typename Buffer> Buffer &load(Buffer &buffer) {
+  template<typename Buffer>
+  Buffer& load(Buffer& buffer)
+  {
     std::string version;
     uint32_t active_side;
 
@@ -227,7 +237,8 @@ public:
   }
 
   // TODO: Improve performance !!!
-  std::FILE *load(std::FILE *file) {
+  std::FILE* load(std::FILE* file)
+  {
     std::string str;
     char c;
     do {
@@ -250,7 +261,8 @@ public:
     return file;
   }
 
-  std::string load(std::string &string) {
+  std::string load(std::string& string)
+  {
     std::stringstream s;
     s << string;
     load(s);
@@ -258,7 +270,8 @@ public:
   }
 
 private:
-  class KeyboardState {
+  class KeyboardState
+  {
   public:
     KeyboardState() = default;
 
@@ -270,13 +283,15 @@ private:
     puzzle::LEAF section = puzzle::LEAF::INVALID;
   };
 
-  bool is_leaf_complete(puzzle::SpinPuzzleSide<> &side, LEAF leaf);
+  bool is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf);
 
   //!< sides of a trefoil
   std::array<puzzle::SpinPuzzleSide<>, 2> m_sides;
   //!< which side of a trefoil is currently active
   SIDE m_active_side = SIDE::FRONT;
-  double m_spin_rotation[static_cast<uint8_t>(LEAF::TREFOIL)] = {0.0, 0.0, 0.0};
+  double m_spin_rotation[static_cast<uint8_t>(LEAF::TREFOIL)] = { 0.0,
+                                                                  0.0,
+                                                                  0.0 };
 
   // void debug_iter(const char *name, SpinPuzzleSide<>::iterator it);
 

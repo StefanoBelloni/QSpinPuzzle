@@ -2,21 +2,27 @@
 
 namespace puzzle {
 
-std::string Cipher::encrypt(const std::string &input) {
+std::string
+Cipher::encrypt(const std::string& input)
+{
   if (m_version == Cipher::VERSION::v0) {
     return caesar_encrypt(input);
   }
   return input;
 }
 
-std::string Cipher::decrypt(const std::string &input) {
+std::string
+Cipher::decrypt(const std::string& input)
+{
   if (m_version == Cipher::VERSION::v0) {
     return caesar_decrypt(input);
   }
   return input;
 }
 
-std::string Cipher::caesar_encrypt(const std::string &input) {
+std::string
+Cipher::caesar_encrypt(const std::string& input)
+{
   std::string output;
   int n = 0;
   for (char c : input) {
@@ -30,7 +36,9 @@ std::string Cipher::caesar_encrypt(const std::string &input) {
   }
   return output;
 }
-std::string Cipher::caesar_decrypt(const std::string &input) {
+std::string
+Cipher::caesar_decrypt(const std::string& input)
+{
   std::string output;
   for (char c : input) {
     if (c == '\n') {
