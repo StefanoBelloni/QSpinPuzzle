@@ -484,6 +484,27 @@ SpinPuzzleGame::shuffle(int seed, int commands, bool check)
   }
 }
 
+void
+SpinPuzzleGame::shuffle_with_commands(int seed, int commands, bool check)
+{
+  int command = 0;
+  ActionProvider ap;
+  auto vec = ap.getSequenceOfCommands(seed, commands);
+  for (auto key : vec) {
+    process_command(key);
+    if (check && !check_consistency()) {
+      std::cerr << "[DEBUG][suffle] marbles are in an invalid state after "
+                   "processing command "
+                << static_cast<int>(key) << ", n. command: " << command << "\n";
+      std::cerr << "[DEBUG][shuffle] GAME:"
+                << "\n";
+      std::cerr << to_string().c_str() << "\n";
+      assert(check_consistency(true));
+    }
+    ++command;
+  }
+}
+
 // optimize it!
 std::array<Color, puzzle::SIZE_STEP_ARRAY>
 SpinPuzzleGame::current_time_step()

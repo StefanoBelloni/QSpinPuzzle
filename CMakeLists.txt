@@ -126,6 +126,7 @@ add_executable(
   tests/t_puzzle_side.cpp
   tests/t_puzzle_game.cpp
   tests/t_definition.cpp
+  tests/t_puzzle_cipher.cpp
 )
 target_include_directories(
     t_puzzle

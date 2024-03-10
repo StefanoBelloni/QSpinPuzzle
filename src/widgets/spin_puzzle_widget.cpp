@@ -330,8 +330,6 @@ SpinPuzzleWidget::store_puzzle_record(int elapsed_time,
   // add to games
   if (!found_duplicate) {
     games.emplace_back(elapsed_time, game);
-  } else {
-    return false;
   }
 
   return store_puzzles_record(games);
@@ -1148,11 +1146,13 @@ SpinPuzzleWidget::mousePressEvent(QMouseEvent* e)
   }
 
   if (m_paint_congratulations) {
-    const int L = this->m_length;
-    auto rec = QRect(L / 4 + m_tx, L / 2 - L / 16 + m_ty, L / 2, L / 8);
-    if (rec.contains(e->pos())) {
-      reset();
-    }
+    // const int L = this->m_length;
+    // auto rec = QRect(L / 4 + m_tx, L / 2 - L / 16 + m_ty, L / 2, L / 8);
+    // if (rec.contains(e->pos())) {
+    // reset();
+    // }
+    reset();
+    return;
   }
 
 #if HIDDEN_BUTTON == 1
@@ -1401,6 +1401,7 @@ SpinPuzzleWidget::reset()
     }
   }
   m_paint_congratulations = false;
+  m_lastPositionMause = QPoint(-1, -1);
   stop_spinning_winning();
   update();
 }

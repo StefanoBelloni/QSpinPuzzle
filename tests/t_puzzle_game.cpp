@@ -176,6 +176,13 @@ TEST(PuzzleSide, game_shuffle)
   game.shuffle(42, 10000, true);
 }
 
+TEST(PuzzleSide, game_shuffle_with_commands)
+{
+  SpinPuzzleGame game;
+  game.shuffle_with_commands(0, 10000, true);
+  game.shuffle_with_commands(42, 10000, true);
+}
+
 TEST(PuzzleSide, to_stirng)
 {
   SpinPuzzleGame game;
@@ -198,6 +205,26 @@ TEST(PuzzleSide, basic)
   ASSERT_EQ(game.get_side().begin(),
             game.get_side(puzzle::SIDE::FRONT).begin());
   ASSERT_EQ(game.get_keybord_state(), puzzle::LEAF::INVALID);
+}
+
+TEST(PuzzleSide, game_is_complete)
+{
+  SpinPuzzleGame game;
+  // -------------------------------------- //
+  game.spin_leaf(LEAF::NORTH);
+  ASSERT_FALSE(game.is_game_solved());
+  game.spin_leaf(LEAF::NORTH);
+  ASSERT_TRUE(game.is_game_solved());
+  // -------------------------------------- //
+  game.spin_leaf(LEAF::EAST);
+  ASSERT_FALSE(game.is_game_solved());
+  game.spin_leaf(LEAF::EAST);
+  ASSERT_TRUE(game.is_game_solved());
+  // -------------------------------------- //
+  game.spin_leaf(LEAF::WEST);
+  ASSERT_FALSE(game.is_game_solved());
+  game.spin_leaf(LEAF::WEST);
+  ASSERT_TRUE(game.is_game_solved());
 }
 
 TEST(PuzzleSide, serialize_stringstream)
@@ -283,4 +310,20 @@ TEST(PuzzleSide, many_serialize_file)
   ASSERT_EQ(game.to_string(), shuffled_game2);
   game.load(tmpf);
   ASSERT_EQ(game.to_string(), shuffled_game3);
+}
+
+TEST(PuzzleSide, retrieve_current_timestep)
+{
+  std::stringstream out;
+  SpinPuzzleGame game;
+  game.shuffle();
+  game.serialize(out);
+  auto v1 = game.current_time_step();
+  game.shuffle();
+  auto v2 = game.current_time_step();
+  ASSERT_TRUE(v1 != v2);
+  out.seekg(0, std::ios::beg);
+  game.load(out);
+  auto v3 = game.current_time_step();
+  ASSERT_EQ(v1, v3);
 }

@@ -64,8 +64,22 @@ public:
    * @note
    * @param  seed: seed to be used
    * @param  commands: number of commands
+   * @param  check: check consistency after shuffle
    */
   void shuffle(int seed = 0, int commands = 20000, bool check = false);
+
+  /**
+   * @brief  shuffle the marbles with a sequence of commands
+   * @note   commands are aggregated action: not a simple key press but a
+   *         coherent sequence. For example NORTH_RIGHT is the sequence:
+   *         Key_N + Arrow_Right.
+   * @param  seed: seed to be used
+   * @param  commands: number of commands
+   * @param  check: check consistency after shuffle
+   */
+  void shuffle_with_commands(int seed = 0,
+                             int commands = 20000,
+                             bool check = false);
 
   /**
    * @brief  setter of the active side
