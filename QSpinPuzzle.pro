@@ -30,9 +30,11 @@ SOURCES += \
     src/puzzle/spin_puzzle_matrix.cpp \
     src/puzzle/spin_puzzle_side.cpp \
     src/puzzle/spin_puzzle_cipher.cpp \
+    src/puzzle/spin_configuration.cpp \
     src/widgets/spin_puzzle_history_widget.cpp \
     src/widgets/spin_puzzle_widget.cpp \
     src/widgets/spin_puzzle_window.cpp \
+    src/widgets/spin_puzzle_config_widget.cpp \
     src/main.cpp
 
 HEADERS  += \
@@ -43,10 +45,12 @@ HEADERS  += \
     src/puzzle/spin_puzzle_matrix.h \
     src/puzzle/spin_puzzle_side.h \
     src/puzzle/spin_puzzle_cipher.h \
+    src/puzzle/spin_configuration.h \
     src/widgets/spin_puzzle_history_widget.cpp \
     src/widgets/spin_puzzle_history_widget.h \
     src/widgets/spin_puzzle_widget.h \
     src/widgets/spin_puzzle_window.h \
+    src/widgets/spin_puzzle_config_widget.h
 
 DISTFILES += \
     README.md \

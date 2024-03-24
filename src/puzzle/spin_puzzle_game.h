@@ -3,6 +3,7 @@
 
 #include <sstream>
 
+#include "spin_configuration.h"
 #include "spin_puzzle_side.h"
 
 namespace puzzle {
@@ -198,6 +199,13 @@ public:
    * @retval array rappresentation of the state.
    */
   std::array<Color, puzzle::SIZE_STEP_ARRAY> current_time_step();
+
+  /**
+   * @brief  set parameter form the configuration
+   * @note
+   * @param  config: config to apply
+   */
+  void set_config(puzzle::Configuration& config);
 
   /**
    * @brief  function to serialize the game to save it

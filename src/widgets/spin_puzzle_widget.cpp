@@ -20,6 +20,7 @@
 #include <sstream>
 
 #include "puzzle/spin_puzzle_cipher.h"
+#include "spin_puzzle_config_widget.h"
 
 #define DEBUG_MARBLES 0
 #define DEBUG_CIPHER 0
@@ -41,6 +42,8 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width,
   if (m_allow_play) {
     create_play_buttons();
     connect_play_buttons();
+    load_configuration();
+    m_game.set_config(m_config);
   }
 
   m_timer = new QTimer(this);
@@ -140,6 +143,40 @@ SpinPuzzleWidget::exec_puzzle_records_dialog()
   m_history_widget->setVisible(true);
 }
 
+void
+SpinPuzzleWidget::exec_puzzle_config_dialog()
+{
+  m_config_widget =
+    new SpinPuzzleConfigurationWidget(m_length, m_length, this, m_config);
+  // m_config_widget->setFixedSize(m_length, m_length);
+  m_config_widget->show();
+  m_config_widget->setVisible(true);
+}
+
+void
+SpinPuzzleWidget::update_configuration(const puzzle::Configuration& config)
+{
+  m_config = config;
+  std::ofstream file(get_config_puzzle_file());
+  if (file.is_open()) {
+    std::stringstream s;
+    m_config.dump(s);
+    file << s.str();
+  }
+  m_game.set_config(m_config);
+}
+
+void
+SpinPuzzleWidget::load_configuration()
+{
+  std::ifstream file(get_config_puzzle_file());
+  if (file.is_open()) {
+    std::stringstream s;
+    s << file.rdbuf();
+    m_config.load(s);
+  }
+}
+
 double
 SpinPuzzleWidget::get_height_button_bottom() const
 {
@@ -175,6 +212,7 @@ SpinPuzzleWidget::reset_file_app()
   files.emplace_back((get_current_puzzle_file().c_str()));
   files.emplace_back((get_puzzle_file().c_str()));
   files.emplace_back((get_records_puzzle_file().c_str()));
+  files.emplace_back((get_config_puzzle_file().c_str()));
   for (auto& d : files) {
     QFile file(d.c_str());
     file.remove();
@@ -183,6 +221,7 @@ SpinPuzzleWidget::reset_file_app()
   // file.remove();
   reset();
   delete_history_popup();
+  delete_config_popup();
   update();
 }
 
@@ -332,7 +371,8 @@ SpinPuzzleWidget::store_puzzle_record(int elapsed_time,
     games.emplace_back(elapsed_time, game);
   }
 
-  return store_puzzles_record(games);
+  store_puzzles_record(games);
+  return !found_duplicate;
 }
 
 void
@@ -566,6 +606,10 @@ SpinPuzzleWidget::paint_status()
 
   QPainter painter_status(this);
 
+  auto s = get_length_status_square();
+  QString hello = QString("Hi, ") + QString(m_config.name().c_str());
+  painter_status.drawText(QPoint(s / 5, s - s / 5), hello);
+
   if (side.get_trifoild_status() == puzzle::TREFOIL::BORDER_ROTATION ||
       side.is_border_rotation_possible()) {
     painter_status.setBrush(Qt::green);
@@ -575,7 +619,6 @@ SpinPuzzleWidget::paint_status()
     painter_status.setBrush(Qt::yellow);
   }
 
-  auto s = get_length_status_square();
   // painter_status.translate(0, s);
   painter_status.drawRect(0, s, s - 1, s - 1);
 
@@ -1287,7 +1330,7 @@ SpinPuzzleWidget::mouse_event_inside_leaf(QPoint pos,
 double
 SpinPuzzleWidget::get_scaled_angle(double a1, double a2)
 {
-  return (a1 - a2) * 11.0 * M_PI;
+  return (a1 - a2) * m_config.speed() * M_PI;
 }
 
 bool
@@ -1333,6 +1376,7 @@ SpinPuzzleWidget::set_game(int time, const puzzle::SpinPuzzleGame& game)
 {
   m_elapsed_time = time;
   m_game = game;
+  m_game.set_config(m_config);
 }
 
 void
@@ -1341,6 +1385,14 @@ SpinPuzzleWidget::delete_history_popup()
   m_history_widget->deleteLater();
   m_history_widget = nullptr;
 }
+
+void
+SpinPuzzleWidget::delete_config_popup()
+{
+  m_config_widget->deleteLater();
+  m_config_widget = nullptr;
+}
+
 void
 SpinPuzzleWidget::set_elapsed_time(int t)
 {
@@ -1358,6 +1410,9 @@ SpinPuzzleWidget::closeEvent(QCloseEvent* /*event*/)
 {
   if (m_history_widget) {
     m_history_widget->deleteLater();
+  }
+  if (m_config_widget) {
+    m_config_widget->deleteLater();
   }
 }
 
@@ -1397,6 +1452,7 @@ SpinPuzzleWidget::reset()
       m_elapsed_time = 0;
       m_timer->stop();
       m_game = puzzle::SpinPuzzleGame();
+      m_game.set_config(m_config);
       reset_leaf_colors();
     }
   }
@@ -1416,6 +1472,15 @@ create_dir()
   if (!dir.exists()) {
     dir.mkpath(".");
   }
+}
+
+std::string
+SpinPuzzleWidget::get_config_puzzle_file()
+{
+  auto path =
+    QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  auto filename = QDir(path + "/config_puzzle.txt");
+  return filename.path().toStdString();
 }
 
 std::string
@@ -1478,7 +1543,11 @@ SpinPuzzleWidget::do_start_game(int shuffle_level)
   m_solved = false;
   m_timer->start(1000);
   if (shuffle_level > 0) {
-    m_game.shuffle();
+    // TODO: use some metric to determin the difficulty, for example
+    // fill-grad for leaf + max distance marbles of the same color ...
+    int n_random_commands = 100 + std::pow(m_config.level(), 5);
+    // qDebug() << "Shuffling with " << n_random_commands << " commands";
+    m_game.shuffle(0, n_random_commands);
   }
   if (m_allow_play) {
     create_dir();

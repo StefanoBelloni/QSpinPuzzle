@@ -100,6 +100,7 @@ public:
    */
   class Status
   {
+    int m_tollerance = SpinPuzzleSide::TOLLERANCE_ANGLE;
     //!< phase schifts of the different leaves
     double m_shifts_leaves[N_LEAVES] = { 0.0, 0.0, 0.0 };
     //!< phase schifts of the central disk
@@ -155,6 +156,10 @@ public:
     }
 
   public:
+    //!< set tollerance for realism
+    void set_tollerance(int t) { m_tollerance = t; }
+    //!< retieve tollerance
+    int tollerance() const { return m_tollerance; }
     //!< getter for the local shift in degree of the first marble of the section
     double get_shift_of_leaf(LEAF leaf) const
     {
@@ -468,6 +473,9 @@ public:
    * @retval true if the update was possible
    */
   bool rotate_internal_disk(double angle);
+
+  //!< set tollerance for rotations
+  void set_tollerance(int t) { m_status.set_tollerance(t); }
 
   /**
    * @brief return the first marble of the section
@@ -788,10 +796,10 @@ SpinPuzzleSide<N, M>::is_border_rotation_possible() const
   if (status == TREFOIL::INVALID) {
     const double shift = m_status.get_central_disk_shift();
     const double idisk_shift = fmod(shift + 360.0, 360.0);
-    if ((300 - TOLLERANCE_ANGLE <= idisk_shift &&
-         idisk_shift <= 300 + TOLLERANCE_ANGLE) ||
-        (60 - TOLLERANCE_ANGLE <= idisk_shift &&
-         idisk_shift <= 60 + TOLLERANCE_ANGLE)) {
+    if ((300 - m_status.tollerance() <= idisk_shift &&
+         idisk_shift <= 300 + m_status.tollerance()) ||
+        (60 - m_status.tollerance() <= idisk_shift &&
+         idisk_shift <= 60 + m_status.tollerance())) {
       return true;
     }
   }
@@ -826,19 +834,24 @@ template<std::size_t N, std::size_t M>
 void
 SpinPuzzleSide<N, M>::update_rotation_status(LEAF leaf)
 {
-  double alpha = std::fmod(
-    std::fmod(m_status.get_shift_of_leaf(leaf) + 360.0, 360.0), DTHETA);
   double dtheta = DTHETA;
-  double tollerance = TOLLERANCE_ANGLE;
+  double tollerance = m_status.tollerance();
   if (m_status.get_trefoil_status(TIME::CURRENT) == TREFOIL::BORDER_ROTATION) {
     dtheta /= 12;
     tollerance /= 12;
   }
+  double alpha = std::fmod(
+    std::fmod(m_status.get_shift_of_leaf(leaf) + 360.0, 360.0), dtheta);
   m_status.set_rotation_status(
     leaf,
-    (dtheta / 2 - tollerance < alpha && alpha < dtheta / 2 + tollerance)
-      ? ROTATION::INVALID
-      : ROTATION::OK);
+    (alpha < tollerance || alpha > dtheta - tollerance) ? ROTATION::OK
+                                                        : ROTATION::INVALID);
+  // std::cout << "[DEBUG]" << " tollerance = " << tollerance << ", alpha = " <<
+  // alpha << ((alpha < tollerance || alpha > DTHETA - tollerance) ? "" : "
+  // NOT") << " in [" << tollerance << ", " << (DTHETA - tollerance) << "]";
+  // std::cout << "[DEBUG]" << " ==> ROTATION IS " <<
+  // (m_status.get_rotation_status(leaf) == ROTATION::OK ? "OK" : "INVALID") <<
+  // "\n";
 }
 
 template<std::size_t N, std::size_t M>
@@ -864,8 +877,10 @@ SpinPuzzleSide<N, M>::rotate_internal_disk(double angle)
   // ======================================================================== //
   // FROM BORDER ROTATION TO INTERNAL DISK ROTATION
   if (m_status.get_trefoil_status(TIME::CURRENT) == TREFOIL::BORDER_ROTATION) {
-    if ((300 - TOLLERANCE_ANGLE <= alpha && alpha <= 300 + TOLLERANCE_ANGLE) ||
-        (60 - TOLLERANCE_ANGLE <= alpha && alpha <= 60 + TOLLERANCE_ANGLE)) {
+    if ((300 - m_status.tollerance() <= alpha &&
+         alpha <= 300 + m_status.tollerance()) ||
+        (60 - m_status.tollerance() <= alpha &&
+         alpha <= 60 + m_status.tollerance())) {
       prepare_from_border_rotation();
     }
   }
@@ -873,8 +888,8 @@ SpinPuzzleSide<N, M>::rotate_internal_disk(double angle)
   angle = fmod(angle + 360.0, 360.0);
   m_status.set_trefoil_status(TREFOIL::INVALID);
 
-  if (120 - TOLLERANCE_ANGLE <= new_shift_cdisk &&
-      new_shift_cdisk < 240 - TOLLERANCE_ANGLE) {
+  if (120 - m_status.tollerance() <= new_shift_cdisk &&
+      new_shift_cdisk < 240 - m_status.tollerance()) {
     // ROTATE marbles NORTH->EAST->WEST
     auto north_it = this->begin(LEAF::NORTH) - 1;
     auto east_it = this->begin(LEAF::EAST) - 1;
@@ -886,8 +901,8 @@ SpinPuzzleSide<N, M>::rotate_internal_disk(double angle)
     // recalcualte the shift angle
     const double updated_angle = new_shift_cdisk - 120;
     m_status.set_central_disk_shift(updated_angle);
-  } else if (240 - TOLLERANCE_ANGLE <= new_shift_cdisk &&
-             new_shift_cdisk <= 240 + TOLLERANCE_ANGLE) {
+  } else if (240 - m_status.tollerance() <= new_shift_cdisk &&
+             new_shift_cdisk <= 240 + m_status.tollerance()) {
     // ROTATE marbles WEST->EAST->NORTH
     auto north_it = this->begin(LEAF::NORTH) - 1;
     auto east_it = this->begin(LEAF::EAST) - 1;
@@ -902,12 +917,13 @@ SpinPuzzleSide<N, M>::rotate_internal_disk(double angle)
   } else {
     m_status.set_central_disk_shift(new_shift_cdisk);
   }
-  if ((0 <= new_shift_cdisk && new_shift_cdisk <= TOLLERANCE_ANGLE) ||
-      ((360 - TOLLERANCE_ANGLE) <= new_shift_cdisk && new_shift_cdisk <= 360) ||
-      (120 - TOLLERANCE_ANGLE <= new_shift_cdisk &&
-       new_shift_cdisk <= 120 + TOLLERANCE_ANGLE) ||
-      ((240 - TOLLERANCE_ANGLE) <= new_shift_cdisk &&
-       new_shift_cdisk <= 240 + TOLLERANCE_ANGLE)) {
+  if ((0 <= new_shift_cdisk && new_shift_cdisk <= m_status.tollerance()) ||
+      ((360 - m_status.tollerance()) <= new_shift_cdisk &&
+       new_shift_cdisk <= 360) ||
+      (120 - m_status.tollerance() <= new_shift_cdisk &&
+       new_shift_cdisk <= 120 + m_status.tollerance()) ||
+      ((240 - m_status.tollerance()) <= new_shift_cdisk &&
+       new_shift_cdisk <= 240 + m_status.tollerance())) {
     m_status.set_trefoil_status(TREFOIL::LEAF_ROTATION);
   }
 
@@ -942,12 +958,13 @@ SpinPuzzleSide<N, M>::reorder_marbles_after_border_reset()
   auto it_north = begin(LEAF::NORTH);
   auto it_east = begin(LEAF::EAST);
   auto it_west = begin(LEAF::WEST);
-  if ((60 - TOLLERANCE_ANGLE <= shift && shift <= 60 + TOLLERANCE_ANGLE)) {
+  if ((60 - m_status.tollerance() <= shift &&
+       shift <= 60 + m_status.tollerance())) {
     std::iter_swap(it_north + N - 3, it_north + N - 1);
     std::iter_swap(it_east + N - 3, it_east + N - 1);
     std::iter_swap(it_west + N - 3, it_west + N - 1);
-  } else if ((300 - TOLLERANCE_ANGLE <= shift &&
-              shift <= 300 + TOLLERANCE_ANGLE)) {
+  } else if ((300 - m_status.tollerance() <= shift &&
+              shift <= 300 + m_status.tollerance())) {
     std::iter_swap(it_north + N - 3, it_east + N - 1);
     std::iter_swap(it_north + N - 2, it_east + N - 2);
     std::iter_swap(it_north + N - 1, it_east + N - 3);

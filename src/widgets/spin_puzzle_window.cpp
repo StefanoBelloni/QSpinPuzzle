@@ -44,6 +44,8 @@ SpinPuzzleWindow::create_actions()
   m_save_game = new QAction(tr("Save Progress"), this);
   m_load_game = new QAction(tr("Load Latest Game"), this);
 
+  m_config_game = new QAction(tr("Configuration"), this);
+
   m_about = new QAction(tr("About"), this);
   m_quit = new QAction(tr("Quit"), this);
 
@@ -74,6 +76,11 @@ SpinPuzzleWindow::create_actions()
           &QAction::triggered,
           m_spinPuzzleWidget,
           &SpinPuzzleWidget::load_latest_game);
+
+  connect(m_config_game,
+          &QAction::triggered,
+          m_spinPuzzleWidget,
+          &SpinPuzzleWidget::exec_puzzle_config_dialog);
 
   connect(m_about, &QAction::triggered, this, [this] {
     QMessageBox::about(this, "QSpinPuzzle", R"(
@@ -128,6 +135,8 @@ SpinPuzzleWindow::create_menus()
   m_menu->addSeparator();
   m_menu->addAction(m_records_action);
   m_menu->addAction(m_import);
+  m_menu->addSeparator();
+  m_menu->addAction(m_config_game);
   m_menu->addSeparator();
   m_menu->addAction(m_about);
   m_menu->addSeparator();

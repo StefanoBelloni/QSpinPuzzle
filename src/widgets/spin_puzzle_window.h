@@ -33,6 +33,7 @@ private:
   QAction* m_reset_game;
   QAction* m_save_game;
   QAction* m_load_game;
+  QAction* m_config_game;
   QAction* m_about;
   QAction* m_quit;
 

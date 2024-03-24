@@ -7,7 +7,7 @@
 
 using namespace puzzle;
 
-TEST(PuzzleSide, cipher_basic)
+TEST(PuzzleCipher, cipher_basic)
 {
   Cipher cipher(Cipher::VERSION::v0);
   std::stringstream out;

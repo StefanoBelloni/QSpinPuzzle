@@ -25,6 +25,13 @@ SpinPuzzleGame::rotate_internal_disk(double angle)
   return m_sides[n].rotate_internal_disk(angle);
 }
 
+void
+SpinPuzzleGame::set_config(puzzle::Configuration& config)
+{
+  m_sides[0].set_tollerance(config.realism());
+  m_sides[1].set_tollerance(config.realism());
+}
+
 bool
 SpinPuzzleGame::spin_leaf(LEAF leaf)
 {

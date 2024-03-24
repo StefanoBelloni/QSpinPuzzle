@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QWidget>
 
+#include "puzzle/spin_configuration.h"
 #include "puzzle/spin_puzzle_definitions.h"
 #include "puzzle/spin_puzzle_game.h"
 #include "spin_puzzle_history_widget.h"
@@ -11,6 +12,7 @@
 #define SAVE_LOAD_DATA 1
 
 class SpinPuzzleHistoryWidget;
+class SpinPuzzleConfigurationWidget;
 
 /**
  * @brief  Class to display the SpinPuzzle Game
@@ -39,6 +41,7 @@ class SpinPuzzleHistoryWidget;
 class SpinPuzzleWidget : public QWidget
 {
   friend class SpinPuzzleHistoryWidget;
+  friend class SpinPuzzleConfigurationWidget;
   Q_OBJECT
 public:
   SpinPuzzleWidget(int win_width,
@@ -54,6 +57,7 @@ public:
   void closeEvent(QCloseEvent* event) override;
 
   void exec_puzzle_records_dialog();
+  void exec_puzzle_config_dialog();
   void reset_file_app();
   bool import_game();
 
@@ -103,12 +107,16 @@ private:
   void do_spin_west();
   void do_start_game(int shuffle_level);
 
+  void update_configuration(const puzzle::Configuration& config);
+  void load_configuration();
+
   void connect_play_buttons();
   void create_play_buttons();
 
   bool processKey(int key, double fraction_angle);
 
   void delete_history_popup();
+  void delete_config_popup();
   void stop_spinning_winning();
   void set_game(int time, const puzzle::SpinPuzzleGame& game);
   void set_game(const puzzle::SpinPuzzleGame& game);
@@ -141,6 +149,7 @@ private:
   std::string get_puzzle_file();
   std::string get_records_puzzle_file();
   std::string get_current_puzzle_file();
+  std::string get_config_puzzle_file();
 
   // plot puzzle body
   uint32_t m_length;
@@ -152,8 +161,6 @@ private:
   QPoint m_lastPositionMause;
   // Game
   puzzle::SpinPuzzleGame m_game;
-
-  const double m_speed = 350.0;
 
   QPushButton* m_reset_btn = nullptr;
   QPushButton* m_start_btn = nullptr;
@@ -168,6 +175,7 @@ private:
 
   // maybe use a shared_pointer ...
   SpinPuzzleHistoryWidget* m_history_widget = nullptr;
+  SpinPuzzleConfigurationWidget* m_config_widget = nullptr;
 
   QTimer* m_timer;
   QTimer* m_congratulation_timer;
@@ -189,6 +197,8 @@ private:
   std::array<ColorsSide, 2> m_colors_leaves;
   std::array<ColorsSide, 2> m_colors_leaves_internal;
   std::array<ColorsSide, 2> m_colors_leaves_body;
+
+  puzzle::Configuration m_config;
 };
 
 #endif // SPIN_PUZZLE_WIDGET_H

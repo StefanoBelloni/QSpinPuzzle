@@ -166,6 +166,28 @@ problem when compiling, due to the limit of the maximum length of _paths_
 
 ## TODOs
 
+- [ ] add settings
+    - [ ] description of the setting
+    - [ ] different colors(?)
+    - [ ] autosave
+    - [ ] cipher (-)
+- [ ] add play from file: to visualize RL solution
+- [ ] difficult level should not depend on number of shuffle, but on some metric, 
+      for example the fill-level for the leaves and max sidstance between marbles
+- [ ] inform user if new solution is a record of the time is worse then previous
+- [ ] add user and date of solution
+- [ ] by fist lunch of the app, open the configuration
+- [ ] remove spin button and use mouse or improve them
+- [ ] add internal history of commands
+
+- [ ] processKey is not sincronized with swap leaf color by spin: fix it!
+      the workaround fails when shuffle is called.
+- [ ] save/load etc. port to python
+- [ ] animate spin of leave
+- [ ] 3D (??)
+
+## DONE
+
 - [x] Add a status to check if the game has been solved.
 - [x] add a timer
 - [x] Change leaf color when spinning a leaf.
@@ -175,17 +197,10 @@ problem when compiling, due to the limit of the maximum length of _paths_
 - [x] delete game from records
 - [x] use image for gae-button
 - [x] cipher (caeser) export to avoid to manipulate export
-- [ ] add settings
-    - [ ] difficult level
-    - [ ] difficult colors(?)
-    - [ ] autosave
-    - [ ] cipher
-- [ ] inform user if new solution is a record of the time is worse then previous
-- [ ] remove spin button and use mouse or improve them
-- [ ] save/load etc. port to python
-- [ ] processKey is not sincronized with swap leaf color by spin: fix it!
-      the workaround fails when shuffle is called.
-- [ ] add internal history of commands
+- [x] add settings
+    - [x] difficult level
+    - [x] marbles speed
+    - [x] realism (allow rotation also if marble between rotationg-mechanisms)
 
 ### References
 

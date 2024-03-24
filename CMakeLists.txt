@@ -37,11 +37,11 @@ endif()
 if (USE_QT)
     find_package(
         QT NAMES Qt6 Qt5 
-        COMPONENTS Widgets LinguistTools
+        COMPONENTS Widgets LinguistTools Test
     )
     find_package(
         Qt${QT_VERSION_MAJOR} 
-        COMPONENTS Widgets LinguistTools
+        COMPONENTS Widgets LinguistTools Test
     )
     # set(CMAKE_INCLUDE_CURRENT_DIR YES)
     set(CMAKE_AUTORCC ON)
@@ -70,6 +70,8 @@ add_library(spinpuzzle SHARED
     src/puzzle/spin_action_provider.h
     src/puzzle/spin_puzzle_cipher.h
     src/puzzle/spin_puzzle_cipher.cpp
+    src/puzzle/spin_configuration.cpp
+    src/puzzle/spin_configuration.h
 )
 
 # ============================================================================ #
@@ -127,6 +129,7 @@ add_executable(
   tests/t_puzzle_game.cpp
   tests/t_definition.cpp
   tests/t_puzzle_cipher.cpp
+  tests/t_puzzle_configuration.cpp
 )
 target_include_directories(
     t_puzzle
@@ -184,6 +187,8 @@ if (USE_QT)
             src/widgets/spin_puzzle_widget.cpp
             src/widgets/spin_puzzle_history_widget.h
             src/widgets/spin_puzzle_history_widget.cpp
+            src/widgets/spin_puzzle_config_widget.h
+            src/widgets/spin_puzzle_config_widget.cpp
             # =========================== #
             README.md
             # =========================== #
@@ -268,6 +273,10 @@ if (USE_QT)
     if(QT_VERSION_MAJOR EQUAL 6)
         qt_finalize_executable(QSpinPuzzle)
     endif()
+
+    # qt_add_executable( qtest_example tests/qtest_string.cpp)
+    # target_link_libraries( qtest_example PRIVATE Qt6::Core Qt6::Gui Qt6::Test Qt6::Widgets)
+    # add_test(qtest_example qtest_example)
 
 endif(USE_QT)
 # ============================================================================ #
