@@ -166,7 +166,7 @@ SpinPuzzleWidget::update_configuration(const puzzle::Configuration& config)
   m_game.set_config(m_config);
 }
 
-void
+bool
 SpinPuzzleWidget::load_configuration()
 {
   std::ifstream file(get_config_puzzle_file());
@@ -174,7 +174,9 @@ SpinPuzzleWidget::load_configuration()
     std::stringstream s;
     s << file.rdbuf();
     m_config.load(s);
+    return true;
   }
+  return false;
 }
 
 double

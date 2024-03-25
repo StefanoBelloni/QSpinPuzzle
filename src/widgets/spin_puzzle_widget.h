@@ -108,7 +108,7 @@ private:
   void do_start_game(int shuffle_level);
 
   void update_configuration(const puzzle::Configuration& config);
-  void load_configuration();
+  bool load_configuration();
 
   void connect_play_buttons();
   void create_play_buttons();

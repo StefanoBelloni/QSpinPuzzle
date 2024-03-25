@@ -166,8 +166,8 @@ problem when compiling, due to the limit of the maximum length of _paths_
 
 ## TODOs
 
+- [ ] save more information in record (username, time, difficulty level, date)
 - [ ] add settings
-    - [ ] description of the setting
     - [ ] different colors(?)
     - [ ] autosave
     - [ ] cipher (-)
@@ -201,6 +201,7 @@ problem when compiling, due to the limit of the maximum length of _paths_
     - [x] difficult level
     - [x] marbles speed
     - [x] realism (allow rotation also if marble between rotationg-mechanisms)
+    - [x] description of the setting
 
 ### References
 

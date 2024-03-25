@@ -25,7 +25,9 @@ public:
                                 puzzle::Configuration& config);
 
 private:
-  QLayout* create_level_section(const puzzle::Configuration& config);
+  QLayout* create_level_section();
+  QLayout* create_speed_section();
+  QLayout* create_realism_section();
   void set_config_values(const puzzle::Configuration& config);
 
   QLineEdit* m_nameLineEdit;
