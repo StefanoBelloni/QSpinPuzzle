@@ -35,6 +35,8 @@ SOURCES += \
     src/widgets/spin_puzzle_widget.cpp \
     src/widgets/spin_puzzle_window.cpp \
     src/widgets/spin_puzzle_config_widget.cpp \
+    src/puzzle/spin_puzzle_record.cpp \
+    src/puzzle/spin_puzzle_record.h \
     src/main.cpp
 
 HEADERS  += \

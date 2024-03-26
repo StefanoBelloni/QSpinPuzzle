@@ -72,6 +72,8 @@ add_library(spinpuzzle SHARED
     src/puzzle/spin_puzzle_cipher.cpp
     src/puzzle/spin_configuration.cpp
     src/puzzle/spin_configuration.h
+    src/puzzle/spin_puzzle_record.cpp
+    src/puzzle/spin_puzzle_record.h
 )
 
 # ============================================================================ #
@@ -130,6 +132,7 @@ add_executable(
   tests/t_definition.cpp
   tests/t_puzzle_cipher.cpp
   tests/t_puzzle_configuration.cpp
+  tests/t_puzzle_records.cpp
 )
 target_include_directories(
     t_puzzle

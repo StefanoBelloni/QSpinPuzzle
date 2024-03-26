@@ -6,7 +6,7 @@
 
 using namespace puzzle;
 
-TEST(PuzzleSide, configuration_basic)
+TEST(PuzzleConfiguration, configuration_basic)
 {
   Configuration cnf;
   cnf.set_name("QSpinTest");
