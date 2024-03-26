@@ -11,12 +11,7 @@ TEST(PuzzleRecord, records_serialization_sstring)
   std::stringstream s;
   SpinPuzzleGame game;
   game.shuffle();
-  auto record1 = SpinPuzzleRecord(
-    "QSpinPuzzleTest",
-    12345,
-    6,
-    game 
-    );
+  auto record1 = SpinPuzzleRecord("QSpinPuzzleTest", 12345, 6, game);
 
   SpinPuzzleRecord record2{};
   ASSERT_EQ(record2.username(), "");
@@ -43,18 +38,13 @@ TEST(PuzzleRecord, records_serialization_fstream)
 
   SpinPuzzleGame game;
   game.shuffle();
-  auto record1 = SpinPuzzleRecord(
-    "QSpinPuzzleTest",
-    12345,
-    6,
-    game 
-  );
+  auto record1 = SpinPuzzleRecord("QSpinPuzzleTest", 12345, 6, game);
   record1.update_time(54321);
+  record1.update_username("TestPuzzleQSpin");
   SpinPuzzleRecord record2{};
   ASSERT_EQ(record2.username(), "");
   ASSERT_EQ(record2.time(), 0);
   ASSERT_EQ(record2.level(), -1);
-
 
   record1.serialize(out);
   out.close();
@@ -65,13 +55,12 @@ TEST(PuzzleRecord, records_serialization_fstream)
   record2.load(in);
   auto game2 = record2.game();
 
-  ASSERT_EQ(record2.username(), "QSpinPuzzleTest");
+  ASSERT_EQ(record2.username(), "TestPuzzleQSpin");
   ASSERT_EQ(record2.time(), 54321);
   ASSERT_EQ(record2.level(), 6);
   ASSERT_EQ(game2.current_time_step(), game.current_time_step());
 
   std::remove(filename.c_str());
-
 }
 
 TEST(PuzzleRecord, records_multiple_serialization_fstream)
@@ -87,12 +76,8 @@ TEST(PuzzleRecord, records_multiple_serialization_fstream)
   for (size_t n = 0; n < n_games; ++n) {
     SpinPuzzleGame game;
     game.shuffle();
-    auto record1 = SpinPuzzleRecord(
-      "QSpinPuzzleTest" + std::to_string(n),
-      n * n,
-      n,
-      game 
-    );
+    auto record1 =
+      SpinPuzzleRecord("QSpinPuzzleTest" + std::to_string(n), n * n, n, game);
     games.emplace_back(game);
     record1.serialize(out);
   }
@@ -116,5 +101,4 @@ TEST(PuzzleRecord, records_multiple_serialization_fstream)
 
   in.close();
   std::remove(filename.c_str());
-
 }

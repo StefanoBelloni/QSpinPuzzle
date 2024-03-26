@@ -7,6 +7,7 @@
 #include "puzzle/spin_configuration.h"
 #include "puzzle/spin_puzzle_definitions.h"
 #include "puzzle/spin_puzzle_game.h"
+#include "puzzle/spin_puzzle_record.h"
 #include "spin_puzzle_history_widget.h"
 
 #define SAVE_LOAD_DATA 1
@@ -130,11 +131,10 @@ private:
   void load(int index, puzzle::SpinPuzzleGame& game);
   void store_puzzle_begin();
   bool store_puzzle_record();
-  bool store_puzzle_record(int elapsed_time, puzzle::SpinPuzzleGame game);
-  bool store_puzzles_record(
-    std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games);
+  bool store_puzzle_record(const puzzle::SpinPuzzleRecord& record);
+  bool store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> games);
   // return max time
-  int load_records(std::vector<std::pair<int, puzzle::SpinPuzzleGame>>& games);
+  int load_records(std::vector<puzzle::SpinPuzzleRecord>& games);
 
   bool can_rotate_internal();
   bool is_mause_on_leaf_marbles(QPoint pos, QPoint center);

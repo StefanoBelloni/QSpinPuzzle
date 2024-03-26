@@ -126,8 +126,8 @@ SpinPuzzleWidget::connect_play_buttons()
 void
 SpinPuzzleWidget::exec_puzzle_records_dialog()
 {
-  std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
-  load_records(games);
+  std::vector<puzzle::SpinPuzzleRecord> records;
+  load_records(records);
   /*
   if (games.size() == 0) {
     QMessageBox(QMessageBox::Warning, "records",
@@ -137,7 +137,7 @@ SpinPuzzleWidget::exec_puzzle_records_dialog()
   }
   */
   m_history_widget =
-    new SpinPuzzleHistoryWidget(m_length, m_length, this, games);
+    new SpinPuzzleHistoryWidget(m_length, m_length, this, records);
   m_history_widget->setFixedSize(m_length, m_length);
   m_history_widget->show();
   m_history_widget->setVisible(true);
@@ -233,8 +233,9 @@ SpinPuzzleWidget::save_progress()
   auto file_name = get_current_puzzle_file();
   std::ofstream f(file_name, std::ios::trunc);
   if (f.is_open()) {
-    f << m_elapsed_time << " ";
-    m_game.serialize(f);
+    puzzle::SpinPuzzleRecord record(
+      m_config.name(), m_elapsed_time, m_config.level(), m_game);
+    record.serialize(f);
     f.close();
     return true;
   }
@@ -267,15 +268,15 @@ SpinPuzzleWidget::store_puzzle_begin()
 {
   std::ofstream f(get_puzzle_file(), std::ios::trunc);
   if (f.is_open()) {
-    f << m_elapsed_time << " ";
-    m_game.serialize(f);
+    puzzle::SpinPuzzleRecord record(
+      m_config.name(), m_elapsed_time, m_config.level(), m_game);
+    record.serialize(f);
     f.close();
   }
 }
 
 int
-SpinPuzzleWidget::load_records(
-  std::vector<std::pair<int, puzzle::SpinPuzzleGame>>& games)
+SpinPuzzleWidget::load_records(std::vector<puzzle::SpinPuzzleRecord>& games)
 {
   games.clear();
   int max_time = 0;
@@ -286,13 +287,12 @@ SpinPuzzleWidget::load_records(
     f1 >> s;
     if (s == "records:") {
       while (!f1.eof()) {
-        f1 >> t;
-        if (f1.eof())
+        puzzle::SpinPuzzleRecord r;
+        if (!r.load(f1)) {
           break;
-        max_time = std::max(t, max_time);
-        puzzle::SpinPuzzleGame g;
-        g.load(f1);
-        games.emplace_back(t, g);
+        }
+        max_time = std::max(max_time, r.time());
+        games.emplace_back(r);
       }
     }
   }
@@ -302,41 +302,41 @@ SpinPuzzleWidget::load_records(
 bool
 SpinPuzzleWidget::store_puzzle_record()
 {
-  puzzle::SpinPuzzleGame game;
+  puzzle::SpinPuzzleRecord record{};
   std::ifstream f0(get_puzzle_file());
   // load beginning
   if (f0.is_open()) {
-    int tmp;
-    f0 >> tmp;
-    game.load(f0);
+    record.load(f0);
+    record.update_time(m_elapsed_time);
     f0.close();
   }
-  bool ok = store_puzzle_record(m_elapsed_time, game);
-  game.reset();
+  bool ok = store_puzzle_record(record);
   return ok;
 }
 
 bool
 SpinPuzzleWidget::store_puzzles_record(
-  std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games)
+  std::vector<puzzle::SpinPuzzleRecord> records)
 {
-  std::sort(games.begin(),
-            games.end(),
-            [](const std::pair<int, puzzle::SpinPuzzleGame>& first,
-               const std::pair<int, puzzle::SpinPuzzleGame>& second) {
-              return first.first < second.first;
+  std::sort(records.begin(),
+            records.end(),
+            [](const puzzle::SpinPuzzleRecord& first,
+               const puzzle::SpinPuzzleRecord& second) {
+              if (first.level() == second.level()) {
+                return first.time() < second.time();
+              } else {
+                return first.level() > second.level();
+              }
             });
 
   std::ofstream f(get_records_puzzle_file());
   if (!f.is_open()) {
     return false;
   }
-  f << "records:"
-    << " ";
-  int m = games.size();
+  f << "records:\n";
+  int m = records.size();
   for (int n = 0; n < std::min(m, m_max_saved_games); ++n) {
-    f << games[n].first << " ";
-    games[n].second.serialize(f);
+    records[n].serialize(f);
   }
   f.close();
 
@@ -344,25 +344,27 @@ SpinPuzzleWidget::store_puzzles_record(
 }
 
 bool
-SpinPuzzleWidget::store_puzzle_record(int elapsed_time,
-                                      puzzle::SpinPuzzleGame game)
+SpinPuzzleWidget::store_puzzle_record(const puzzle::SpinPuzzleRecord& record)
 {
   // store in records - max 5
-  std::vector<std::pair<int, puzzle::SpinPuzzleGame>> games;
+  std::vector<puzzle::SpinPuzzleRecord> games;
   // check if current is faster then the others
   int max_time = load_records(games);
   int size = games.size();
-  if (size > m_max_saved_games && elapsed_time > max_time) {
+  if (size > m_max_saved_games && record.time() > max_time) {
     return false;
   }
 
+  auto game = record.game();
   auto current = game.current_time_step();
   // check for duplicates
   bool found_duplicate = false;
   for (auto& p : games) {
-    if (p.second.current_time_step() == current) {
-      if (p.first > elapsed_time) {
-        p.first = elapsed_time;
+    auto g = p.game();
+    if (g.current_time_step() == current) {
+      if (p.time() > record.time()) {
+        p.update_time(record.time());
+        p.update_username(record.username());
       }
       found_duplicate = true;
       break;
@@ -370,7 +372,7 @@ SpinPuzzleWidget::store_puzzle_record(int elapsed_time,
   }
   // add to games
   if (!found_duplicate) {
-    games.emplace_back(elapsed_time, game);
+    games.emplace_back(record);
   }
 
   store_puzzles_record(games);
@@ -470,6 +472,7 @@ SpinPuzzleWidget::load_latest_game()
   m_timer->start(1000);
 }
 
+// TODO: after impl. records this is broken!!
 bool
 SpinPuzzleWidget::import_game()
 {
@@ -508,29 +511,22 @@ SpinPuzzleWidget::import_game()
     }
     puzzle::Cipher::VERSION v = puzzle::Cipher::VERSION(cipher_version);
     puzzle::Cipher cipher(v);
-    std::string time_str;
-    s >> time_str;
-    int time;
-    try {
-      time = std::stoi(cipher.decrypt(time_str));
-    } catch (std::invalid_argument& ex) {
-      QMessageBox(
-        QMessageBox::Warning, "error", "Not a valid game", QMessageBox::Ok)
+    std::string game_str;
+    std::getline(s, game_str, '|');
+    game_str = cipher.decrypt(game_str);
+    std::stringstream s2;
+    s2 << game_str;
+    puzzle::SpinPuzzleRecord record{};
+
+    if (!record.load(s2)) {
+      QMessageBox(QMessageBox::Warning,
+                  "error",
+                  "Not a valid game - load failed",
+                  QMessageBox::Ok)
         .exec();
       return false;
     }
-    std::string game_str;
-    std::getline(s, game_str, '|');
-#if DEBUG_CIPHER == 1
-    qDebug() << "ENCRYPT: " << game_str << "\n";
-#endif
-    game_str = cipher.decrypt(game_str);
-#if DEBUG_CIPHER == 1
-    qDebug() << "DECRYPT TO LOAD: " << game_str << "\n";
-#endif
-    puzzle::SpinPuzzleGame game;
-    game.load(game_str);
-    bool inserted = store_puzzle_record(time, game);
+    bool inserted = store_puzzle_record(record);
     if (!inserted) {
       QMessageBox(QMessageBox::Information,
                   "info",
@@ -539,7 +535,7 @@ SpinPuzzleWidget::import_game()
         .exec();
       return false;
     }
-    start_with_game(game);
+    start_with_game(record.game());
     return true;
   }
   return false;

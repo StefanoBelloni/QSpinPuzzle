@@ -1,10 +1,10 @@
 #ifndef SPIN_PUZZLE_RECORD_H
 #define SPIN_PUZZLE_RECORD_H
 
-#include <string>
+#include "spin_puzzle_game.h"
 #include <fstream>
 #include <sstream>
-#include "spin_puzzle_game.h"
+#include <string>
 
 namespace puzzle {
 
@@ -26,6 +26,7 @@ public:
   const puzzle::SpinPuzzleGame& game() const;
 
   void update_time(int time);
+  void update_username(const std::string& username);
 
   bool serialize(std::ofstream& out);
   bool serialize(std::stringstream& out);

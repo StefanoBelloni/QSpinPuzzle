@@ -20,12 +20,12 @@ SpinPuzzleHistoryWidget::SpinPuzzleHistoryWidget(
   int win_width,
   int win_heigth,
   SpinPuzzleWidget* parent,
-  const std::vector<std::pair<int, puzzle::SpinPuzzleGame>>&
-    games) //, std::array<puzzle::SpinPuzzleGame>& game)
+  const std::vector<puzzle::SpinPuzzleRecord>&
+    records) //, std::array<puzzle::SpinPuzzleGame>& game)
   : m_win_width(win_width)
   , m_win_heigth(win_heigth)
   , m_parent(parent)
-  , m_games(games)
+  , m_games(records)
 {
   QPushButton* cancel_btn = new QPushButton("Cancel", this);
   QPushButton* import_btn = new QPushButton("import", this);
@@ -87,20 +87,21 @@ SpinPuzzleHistoryWidget::populateStackedWidget()
   // m_pageComboBox->clear();
   size_t n = 0;
   for (auto& g : m_games) {
-    m_stackedWidget->addWidget(this->get_puzzle(g.first, g.second));
+    m_stackedWidget->addWidget(this->get_puzzle(g));
     QString time = QString("time: %3:%2:%1")
-                     .arg(g.first % 60, 2, 10, QChar('0'))
-                     .arg(g.first / 60, 2, 10, QChar('0'))
-                     .arg(g.first / 60 / 60, 2, 10, QChar('0'));
-    QString str = QString::number(n + 1) + QString("° Puzzle - ") + time;
+                     .arg(g.time() % 60, 2, 10, QChar('0'))
+                     .arg(g.time() / 60, 2, 10, QChar('0'))
+                     .arg(g.time() / 60 / 60, 2, 10, QChar('0'));
+    QString str = QString::number(n + 1) + QString("° Puzzle - level: ") +
+                  QString::number(g.level()) + " -> " + time;
+    str += "  (" + g.username() + ")";
     m_pageComboBox->addItem(tr(str.toStdString().c_str()));
     ++n;
   }
 }
 
 QWidget*
-SpinPuzzleHistoryWidget::get_puzzle(int time,
-                                    const puzzle::SpinPuzzleGame& game)
+SpinPuzzleHistoryWidget::get_puzzle(const puzzle::SpinPuzzleRecord& record)
 {
   QWidget* widget = new QWidget();
   QWidget* btns = new QWidget();
@@ -117,7 +118,7 @@ SpinPuzzleHistoryWidget::get_puzzle(int time,
   btns->setLayout(layout_btn);
 
   auto w1 = new SpinPuzzleWidget(m_win_width, m_win_heigth, false, this);
-  w1->set_game(time, game);
+  w1->set_game(record.game());
 
   layout->addWidget(w1);
   layout->addWidget(btns);
@@ -126,7 +127,7 @@ SpinPuzzleHistoryWidget::get_puzzle(int time,
   layout->setStretch(1, 1);
 
   connect(select, &QPushButton::released, m_parent, [this] {
-    m_parent->start_with_game(m_games[m_stackedWidget->currentIndex()].second);
+    m_parent->start_with_game(m_games[m_stackedWidget->currentIndex()].game());
     m_parent->delete_history_popup();
   });
 
@@ -136,19 +137,12 @@ SpinPuzzleHistoryWidget::get_puzzle(int time,
     QClipboard* clipboard = QGuiApplication::clipboard();
     puzzle::Cipher::VERSION version = puzzle::Cipher::VERSION::v0;
     puzzle::Cipher cipher(version);
-    std::string number = cipher.encrypt(std::to_string(time_game.first));
-    s << "spinpuzzlegame " << static_cast<int>(version) << " " << number << " ";
+    s << "spinpuzzlegame " << static_cast<int>(version);
     std::stringstream game_s;
-    time_game.second.serialize(game_s);
+    time_game.serialize(game_s);
     std::string g = game_s.str();
-#if DEBUG_CIPHER == 1
-    qDebug() << "DECRYPT: " << g << "\n";
-#endif
     std::string out = cipher.encrypt(g);
     s << out << "|";
-#if DEBUG_CIPHER == 1
-    qDebug() << "ENCRYPT: " << out << "\n";
-#endif
     clipboard->setText(QString(s.str().c_str()));
     auto m = QMessageBox(QMessageBox::Information,
                          "copyed",
