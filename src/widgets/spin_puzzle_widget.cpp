@@ -489,36 +489,8 @@ SpinPuzzleWidget::import_game()
   QString text = QInputDialog::getText(
     this, tr("import"), tr("game:"), QLineEdit::Normal, "", &ok);
   if (ok && !text.isEmpty()) {
-    std::stringstream s;
-    s << text.toStdString();
-    std::string prefix;
-    s >> prefix;
-    bool error = false;
-    if (prefix != "spinpuzzlegame") {
-      error = true;
-    }
-    int cipher_version;
-    if (!error) {
-      s >> cipher_version;
-      error = error || static_cast<puzzle::Cipher::VERSION>(cipher_version) >=
-                         puzzle::Cipher::VERSION::INVALID;
-    }
-    if (error) {
-      QMessageBox(
-        QMessageBox::Warning, "error", "Not a valid game", QMessageBox::Ok)
-        .exec();
-      return false;
-    }
-    puzzle::Cipher::VERSION v = puzzle::Cipher::VERSION(cipher_version);
-    puzzle::Cipher cipher(v);
-    std::string game_str;
-    std::getline(s, game_str, '|');
-    game_str = cipher.decrypt(game_str);
-    std::stringstream s2;
-    s2 << game_str;
     puzzle::SpinPuzzleRecord record{};
-
-    if (!record.load(s2)) {
+    if (!record.decrypt(text.toStdString())) {
       QMessageBox(QMessageBox::Warning,
                   "error",
                   "Not a valid game - load failed",

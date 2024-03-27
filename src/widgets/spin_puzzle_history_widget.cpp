@@ -132,18 +132,10 @@ SpinPuzzleHistoryWidget::get_puzzle(const puzzle::SpinPuzzleRecord& record)
   });
 
   connect(export_btn, &QPushButton::released, m_parent, [this] {
-    std::stringstream s;
-    auto& time_game = m_games[m_stackedWidget->currentIndex()];
+    auto& record = m_games[m_stackedWidget->currentIndex()];
     QClipboard* clipboard = QGuiApplication::clipboard();
-    puzzle::Cipher::VERSION version = puzzle::Cipher::VERSION::v0;
-    puzzle::Cipher cipher(version);
-    s << "spinpuzzlegame " << static_cast<int>(version);
-    std::stringstream game_s;
-    time_game.serialize(game_s);
-    std::string g = game_s.str();
-    std::string out = cipher.encrypt(g);
-    s << out << "|";
-    clipboard->setText(QString(s.str().c_str()));
+    std::string s = record.encrypt();
+    clipboard->setText(QString(s.c_str()));
     auto m = QMessageBox(QMessageBox::Information,
                          "copyed",
                          "game copied to clipboard",

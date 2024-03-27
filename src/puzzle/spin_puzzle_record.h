@@ -1,10 +1,12 @@
 #ifndef SPIN_PUZZLE_RECORD_H
 #define SPIN_PUZZLE_RECORD_H
 
-#include "spin_puzzle_game.h"
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include "spin_puzzle_cipher.h"
+#include "spin_puzzle_game.h"
 
 namespace puzzle {
 
@@ -33,11 +35,18 @@ public:
   bool load(std::ifstream& in);
   bool load(std::stringstream& in);
 
+  std::string encrypt(const char* prefix = "spinpuzzlegame",
+                      char end_of_message = '|');
+  bool decrypt(std::string input,
+               const char* expected_prefix = "spinpuzzlegame",
+               char end_of_message = '|');
+
 private:
   std::string m_username = "";
   int m_time = 0;
   int m_difficult_level = -1;
   puzzle::SpinPuzzleGame m_game{};
+  puzzle::Cipher::VERSION m_version = puzzle::Cipher::VERSION::v0;
 };
 
 }

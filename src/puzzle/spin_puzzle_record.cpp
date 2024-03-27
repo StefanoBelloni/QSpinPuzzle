@@ -149,4 +149,48 @@ SpinPuzzleRecord::load(std::stringstream& in)
   return true;
 }
 
+std::string
+SpinPuzzleRecord::encrypt(const char* prefix, char end_of_message)
+{
+  puzzle::Cipher cipher(m_version);
+  std::stringstream s;
+  s << "spinpuzzlegame " << static_cast<int>(m_version);
+  std::stringstream game_s;
+  serialize(game_s);
+  std::string g = game_s.str();
+  std::string out = cipher.encrypt(g);
+  s << out << "|";
+  return s.str();
+}
+
+bool
+SpinPuzzleRecord::decrypt(std::string input,
+                          const char* expected_prefix,
+                          char end_of_message)
+{
+  std::stringstream s;
+  std::string prefix;
+  s << input;
+  s >> prefix;
+  bool error = false;
+  if (prefix != expected_prefix) {
+    return false;
+  }
+  int cipher_version;
+  s >> cipher_version;
+  error = static_cast<puzzle::Cipher::VERSION>(cipher_version) >=
+          puzzle::Cipher::VERSION::INVALID;
+  if (error) {
+    return false;
+  }
+  puzzle::Cipher::VERSION v = puzzle::Cipher::VERSION(cipher_version);
+  puzzle::Cipher cipher(v);
+  std::string game_str;
+  std::getline(s, game_str, '|');
+  game_str = cipher.decrypt(game_str);
+  std::stringstream s2;
+  s2 << game_str;
+  return load(s2);
+}
+
 }

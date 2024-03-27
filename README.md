@@ -170,7 +170,6 @@ problem when compiling, due to the limit of the maximum length of _paths_
     - [ ] different colors(?)
     - [ ] autosave
     - [ ] cipher (-)
-- [ ] move export/import impl. in SpinPuzzleRecord class
 - [ ] add play from file: to visualize RL solution
 - [ ] difficult level should not depend on number of shuffle, but on some metric, 
       for example the fill-level for the leaves and max sidstance between marbles
@@ -203,6 +202,7 @@ problem when compiling, due to the limit of the maximum length of _paths_
     - [x] realism (allow rotation also if marble between rotationg-mechanisms)
     - [x] description of the setting
 - [x] save more information in record (username, time, difficulty level, date)
+- [x] move export/import impl. in SpinPuzzleRecord class
 
 ### References
 
