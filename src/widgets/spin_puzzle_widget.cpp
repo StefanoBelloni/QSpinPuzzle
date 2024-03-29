@@ -214,7 +214,7 @@ SpinPuzzleWidget::reset_file_app()
   files.emplace_back((get_current_puzzle_file().c_str()));
   files.emplace_back((get_puzzle_file().c_str()));
   files.emplace_back((get_records_puzzle_file().c_str()));
-  files.emplace_back((get_config_puzzle_file().c_str()));
+  // files.emplace_back((get_config_puzzle_file().c_str()));
   for (auto& d : files) {
     QFile file(d.c_str());
     file.remove();
@@ -415,13 +415,14 @@ SpinPuzzleWidget::load(int index, puzzle::SpinPuzzleGame& game)
   }
 
   do {
-    f >> m_elapsed_time;
-    if (f.eof()) {
+    puzzle::SpinPuzzleRecord record;
+    if (!record.load(f)) {
       msg.setInformativeText("Puzzle not found.");
       f.close();
       return;
     }
-    game.load(f);
+    m_elapsed_time = record.time();
+    m_game = record.game();
     current++;
   } while (current != index);
   f.close();
@@ -465,8 +466,14 @@ SpinPuzzleWidget::load_latest_game()
 
   std::ifstream f(path);
   if (f.is_open()) {
-    f >> m_elapsed_time;
-    m_game.load(f);
+    puzzle::SpinPuzzleRecord record{};
+    if (!record.load(f)) {
+      QMessageBox(QMessageBox::Warning, "load", "Unable to load latest game")
+        .exec();
+      return;
+    }
+    m_game = record.game();
+    m_elapsed_time = record.time();
     f.close();
   }
   m_timer->start(1000);
