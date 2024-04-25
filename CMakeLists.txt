@@ -74,6 +74,8 @@ add_library(spinpuzzle SHARED
     src/puzzle/spin_configuration.h
     src/puzzle/spin_puzzle_record.cpp
     src/puzzle/spin_puzzle_record.h
+    src/puzzle/spin_metrics.cpp
+    src/puzzle/spin_metrics.h
 )
 
 # ============================================================================ #

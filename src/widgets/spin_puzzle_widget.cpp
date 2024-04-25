@@ -147,7 +147,7 @@ void
 SpinPuzzleWidget::exec_puzzle_config_dialog()
 {
   m_config_widget =
-    new SpinPuzzleConfigurationWidget(m_length, m_length, this, m_config);
+    new SpinPuzzleConfigurationWidget(m_win_width, m_win_height, this, m_config);
   // m_config_widget->setFixedSize(m_length, m_length);
   m_config_widget->show();
   m_config_widget->setVisible(true);
