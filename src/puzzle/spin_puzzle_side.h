@@ -106,7 +106,7 @@ public:
     //!< phase schifts of the central disk
     double m_shift_cdisk = 0.0;
     //!< iterators to keep track of the start position of every section
-    // typename SpinPuzzleSide<N, M>::iterator m_start_sections[N_LEAVES];
+    // typename SpinPuzzleSide<N, M>::const_iterator m_start_sections[N_LEAVES];
     //!< last 2 states of of the mechanical parts
     TREFOIL m_trefoil_status[2] = { TREFOIL::INVALID, TREFOIL::LEAF_ROTATION };
     //!< state of the marbles
@@ -117,7 +117,7 @@ public:
 
   public:
     template<typename Buffer>
-    Buffer& serialize(Buffer& buffer)
+    Buffer& serialize(Buffer& buffer) const
     {
       // buffer.write(reinterpret_cast<const char*>(&status.m_shifts_leaves[0]),
       // sizeof(double)),
@@ -262,6 +262,138 @@ public:
   SpinPuzzleSide(std::array<puzzle::SpinMarble, U>&& marbles);
 
   /**
+   * @brief const_iterator class to navigate inside a section of marbles.
+   *
+   * @note in the construction one needs to provide which section is and the
+   * state of the trefoil, in order to properly navigate through the marbles
+   */
+  class const_iterator
+  {
+  public:
+    // member types
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = SpinMarble;
+    using difference_type = std::ptrdiff_t;
+    using pointer = SpinMarble*;
+    using reference = SpinMarble&;
+
+  public:
+    const_iterator() = default;
+
+    // This does not really work:
+    // if state is in BORDER_ROTATION then NORTH/EAST/WEST are K.O
+    // and vice versa: this is py the python interface has specific
+    // callback for north, east, west, border.
+    const_iterator(LEAF leaf,
+                   const std::array<SpinMarble, N_MARBLES>& marbles,
+                   Status status,
+                   difference_type pos = 0,
+                   double angle = 0.0)
+      : m_begin_range(marbles.begin())
+      , m_end_range(marbles.end())
+      , m_curr(m_begin_range)
+      , m_current_status(status.get_trefoil_status(TIME::CURRENT))
+      , m_leaf(leaf)
+      , m_angle(angle)
+    {
+      // trefoil
+      if (leaf != LEAF::TREFOIL) {
+        m_begin_range = marbles.begin() + static_cast<uint64_t>(leaf) * N;
+        m_end_range = marbles.begin() + (static_cast<uint64_t>(leaf) + 1) * N;
+        m_curr = m_begin_range;
+      }
+
+      this->operator+=(pos);
+    }
+
+    const_iterator(const const_iterator& other) = default;
+
+    const_iterator& operator++() { return (*this += 1); }
+
+    const_iterator& operator--() { return (*this -= 1); }
+
+    const_iterator operator+(std::ptrdiff_t offset)
+    {
+      auto tmp = *this;
+      tmp += offset;
+      return tmp;
+    }
+
+    const_iterator operator-(std::ptrdiff_t offset)
+    {
+      auto tmp = *this;
+      tmp -= offset;
+      return tmp;
+    }
+
+    // index inside the complete marbles
+    size_t index()
+    {
+      return static_cast<uint64_t>(m_leaf) * N + (m_curr - m_begin_range);
+    }
+
+    const_iterator& operator-=(std::ptrdiff_t offset)
+    {
+      return *this += (-offset);
+    }
+
+    /**
+     * @brief operator to increment an const_iterator
+     * @note  it operate iniside the given section specified with the leaf
+     * @param  offset: increment to apply
+     * @retval itself.
+     */
+    const_iterator& operator+=(std::ptrdiff_t offset)
+    {
+      auto n = m_end_range - m_begin_range;
+      if (offset == 0 || m_current_status == TREFOIL::LEAF_SPINNING) {
+        return *this;
+      }
+      if (offset < 0) {
+        offset = ((offset % n) + n) % n;
+      }
+      if (offset >= n) {
+        offset = offset % n;
+      }
+      auto remaining = m_end_range - m_curr;
+      if (offset < remaining) {
+        m_curr += offset;
+        return *this;
+      }
+      offset -= remaining;
+      m_curr = m_begin_range + offset;
+      return *this;
+    }
+
+    //!< convinient operator
+    bool friend operator==(const SpinPuzzleSide<N, M>::const_iterator& self,
+                           const SpinPuzzleSide<N, M>::const_iterator& other)
+    {
+      return (*self == *other);
+    }
+
+    //!< convinient operator
+    const SpinMarble* operator->() { return m_curr; }
+    //!< convinient operator
+    const SpinMarble* operator->() const { return m_curr; }
+    //!< convinient operator
+    const SpinMarble& operator*() const { return *m_curr; }
+    //!< convinient operator
+    const SpinMarble& operator*() { return *m_curr; }
+    //!< relative shift of the marble
+    double get_angle() const { return m_angle; }
+
+  private:
+    typename std::array<SpinMarble, N_MARBLES>::const_iterator m_begin_range;
+    typename std::array<SpinMarble, N_MARBLES>::const_iterator m_end_range;
+    typename std::array<SpinMarble, N_MARBLES>::const_iterator m_curr;
+
+    TREFOIL m_current_status;
+    LEAF m_leaf;
+    double m_angle;
+  };
+
+  /**
    * @brief iterator class to navigate inside a section of marbles.
    *
    * @note in the construction one needs to provide which section is and the
@@ -269,7 +401,13 @@ public:
    */
   class iterator
   {
+  public:
     // member types
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = SpinMarble;
+    using difference_type = std::ptrdiff_t;
+    using pointer = SpinMarble*;
+    using reference = SpinMarble&;
 
   public:
     iterator() = default;
@@ -281,7 +419,7 @@ public:
     iterator(LEAF leaf,
              std::array<SpinMarble, N_MARBLES>& marbles,
              Status status,
-             std::ptrdiff_t pos = 0,
+             difference_type pos = 0,
              double angle = 0.0)
       : m_begin_range(marbles.begin())
       , m_end_range(marbles.end())
@@ -404,6 +542,16 @@ public:
   }
 
   /**
+   * @brief  retirve the marbles of a given section (const version)
+   */
+  const_iterator marbles(LEAF leaf = LEAF::NORTH,
+                         std::size_t pos = 0ul,
+                         double angle = 0.0) const
+  {
+    return const_iterator(leaf, m_marbles, m_status, pos, angle);
+  }
+
+  /**
    * @brief  method to rotate the marbles
    *
    * The marbles in the given leaf are rotate of the given angle
@@ -488,6 +636,55 @@ public:
    * @param  leaf: section to return
    * @retval iterator the first marble of the section (local shift).
    */
+  const_iterator begin(LEAF leaf) const
+  {
+    if (leaf == LEAF::TREFOIL) {
+      return begin();
+    }
+    if (m_status.get_trefoil_status(TIME::CURRENT) !=
+        TREFOIL::BORDER_ROTATION) {
+      const double theta = m_status.get_shift_of_leaf(leaf);
+      const double theta0 = theta + DTHETA / 2;
+      const double t = fmod(theta0 + 360.0, 360.0);
+      const int pos = -floor(t / DTHETA);
+      const double alpha = theta + pos * DTHETA;
+      return marbles(leaf, pos, alpha);
+    } else {
+      const double DTHETA12 = DTHETA / 12.0;
+      const double theta = m_status.get_shift_of_leaf(leaf);
+      const double theta0 = theta + DTHETA12 / 2;
+      const double t = fmod(theta0 + 360.0, 360.0);
+      const int pos = -floor(t / DTHETA12);
+      const double alpha = theta + pos * DTHETA12;
+      return marbles(leaf, pos, alpha);
+    }
+  }
+
+  /**
+   * @brief iterator for border rotation
+   * @retval iterator the first marble of the section and its (local shift).
+   */
+  const_iterator begin() const
+  {
+    if (m_status.get_trefoil_status(TIME::CURRENT) !=
+        TREFOIL::BORDER_ROTATION) {
+      const double theta = m_status.get_shift_of_leaf(LEAF::NORTH);
+      const double theta0 = theta + DTHETA / 2;
+      const double t = fmod(theta0 + 360.0, 360.0);
+      const int pos = -floor(t / DTHETA);
+      const double alpha = theta + pos * DTHETA;
+      return marbles(LEAF::TREFOIL, pos, alpha);
+    } else {
+      const double DTHETA12 = DTHETA / 12.0;
+      const double theta = m_status.get_shift_of_leaf(LEAF::NORTH);
+      const double theta0 = theta + DTHETA12 / 2;
+      const double t = fmod(theta0 + 360.0, 360.0);
+      const int pos = -floor(t / DTHETA12);
+      const double alpha = theta + pos * DTHETA12;
+      return marbles(LEAF::TREFOIL, pos, alpha);
+    }
+  }
+
   iterator begin(LEAF leaf)
   {
     if (leaf == LEAF::TREFOIL) {
@@ -549,12 +746,12 @@ public:
    * @retval angle in degree to the first marble of the marbles retrieve via the
    *         function marbles(LEAF)
    */
-  double get_phase_shift_leaf(LEAF leaf)
+  double get_phase_shift_leaf(LEAF leaf) const
   {
     return m_status.get_shift_of_leaf(leaf);
   }
   //!< getter for internal disk rotation
-  double get_phase_shift_internal_disk()
+  double get_phase_shift_internal_disk() const
   {
     return m_status.get_central_disk_shift();
   }
@@ -591,7 +788,7 @@ public:
    * @param  leaf: leaf to check
    * @retval true if is possible to spin the leaf
    */
-  bool is_leaf_spinning_possible(LEAF leaf)
+  bool is_leaf_spinning_possible(LEAF leaf) const
   {
     return m_status.get_rotation_status(leaf) == ROTATION::OK;
   }
@@ -643,7 +840,7 @@ public:
     return m_status.get_rotation_status(leaf) == ROTATION::OK;
   }
 
-  std::string to_string()
+  std::string to_string() const
   {
     std::string str;
     str += "marbles: ";
@@ -691,7 +888,7 @@ public:
   }
 
   void current_time_step(size_t start_index,
-                         std::array<Color, puzzle::SIZE_STEP_ARRAY>& out);
+                         std::array<Color, puzzle::SIZE_STEP_ARRAY>& out) const;
 
   /**
    * @brief  function to serialize the side to save it
@@ -700,10 +897,10 @@ public:
    * @retval
    */
   template<typename Buffer>
-  Buffer& serialize(Buffer& buffer)
+  Buffer& serialize(Buffer& buffer) const
   {
     m_status.serialize(buffer);
-    for (auto& m : m_marbles) {
+    for (const auto& m : m_marbles) {
       m.serialize(buffer);
     }
     return buffer;
@@ -762,7 +959,7 @@ private:
   }
 
   //!< update shift angle, after resetting 1° marble at origin
-  double get_angle_for_origin(LEAF leaf)
+  double get_angle_for_origin(LEAF leaf) const
   {
     const double DTHETA12 = DTHETA / 1.0;
     const double theta = m_status.get_shift_of_leaf(leaf);
@@ -1032,7 +1229,7 @@ template<std::size_t N, std::size_t M>
 void
 SpinPuzzleSide<N, M>::current_time_step(
   size_t start_index,
-  std::array<Color, puzzle::SIZE_STEP_ARRAY>& out)
+  std::array<Color, puzzle::SIZE_STEP_ARRAY>& out) const
 {
   if (get_trifoild_status() == puzzle::TREFOIL::BORDER_ROTATION) {
     auto it = begin(LEAF::TREFOIL);

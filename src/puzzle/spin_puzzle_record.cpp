@@ -70,7 +70,7 @@ SpinPuzzleRecord::update_username(const std::string& username)
 }
 
 bool
-SpinPuzzleRecord::serialize(std::ofstream& out)
+SpinPuzzleRecord::serialize(std::ofstream& out) const
 {
   out << "spin_puzzle_single_record\n";
   out << username() << "\n";
@@ -81,7 +81,7 @@ SpinPuzzleRecord::serialize(std::ofstream& out)
 }
 
 bool
-SpinPuzzleRecord::serialize(std::stringstream& out)
+SpinPuzzleRecord::serialize(std::stringstream& out) const
 {
   out << "spin_puzzle_single_record\n";
   out << username() << "\n";

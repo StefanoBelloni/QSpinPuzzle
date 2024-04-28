@@ -5,15 +5,15 @@
 
 namespace puzzle {
 
-    class MetricProvider {
-    public:
-        MetricProvider() = default;
+class MetricProvider
+{
+public:
+  MetricProvider() = default;
 
-        double naive_disorder(puzzle::SpinPuzzleGame& game);
+  double naive_disorder(const puzzle::SpinPuzzleGame& game);
 
-    private: 
-
-    };
+private:
+};
 }
 
 #endif // SPIN_METRICS_H

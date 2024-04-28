@@ -167,7 +167,7 @@ problem when compiling, due to the limit of the maximum length of _paths_
 ## TODOs
 
 - [ ] difficult level should not depend on number of shuffle, but on some metric, 
-      for example the fill-level for the leaves and max sidstance between marbles
+      for example the fill-level for the leaves and max sidstance between marbles (start)
 - [ ] add settings
     - [ ] different colors(?)
     - [ ] autosave
@@ -203,6 +203,7 @@ problem when compiling, due to the limit of the maximum length of _paths_
     - [x] description of the setting
 - [x] save more information in record (username, time, difficulty level, date)
 - [x] move export/import impl. in SpinPuzzleRecord class
+- [x] const-correctness
 
 ### References
 

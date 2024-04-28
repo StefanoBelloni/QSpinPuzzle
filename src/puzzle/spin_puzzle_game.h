@@ -140,13 +140,23 @@ public:
    */
   void swap_side();
 
+  puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side)
+  {
+    uint8_t n = static_cast<uint8_t>(side);
+    return m_sides[n];
+  }
+  puzzle::SpinPuzzleSide<10, 3>& get_side()
+  {
+    return get_side(get_active_side());
+  }
+
   /**
    * @brief get the SpinPuzzle For the given Side.
 
    * @param  side: side to get
    * @retval returns a \ref SpinPuzzleSide for the side.
    */
-  puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side)
+  const puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side) const
   {
     uint8_t n = static_cast<uint8_t>(side);
     return m_sides[n];
@@ -158,7 +168,7 @@ public:
    * @param  side: side to get
    * @retval returns a \ref SpinPuzzleSide for the side.
    */
-  puzzle::SpinPuzzleSide<10, 3>& get_side()
+  const puzzle::SpinPuzzleSide<10, 3>& get_side() const
   {
     return get_side(get_active_side());
   }
@@ -179,7 +189,7 @@ public:
    * @note   the game must be in LEAF_ROTATION state
    * @retval true if the game is solved.
    */
-  bool is_game_solved();
+  bool is_game_solved() const;
 
   /**
    * @brief Convenient callback to be able to implement
@@ -198,7 +208,7 @@ public:
    * https://www.tensorflow.org/agents/api_docs/python/tf_agents/environments/tf_environment
    * @retval array rappresentation of the state.
    */
-  std::array<Color, puzzle::SIZE_STEP_ARRAY> current_time_step();
+  std::array<Color, puzzle::SIZE_STEP_ARRAY> current_time_step() const;
 
   /**
    * @brief  set parameter form the configuration
@@ -214,7 +224,7 @@ public:
    * @retval
    */
   template<typename Buffer>
-  Buffer& serialize(Buffer& buffer)
+  Buffer& serialize(Buffer& buffer) const
   {
     buffer << "v0"
            << " " << static_cast<uint32_t>(m_active_side) << " "
@@ -226,14 +236,14 @@ public:
     return buffer;
   }
 
-  std::FILE* serialize(std::FILE* file)
+  std::FILE* serialize(std::FILE* file) const
   {
     std::stringstream s;
     serialize(s);
     std::fputs(s.str().c_str(), file);
     return file;
   }
-  std::string serialize(std::string& string)
+  std::string serialize(std::string& string) const
   {
     std::stringstream s;
     serialize(s);
@@ -307,7 +317,7 @@ private:
     puzzle::LEAF section = puzzle::LEAF::INVALID;
   };
 
-  bool is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf);
+  bool is_leaf_complete(const puzzle::SpinPuzzleSide<>& side, LEAF leaf) const;
 
   //!< sides of a trefoil
   std::array<puzzle::SpinPuzzleSide<>, 2> m_sides;

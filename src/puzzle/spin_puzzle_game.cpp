@@ -138,7 +138,8 @@ SpinPuzzleGame::to_string()
 }
 
 bool
-SpinPuzzleGame::is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf)
+SpinPuzzleGame::is_leaf_complete(const puzzle::SpinPuzzleSide<>& side,
+                                 LEAF leaf) const
 {
   auto it = side.begin(leaf);
   Color color = it->color();
@@ -156,10 +157,10 @@ SpinPuzzleGame::is_leaf_complete(puzzle::SpinPuzzleSide<>& side, LEAF leaf)
 }
 
 bool
-SpinPuzzleGame::is_game_solved()
+SpinPuzzleGame::is_game_solved() const
 {
-  auto& front = get_side(SIDE::FRONT);
-  auto& back = get_side(SIDE::BACK);
+  const auto& front = get_side(SIDE::FRONT);
+  const auto& back = get_side(SIDE::BACK);
 
   auto front_status_ok = front.get_trifoild_status() == TREFOIL::LEAF_ROTATION;
   auto back_status_ok = back.get_trifoild_status() == TREFOIL::LEAF_ROTATION;
@@ -514,14 +515,15 @@ SpinPuzzleGame::shuffle_with_commands(int seed, int commands, bool check)
 
 // optimize it!
 std::array<Color, puzzle::SIZE_STEP_ARRAY>
-SpinPuzzleGame::current_time_step()
+SpinPuzzleGame::current_time_step() const
 {
   std::array<Color, puzzle::SIZE_STEP_ARRAY> out;
   out.fill(puzzle::SpinMarble::INVALID_COLOR);
   out[0] = static_cast<int>(get_active_side());
-  get_side(SIDE::FRONT).current_time_step(1, out);
-  get_side(SIDE::BACK)
-    .current_time_step((puzzle::SIZE_STEP_ARRAY - 1) / 2, out);
+  const auto& front = get_side(SIDE::FRONT);
+  const auto& back = get_side(SIDE::BACK);
+  front.current_time_step(1, out);
+  back.current_time_step((puzzle::SIZE_STEP_ARRAY - 1) / 2, out);
   return out;
 }
 

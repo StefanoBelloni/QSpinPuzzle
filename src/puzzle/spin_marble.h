@@ -93,13 +93,13 @@ public:
 
   bool operator!=(const SpinMarble& other) const { return !(*this == other); }
 
-  std::string to_string()
+  std::string to_string() const
   {
     return '(' + std::to_string(m_id) + ':' + std::to_string(m_color) + ')';
   }
 
   template<typename Buffer>
-  Buffer& serialize(Buffer& buffer)
+  Buffer& serialize(Buffer& buffer) const
   {
     buffer << m_id << " " << m_color << " ";
     return buffer;

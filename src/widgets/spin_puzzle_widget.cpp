@@ -146,8 +146,8 @@ SpinPuzzleWidget::exec_puzzle_records_dialog()
 void
 SpinPuzzleWidget::exec_puzzle_config_dialog()
 {
-  m_config_widget =
-    new SpinPuzzleConfigurationWidget(m_win_width, m_win_height, this, m_config);
+  m_config_widget = new SpinPuzzleConfigurationWidget(
+    m_win_width, m_win_height, this, m_config);
   // m_config_widget->setFixedSize(m_length, m_length);
   m_config_widget->show();
   m_config_widget->setVisible(true);
@@ -215,7 +215,7 @@ SpinPuzzleWidget::reset_file_app()
   files.emplace_back((get_puzzle_file().c_str()));
   files.emplace_back((get_records_puzzle_file().c_str()));
   // files.emplace_back((get_config_puzzle_file().c_str()));
-  for (auto& d : files) {
+  for (const auto& d : files) {
     QFile file(d.c_str());
     file.remove();
   }
@@ -276,7 +276,7 @@ SpinPuzzleWidget::store_puzzle_begin()
 }
 
 int
-SpinPuzzleWidget::load_records(std::vector<puzzle::SpinPuzzleRecord>& games)
+SpinPuzzleWidget::load_records(std::vector<puzzle::SpinPuzzleRecord>& games) const
 {
   games.clear();
   int max_time = 0;
@@ -300,7 +300,7 @@ SpinPuzzleWidget::load_records(std::vector<puzzle::SpinPuzzleRecord>& games)
 }
 
 bool
-SpinPuzzleWidget::store_puzzle_record()
+SpinPuzzleWidget::store_puzzle_record() const
 {
   puzzle::SpinPuzzleRecord record{};
   std::ifstream f0(get_puzzle_file());
@@ -315,8 +315,7 @@ SpinPuzzleWidget::store_puzzle_record()
 }
 
 bool
-SpinPuzzleWidget::store_puzzles_record(
-  std::vector<puzzle::SpinPuzzleRecord> records)
+SpinPuzzleWidget::store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> records) const
 {
   std::sort(records.begin(),
             records.end(),
@@ -344,7 +343,7 @@ SpinPuzzleWidget::store_puzzles_record(
 }
 
 bool
-SpinPuzzleWidget::store_puzzle_record(const puzzle::SpinPuzzleRecord& record)
+SpinPuzzleWidget::store_puzzle_record(const puzzle::SpinPuzzleRecord& record) const
 {
   // store in records - max 5
   std::vector<puzzle::SpinPuzzleRecord> games;
@@ -1221,7 +1220,7 @@ SpinPuzzleWidget::mouseMoveEvent(QMouseEvent* ev)
 }
 
 bool
-SpinPuzzleWidget::can_rotate_internal()
+SpinPuzzleWidget::can_rotate_internal() const
 {
   return true;
 }
@@ -1305,13 +1304,13 @@ SpinPuzzleWidget::mouse_event_inside_leaf(QPoint pos,
 }
 
 double
-SpinPuzzleWidget::get_scaled_angle(double a1, double a2)
+SpinPuzzleWidget::get_scaled_angle(double a1, double a2) const
 {
   return (a1 - a2) * m_config.speed() * M_PI;
 }
 
 bool
-SpinPuzzleWidget::is_mause_on_leaf_marbles(QPoint pos, QPoint center)
+SpinPuzzleWidget::is_mause_on_leaf_marbles(QPoint pos, QPoint center) const
 {
   const double internalRadius = get_radius_internal();
 
@@ -1452,7 +1451,7 @@ create_dir()
 }
 
 std::string
-SpinPuzzleWidget::get_config_puzzle_file()
+SpinPuzzleWidget::get_config_puzzle_file() const
 {
   auto path =
     QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
@@ -1461,7 +1460,7 @@ SpinPuzzleWidget::get_config_puzzle_file()
 }
 
 std::string
-SpinPuzzleWidget::get_current_puzzle_file()
+SpinPuzzleWidget::get_current_puzzle_file() const
 {
   auto path =
     QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
@@ -1470,7 +1469,7 @@ SpinPuzzleWidget::get_current_puzzle_file()
 }
 
 std::string
-SpinPuzzleWidget::get_puzzle_file()
+SpinPuzzleWidget::get_puzzle_file() const
 {
   auto path =
     QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
@@ -1479,7 +1478,7 @@ SpinPuzzleWidget::get_puzzle_file()
 }
 
 std::string
-SpinPuzzleWidget::get_records_puzzle_file()
+SpinPuzzleWidget::get_records_puzzle_file() const
 {
   auto path =
     QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);

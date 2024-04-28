@@ -130,15 +130,15 @@ private:
   void load(int index);
   void load(int index, puzzle::SpinPuzzleGame& game);
   void store_puzzle_begin();
-  bool store_puzzle_record();
-  bool store_puzzle_record(const puzzle::SpinPuzzleRecord& record);
-  bool store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> games);
+  bool store_puzzle_record() const;
+  bool store_puzzle_record(const puzzle::SpinPuzzleRecord& record) const;
+  bool store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> games) const;
   // return max time
-  int load_records(std::vector<puzzle::SpinPuzzleRecord>& games);
+  int load_records(std::vector<puzzle::SpinPuzzleRecord>& games) const;
 
-  bool can_rotate_internal();
-  bool is_mause_on_leaf_marbles(QPoint pos, QPoint center);
-  double get_scaled_angle(double a1, double a2);
+  bool can_rotate_internal() const;
+  bool is_mause_on_leaf_marbles(QPoint pos, QPoint center) const;
+  double get_scaled_angle(double a1, double a2) const;
   QColor toQtColor(puzzle::Color value);
   QColor toMarbleColor(puzzle::Color value);
 
@@ -146,10 +146,10 @@ private:
   double get_width_button_bottom() const;
   double get_length_status_square() const;
 
-  std::string get_puzzle_file();
-  std::string get_records_puzzle_file();
-  std::string get_current_puzzle_file();
-  std::string get_config_puzzle_file();
+  std::string get_puzzle_file() const;
+  std::string get_records_puzzle_file() const;
+  std::string get_current_puzzle_file() const;
+  std::string get_config_puzzle_file() const;
 
   // plot puzzle body
   uint32_t m_length;

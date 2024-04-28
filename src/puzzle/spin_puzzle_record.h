@@ -30,8 +30,8 @@ public:
   void update_time(int time);
   void update_username(const std::string& username);
 
-  bool serialize(std::ofstream& out);
-  bool serialize(std::stringstream& out);
+  bool serialize(std::ofstream& out) const;
+  bool serialize(std::stringstream& out) const;
   bool load(std::ifstream& in);
   bool load(std::stringstream& in);
 
