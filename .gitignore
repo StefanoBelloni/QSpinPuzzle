@@ -143,3 +143,6 @@ gradle-app.setting
 
 android/*
 .VSCodeCounter/*
+papers/750_solving_the_rubik_s_cube_with_.pdf
+tests/qtest_string.cpp
+tests/qtest_string.h
