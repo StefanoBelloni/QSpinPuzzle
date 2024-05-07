@@ -19,6 +19,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "puzzle/spin_metrics.h"
 #include "puzzle/spin_puzzle_cipher.h"
 #include "spin_puzzle_config_widget.h"
 
@@ -633,6 +634,7 @@ SpinPuzzleWidget::paint_timer()
   // if (!m_allow_play) { return; }
   const int L = this->m_length;
   QPainter painter_status(this);
+  double metric = 1.0;
   if (m_game.is_game_solved()) {
     painter_status.setBrush(Qt::green);
     if (m_timer->isActive() && m_elapsed_time > 0 && !m_solved) {
@@ -647,6 +649,7 @@ SpinPuzzleWidget::paint_timer()
     if (m_timer->isActive()) {
       painter_status.setPen(Qt::darkRed);
     }
+    metric = puzzle::MetricProvider().naive_disorder(m_game);
   }
   if (m_paint_congratulations) {
     paint_congratulation(painter_status);
@@ -661,7 +664,10 @@ SpinPuzzleWidget::paint_timer()
                    .arg(m_elapsed_time % 60, 2, 10, QChar('0'))
                    .arg(m_elapsed_time / 60, 2, 10, QChar('0'))
                    .arg(m_elapsed_time / 60 / 60, 2, 10, QChar('0'));
-  painter_status.drawText(QPoint(win_width - 8 * L / 24, 2 * L / 24), time);
+  painter_status.drawText(QPoint(win_width - 7 * L / 24, 2 * L / 24), time);
+  QString metric_str = QString("metric: %1").arg(metric);
+  painter_status.drawText(QPoint(win_width - 7 * L / 24, 3 * L / 24),
+                          metric_str);
 }
 
 void
