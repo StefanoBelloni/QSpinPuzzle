@@ -443,15 +443,14 @@ SpinPuzzleGame::process_key(int key, double fraction_angle)
       // ========================== //
       {
         double direction = (key == puzzle::Key_Left) ? -1.0 : 1.0;
-        auto& side = get_side(get_active_side());
         if (keyboard.getSection() == puzzle::LEAF::CENTER) {
-          side.rotate_internal_disk(direction * 60.0 * fraction_angle);
+          rotate_internal_disk(direction * 60.0 * fraction_angle);
         } else if (static_cast<uint8_t>(keyboard.getSection()) <
                    static_cast<uint8_t>(LEAF::TREFOIL)) {
           // make scure only leaves are used
-          side.rotate_marbles(keyboard.getSection(),
-                              direction * puzzle::SpinPuzzleSide<>::STEP *
-                                fraction_angle);
+          rotate_marbles(keyboard.getSection(),
+                         direction * puzzle::SpinPuzzleSide<>::STEP *
+                           fraction_angle);
         }
         return true;
       }

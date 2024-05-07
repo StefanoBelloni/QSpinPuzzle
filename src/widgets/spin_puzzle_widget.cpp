@@ -276,7 +276,8 @@ SpinPuzzleWidget::store_puzzle_begin()
 }
 
 int
-SpinPuzzleWidget::load_records(std::vector<puzzle::SpinPuzzleRecord>& games) const
+SpinPuzzleWidget::load_records(
+  std::vector<puzzle::SpinPuzzleRecord>& games) const
 {
   games.clear();
   int max_time = 0;
@@ -315,7 +316,8 @@ SpinPuzzleWidget::store_puzzle_record() const
 }
 
 bool
-SpinPuzzleWidget::store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> records) const
+SpinPuzzleWidget::store_puzzles_record(
+  std::vector<puzzle::SpinPuzzleRecord> records) const
 {
   std::sort(records.begin(),
             records.end(),
@@ -343,7 +345,8 @@ SpinPuzzleWidget::store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> rec
 }
 
 bool
-SpinPuzzleWidget::store_puzzle_record(const puzzle::SpinPuzzleRecord& record) const
+SpinPuzzleWidget::store_puzzle_record(
+  const puzzle::SpinPuzzleRecord& record) const
 {
   // store in records - max 5
   std::vector<puzzle::SpinPuzzleRecord> games;
@@ -746,6 +749,7 @@ SpinPuzzleWidget::next_section(QPainter& painter, int angle) const
 
 void
 SpinPuzzleWidget::paint_puzzle_section(QPainter& painter,
+                                       bool active,
                                        QColor color,
                                        QColor color_internal,
                                        QColor color_body) const
@@ -757,6 +761,11 @@ SpinPuzzleWidget::paint_puzzle_section(QPainter& painter,
   const bool primary = m_game.get_active_side() == puzzle::SIDE::FRONT;
 
   painter.setBrush(color);
+  auto pen = painter.pen();
+  if (active) {
+    QPen activePen(Qt::black, 3);
+    painter.setPen(activePen);
+  }
   // The span angle for an ellipse segment to angle , which is in 16ths of a
   // degree 360 * 16 / 2 is half the full ellipse
   painter.drawPie(R, 0, 2 * R, 2 * R, 0, 360 * 8);
@@ -800,6 +809,7 @@ SpinPuzzleWidget::paint_puzzle_section(QPainter& painter,
   painter.drawLine(L / 2 - R, L / 4, L / 2 + R, L / 4);
 
   painter.setBrush(originalBrush);
+  painter.setPen(pen);
 }
 
 void
@@ -844,28 +854,39 @@ SpinPuzzleWidget::paint_game()
   int north = static_cast<uint8_t>(puzzle::LEAF::NORTH);
   int east = static_cast<uint8_t>(puzzle::LEAF::EAST);
   int west = static_cast<uint8_t>(puzzle::LEAF::WEST);
-  paint_puzzle_section(painter,
-                       m_colors_leaves[color_side][north],
-                       m_colors_leaves_internal[color_side][north],
-                       m_colors_leaves_body[color_side][north]);
+  paint_puzzle_section(
+    painter,
+    (m_game.get_keybord_state() == puzzle::LEAF::NORTH) ? true : false,
+    m_colors_leaves[color_side][north],
+    m_colors_leaves_internal[color_side][north],
+    m_colors_leaves_body[color_side][north]);
   next_section(painter);
-  paint_puzzle_section(painter,
-                       m_colors_leaves[color_side][east],
-                       m_colors_leaves_internal[color_side][east],
-                       m_colors_leaves_body[color_side][east]);
+  paint_puzzle_section(
+    painter,
+    (m_game.get_keybord_state() == puzzle::LEAF::EAST) ? true : false,
+    m_colors_leaves[color_side][east],
+    m_colors_leaves_internal[color_side][east],
+    m_colors_leaves_body[color_side][east]);
   // WEST
   next_section(painter);
-  paint_puzzle_section(painter,
-                       m_colors_leaves[color_side][west],
-                       m_colors_leaves_internal[color_side][west],
-                       m_colors_leaves_body[color_side][west]);
+  paint_puzzle_section(
+    painter,
+    (m_game.get_keybord_state() == puzzle::LEAF::WEST) ? true : false,
+    m_colors_leaves[color_side][west],
+    m_colors_leaves_internal[color_side][west],
+    m_colors_leaves_body[color_side][west]);
   // ====================================================================== //
 
   painter.restore();
   painter.save();
   auto originalBrush = painter.brush();
+  auto originalPen = painter.pen();
   const int internalRadius = get_radius_internal() + width / 2;
   QRadialGradient radialGrad(center, internalRadius);
+  if (m_game.get_keybord_state() == puzzle::LEAF::CENTER) {
+    QPen activePen(Qt::black, 3);
+    painter.setPen(activePen);
+  }
   radialGrad.setColorAt((color_side) % 2, Qt::magenta);
   radialGrad.setColorAt((color_side + 1) % 2, Qt::darkMagenta);
   // radialGrad.setColorAt(1, Qt::magenta);
@@ -873,6 +894,7 @@ SpinPuzzleWidget::paint_game()
   // painter.setBrush(Qt::magenta);
   painter.drawEllipse(center, internalRadius, internalRadius);
   painter.setBrush(originalBrush);
+  painter.setPen(originalPen);
 
   painter.restore();
   // NORTH

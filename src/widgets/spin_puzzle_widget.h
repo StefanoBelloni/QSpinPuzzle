@@ -73,6 +73,7 @@ private:
   double get_radius_internal() const;
   void create_polygon(QPolygon& polygon);
   void paint_puzzle_section(QPainter& painter,
+                            bool active,
                             QColor color,
                             QColor color_internal,
                             QColor color_body) const;
