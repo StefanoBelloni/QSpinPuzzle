@@ -135,6 +135,7 @@ add_executable(
   tests/t_puzzle_cipher.cpp
   tests/t_puzzle_configuration.cpp
   tests/t_puzzle_records.cpp
+  tests/t_puzzle_metric.cpp
 )
 target_include_directories(
     t_puzzle
