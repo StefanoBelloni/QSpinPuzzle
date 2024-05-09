@@ -1,6 +1,7 @@
 #ifndef SPINPUZZLEGAME_H
 #define SPINPUZZLEGAME_H
 
+#include <functional>
 #include <sstream>
 
 #include "spin_configuration.h"
@@ -81,13 +82,6 @@ public:
   void shuffle_with_commands(int seed = 0,
                              int commands = 20000,
                              bool check = false);
-
-  /**
-   * @brief  setter of the active side
-   *
-   * @param  side: side to activate \ref SIDE::FRONT \ref SIDE::BACK
-   */
-  void set_active_side(SIDE side) { m_active_side = side; }
 
   /**
    * @brief getter of the active side
