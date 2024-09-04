@@ -2,12 +2,15 @@
 #define SPINPUZZLEGAME_H
 
 #include <functional>
+#include <memory>
 #include <sstream>
 
 #include "spin_configuration.h"
 #include "spin_puzzle_side.h"
 
 namespace puzzle {
+
+class Recorder;
 
 /**
  * @brief This class rappresent the Two-sided Trefoil, the base for the game
@@ -134,15 +137,9 @@ public:
    */
   void swap_side();
 
-  puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side)
-  {
-    uint8_t n = static_cast<uint8_t>(side);
-    return m_sides[n];
-  }
-  puzzle::SpinPuzzleSide<10, 3>& get_side()
-  {
-    return get_side(get_active_side());
-  }
+  puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side);
+
+  puzzle::SpinPuzzleSide<10, 3>& get_side();
 
   /**
    * @brief get the SpinPuzzle For the given Side.
@@ -150,11 +147,7 @@ public:
    * @param  side: side to get
    * @retval returns a \ref SpinPuzzleSide for the side.
    */
-  const puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side) const
-  {
-    uint8_t n = static_cast<uint8_t>(side);
-    return m_sides[n];
-  }
+  const puzzle::SpinPuzzleSide<10, 3>& get_side(SIDE side) const;
 
   /**
    * @brief get the SpinPuzzle For the given Side.
@@ -162,10 +155,7 @@ public:
    * @param  side: side to get
    * @retval returns a \ref SpinPuzzleSide for the side.
    */
-  const puzzle::SpinPuzzleSide<10, 3>& get_side() const
-  {
-    return get_side(get_active_side());
-  }
+  const puzzle::SpinPuzzleSide<10, 3>& get_side() const;
 
   bool check_consistency(bool verbose = false);
 
@@ -230,21 +220,6 @@ public:
     return buffer;
   }
 
-  std::FILE* serialize(std::FILE* file) const
-  {
-    std::stringstream s;
-    serialize(s);
-    std::fputs(s.str().c_str(), file);
-    return file;
-  }
-  std::string serialize(std::string& string) const
-  {
-    std::stringstream s;
-    serialize(s);
-    string = s.str();
-    return string;
-  }
-
   template<typename Buffer>
   Buffer& load(Buffer& buffer)
   {
@@ -264,38 +239,17 @@ public:
     return buffer;
   }
 
-  // TODO: Improve performance !!!
-  std::FILE* load(std::FILE* file)
-  {
-    std::string str;
-    char c;
-    do {
-      c = std::fgetc(file);
-    } while (c != '\0' && c != 'v');
-    // empty file
-    if (c == '\0') {
-      return file;
-    }
-    std::stringstream s;
-    s << c;
-    c = std::fgetc(file);
-    assert(c == '0'); // version
-    s << c;
-    while (c != '\n') {
-      c = std::fgetc(file);
-      s << c;
-    }
-    load(s);
-    return file;
-  }
+  std::FILE* serialize(std::FILE* file) const;
 
-  std::string load(std::string& string)
-  {
-    std::stringstream s;
-    s << string;
-    load(s);
-    return string;
-  }
+  std::string serialize(std::string& string) const;
+
+  std::FILE* load(std::FILE* file);
+
+  std::string load(std::string& string);
+
+  void attach_recorder(std::shared_ptr<Recorder> recorder);
+
+  std::shared_ptr<Recorder> detached_recorder();
 
 private:
   class KeyboardState
@@ -343,6 +297,8 @@ private:
   void update_spin_rotation_angle(LEAF leaf, double angle);
   void update_spin_rotation_angle(LEAF leaf);
   bool check_consistency_side(SIDE side, bool verbose);
+
+  std::shared_ptr<Recorder> m_recorder = nullptr;
 };
 
 } // namespace puzzle

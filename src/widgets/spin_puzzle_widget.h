@@ -8,6 +8,7 @@
 #include "puzzle/spin_puzzle_definitions.h"
 #include "puzzle/spin_puzzle_game.h"
 #include "puzzle/spin_puzzle_record.h"
+#include "spin_puzzle_filesystems.h"
 #include "spin_puzzle_history_widget.h"
 
 #define SAVE_LOAD_DATA 1
@@ -147,11 +148,6 @@ private:
   double get_width_button_bottom() const;
   double get_length_status_square() const;
 
-  std::string get_puzzle_file() const;
-  std::string get_records_puzzle_file() const;
-  std::string get_current_puzzle_file() const;
-  std::string get_config_puzzle_file() const;
-
   // plot puzzle body
   uint32_t m_length;
   const int width = 15;
@@ -200,6 +196,7 @@ private:
   std::array<ColorsSide, 2> m_colors_leaves_body;
 
   puzzle::Configuration m_config;
+  puzzle::FileSystem m_files;
 };
 
 #endif // SPIN_PUZZLE_WIDGET_H

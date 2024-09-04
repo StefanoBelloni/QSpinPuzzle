@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "spin_action_provider.h"
+#include "spin_game_recorder.h"
 
 namespace puzzle {
 
@@ -15,6 +16,9 @@ bool
 SpinPuzzleGame::rotate_marbles(LEAF leaf, double angle)
 {
   uint8_t n = static_cast<uint8_t>(m_active_side);
+  if (m_recorder) {
+    m_recorder->rotate_marbles(leaf, angle);
+  }
   return m_sides[n].rotate_marbles(leaf, angle);
 }
 
@@ -22,6 +26,9 @@ bool
 SpinPuzzleGame::rotate_internal_disk(double angle)
 {
   uint8_t n = static_cast<uint8_t>(m_active_side);
+  if (m_recorder) {
+    m_recorder->rotate_internal_disk(angle);
+  }
   return m_sides[n].rotate_internal_disk(angle);
 }
 
@@ -42,6 +49,9 @@ SpinPuzzleGame::spin_leaf(LEAF leaf)
 bool
 SpinPuzzleGame::spin_leaf(LEAF leaf, double angle)
 {
+  if (m_recorder) {
+    m_recorder->spin_leaf(leaf, angle);
+  }
   if (!m_sides[static_cast<uint8_t>(m_active_side)].is_rotation_possible(
         leaf)) {
     return false;
@@ -112,6 +122,9 @@ void SpinPuzzleGame::debug_iter(const char *name,
 void
 SpinPuzzleGame::swap_side()
 {
+  if (m_recorder) {
+    m_recorder->swap_side();
+  }
   m_active_side = get_opposite_side(m_active_side);
   update_spin_rotation_angle(LEAF::NORTH);
   update_spin_rotation_angle(LEAF::EAST);
@@ -344,6 +357,9 @@ void
 SpinPuzzleGame::reset()
 {
   m_active_side = SIDE::FRONT;
+  if (m_recorder) {
+    m_recorder->reset();
+  }
   m_sides[0] = SpinPuzzleSide(createFrontMarbles());
   m_sides[1] = SpinPuzzleSide(createBackMarbles());
 }
@@ -524,6 +540,97 @@ SpinPuzzleGame::current_time_step() const
   front.current_time_step(1, out);
   back.current_time_step((puzzle::SIZE_STEP_ARRAY - 1) / 2, out);
   return out;
+}
+
+std::FILE*
+SpinPuzzleGame::serialize(std::FILE* file) const
+{
+  std::stringstream s;
+  serialize(s);
+  std::fputs(s.str().c_str(), file);
+  return file;
+}
+std::string
+SpinPuzzleGame::serialize(std::string& string) const
+{
+  std::stringstream s;
+  serialize(s);
+  string = s.str();
+  return string;
+}
+
+// TODO: Improve performance !!!
+std::FILE*
+SpinPuzzleGame::load(std::FILE* file)
+{
+  std::string str;
+  char c;
+  do {
+    c = std::fgetc(file);
+  } while (c != '\0' && c != 'v');
+  // empty file
+  if (c == '\0') {
+    return file;
+  }
+  std::stringstream s;
+  s << c;
+  c = std::fgetc(file);
+  assert(c == '0'); // version
+  s << c;
+  while (c != '\n') {
+    c = std::fgetc(file);
+    s << c;
+  }
+  load(s);
+  return file;
+}
+
+std::string
+SpinPuzzleGame::load(std::string& string)
+{
+  std::stringstream s;
+  s << string;
+  load(s);
+  return string;
+}
+
+puzzle::SpinPuzzleSide<10, 3>&
+SpinPuzzleGame::get_side(SIDE side)
+{
+  uint8_t n = static_cast<uint8_t>(side);
+  return m_sides[n];
+}
+puzzle::SpinPuzzleSide<10, 3>&
+SpinPuzzleGame::get_side()
+{
+  return get_side(get_active_side());
+}
+
+const puzzle::SpinPuzzleSide<10, 3>&
+SpinPuzzleGame::get_side(SIDE side) const
+{
+  uint8_t n = static_cast<uint8_t>(side);
+  return m_sides[n];
+}
+
+const puzzle::SpinPuzzleSide<10, 3>&
+SpinPuzzleGame::get_side() const
+{
+  return get_side(get_active_side());
+}
+
+void
+SpinPuzzleGame::attach_recorder(std::shared_ptr<Recorder> recorder)
+{
+  m_recorder = recorder;
+}
+
+std::shared_ptr<Recorder>
+SpinPuzzleGame::detached_recorder()
+{
+  auto tmp = m_recorder;
+  m_recorder = nullptr;
+  return tmp;
 }
 
 } // namespace puzzle

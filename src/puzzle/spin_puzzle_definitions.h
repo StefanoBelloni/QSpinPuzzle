@@ -13,6 +13,7 @@
 namespace puzzle {
 
 // keys
+const inline int Key_NONE = 0x0;
 const inline int Key_N = 0x4e;
 const inline int Key_P = 0x50;
 const inline int Key_E = 0x45;

@@ -31,14 +31,17 @@ SOURCES += \
     src/puzzle/spin_puzzle_side.cpp \
     src/puzzle/spin_puzzle_cipher.cpp \
     src/puzzle/spin_configuration.cpp \
-    src/widgets/spin_puzzle_history_widget.cpp \
-    src/widgets/spin_puzzle_widget.cpp \
-    src/widgets/spin_puzzle_window.cpp \
-    src/widgets/spin_puzzle_config_widget.cpp \
     src/puzzle/spin_puzzle_record.cpp \
     src/puzzle/spin_puzzle_record.h \
     src/puzzle/spin_metrics.cpp \
     src/puzzle/spin_metrics.h \
+    src/puzzle/spin_game_recorder.h \
+    src/puzzle/spin_game_recorder.cpp \
+    src/widgets/spin_puzzle_history_widget.cpp \
+    src/widgets/spin_puzzle_widget.cpp \
+    src/widgets/spin_puzzle_window.cpp \
+    src/widgets/spin_puzzle_config_widget.cpp \
+    src/widgets/spin_puzzle_filesystems.cpp  \
     src/main.cpp
 
 HEADERS  += \
@@ -54,6 +57,8 @@ HEADERS  += \
     src/widgets/spin_puzzle_history_widget.h \
     src/widgets/spin_puzzle_widget.h \
     src/widgets/spin_puzzle_window.h \
+    src/widgets/spin_puzzle_filesystems.h  \
+    src/puzzle/spin_game_recorder.h \
     src/widgets/spin_puzzle_config_widget.h
 
 DISTFILES += \

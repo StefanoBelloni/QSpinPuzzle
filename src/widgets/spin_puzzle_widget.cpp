@@ -158,7 +158,7 @@ void
 SpinPuzzleWidget::update_configuration(const puzzle::Configuration& config)
 {
   m_config = config;
-  std::ofstream file(get_config_puzzle_file());
+  std::ofstream file(m_files.get_config_puzzle_file());
   if (file.is_open()) {
     std::stringstream s;
     m_config.dump(s);
@@ -170,7 +170,7 @@ SpinPuzzleWidget::update_configuration(const puzzle::Configuration& config)
 bool
 SpinPuzzleWidget::load_configuration()
 {
-  std::ifstream file(get_config_puzzle_file());
+  std::ifstream file(m_files.get_config_puzzle_file());
   if (file.is_open()) {
     std::stringstream s;
     s << file.rdbuf();
@@ -212,15 +212,15 @@ SpinPuzzleWidget::reset_file_app()
     return;
   }
   std::vector<std::string> files;
-  files.emplace_back((get_current_puzzle_file().c_str()));
-  files.emplace_back((get_puzzle_file().c_str()));
-  files.emplace_back((get_records_puzzle_file().c_str()));
-  // files.emplace_back((get_config_puzzle_file().c_str()));
+  files.emplace_back((m_files.get_current_puzzle_file().c_str()));
+  files.emplace_back((m_files.get_puzzle_file().c_str()));
+  files.emplace_back((m_files.get_records_puzzle_file().c_str()));
+  // files.emplace_back((m_files.get_config_puzzle_file().c_str()));
   for (const auto& d : files) {
     QFile file(d.c_str());
     file.remove();
   }
-  // QFile file(get_records_puzzle_file().c_str());
+  // QFile file(m_files.get_records_puzzle_file().c_str());
   // file.remove();
   reset();
   delete_history_popup();
@@ -231,7 +231,7 @@ SpinPuzzleWidget::reset_file_app()
 bool
 SpinPuzzleWidget::save_progress()
 {
-  auto file_name = get_current_puzzle_file();
+  auto file_name = m_files.get_current_puzzle_file();
   std::ofstream f(file_name, std::ios::trunc);
   if (f.is_open()) {
     puzzle::SpinPuzzleRecord record(
@@ -267,7 +267,7 @@ SpinPuzzleWidget::quit()
 void
 SpinPuzzleWidget::store_puzzle_begin()
 {
-  std::ofstream f(get_puzzle_file(), std::ios::trunc);
+  std::ofstream f(m_files.get_puzzle_file(), std::ios::trunc);
   if (f.is_open()) {
     puzzle::SpinPuzzleRecord record(
       m_config.name(), m_elapsed_time, m_config.level(), m_game);
@@ -282,7 +282,7 @@ SpinPuzzleWidget::load_records(
 {
   games.clear();
   int max_time = 0;
-  std::ifstream f1(get_records_puzzle_file());
+  std::ifstream f1(m_files.get_records_puzzle_file());
   int t = 0;
   if (f1.is_open()) {
     std::string s;
@@ -305,7 +305,7 @@ bool
 SpinPuzzleWidget::store_puzzle_record() const
 {
   puzzle::SpinPuzzleRecord record{};
-  std::ifstream f0(get_puzzle_file());
+  std::ifstream f0(m_files.get_puzzle_file());
   // load beginning
   if (f0.is_open()) {
     record.load(f0);
@@ -331,7 +331,7 @@ SpinPuzzleWidget::store_puzzles_record(
               }
             });
 
-  std::ofstream f(get_records_puzzle_file());
+  std::ofstream f(m_files.get_records_puzzle_file());
   if (!f.is_open()) {
     return false;
   }
@@ -396,7 +396,7 @@ SpinPuzzleWidget::load(int index, puzzle::SpinPuzzleGame& game)
   m_solved = false;
   m_elapsed_time = 0;
   std::string path;
-  path = get_records_puzzle_file();
+  path = m_files.get_records_puzzle_file();
 
   auto msg =
     QMessageBox(QMessageBox::Warning, "load", "Unable to load puzzle.");
@@ -460,9 +460,9 @@ SpinPuzzleWidget::load_latest_game()
   m_elapsed_time = 0;
   std::string path;
   if (msgBox.clickedButton() == pButtonLatest) {
-    path = get_current_puzzle_file();
+    path = m_files.get_current_puzzle_file();
   } else if (msgBox.clickedButton() == pButtonBegin) {
-    path = get_puzzle_file();
+    path = m_files.get_puzzle_file();
   } else {
     return;
   }
@@ -1467,54 +1467,6 @@ SpinPuzzleWidget::reset()
 }
 
 void
-create_dir()
-{
-  auto path =
-    QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto dir = QDir(path);
-  // qDebug() << "[DEBUG][PATH] path: " << dir;
-  if (!dir.exists()) {
-    dir.mkpath(".");
-  }
-}
-
-std::string
-SpinPuzzleWidget::get_config_puzzle_file() const
-{
-  auto path =
-    QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto filename = QDir(path + "/config_puzzle.txt");
-  return filename.path().toStdString();
-}
-
-std::string
-SpinPuzzleWidget::get_current_puzzle_file() const
-{
-  auto path =
-    QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto filename = QDir(path + "/current_puzzle.txt");
-  return filename.path().toStdString();
-}
-
-std::string
-SpinPuzzleWidget::get_puzzle_file() const
-{
-  auto path =
-    QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto filename = QDir(path + "/puzzle.txt");
-  return filename.path().toStdString();
-}
-
-std::string
-SpinPuzzleWidget::get_records_puzzle_file() const
-{
-  auto path =
-    QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-  auto filename = QDir(path + "/records.txt");
-  return filename.path().toStdString();
-}
-
-void
 SpinPuzzleWidget::stop_spinning_winning()
 {
   if (m_congratulation_timer->isActive()) {
@@ -1554,7 +1506,7 @@ SpinPuzzleWidget::do_start_game(int shuffle_level)
     m_game.shuffle(0, n_random_commands);
   }
   if (m_allow_play) {
-    create_dir();
+    m_files.create_filesystem();
     store_puzzle_begin();
     save_progress();
   }

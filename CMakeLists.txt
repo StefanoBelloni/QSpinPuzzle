@@ -6,8 +6,9 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# option(USE_QT "Enable this if you want to use QT" yes)
-option(USE_QT "Enable this if you want to use QT" no)
+option(USE_QT "Enable this if you want to use QT" yes)
+# option(USE_QT "Enable this if you want to use QT" no)
+add_definitions(-DQSPIN_PUZZLE_RECORD_TIMES)
 
 if(NOT DEFINED ANDROID)
     add_subdirectory(extern/pybind11)
@@ -68,6 +69,8 @@ add_library(spinpuzzle SHARED
     src/puzzle/spin_puzzle_definitions.cpp
     src/puzzle/spin_action_provider.cpp
     src/puzzle/spin_action_provider.h
+    src/puzzle/spin_game_recorder.h
+    src/puzzle/spin_game_recorder.cpp
     src/puzzle/spin_puzzle_cipher.h
     src/puzzle/spin_puzzle_cipher.cpp
     src/puzzle/spin_configuration.cpp
@@ -136,6 +139,7 @@ add_executable(
   tests/t_puzzle_configuration.cpp
   tests/t_puzzle_records.cpp
   tests/t_puzzle_metric.cpp
+  tests/t_recorder.cpp
 )
 target_include_directories(
     t_puzzle
@@ -195,6 +199,8 @@ if (USE_QT)
             src/widgets/spin_puzzle_history_widget.cpp
             src/widgets/spin_puzzle_config_widget.h
             src/widgets/spin_puzzle_config_widget.cpp
+            src/widgets/spin_puzzle_filesystems.h
+            src/widgets/spin_puzzle_filesystems.cpp
             # =========================== #
             README.md
             # =========================== #
