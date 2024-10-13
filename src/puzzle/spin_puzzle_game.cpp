@@ -625,6 +625,13 @@ SpinPuzzleGame::attach_recorder(std::shared_ptr<Recorder> recorder)
   m_recorder = recorder;
 }
 
+void
+SpinPuzzleGame::start_recording()
+{
+  if (m_recorder == nullptr) { return; }
+  m_recorder->rec(*this);
+}
+
 std::shared_ptr<Recorder>
 SpinPuzzleGame::detached_recorder()
 {

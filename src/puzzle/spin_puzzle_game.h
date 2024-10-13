@@ -248,6 +248,7 @@ public:
   std::string load(std::string& string);
 
   void attach_recorder(std::shared_ptr<Recorder> recorder);
+  void start_recording();
 
   std::shared_ptr<Recorder> detached_recorder();
 

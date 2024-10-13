@@ -1,6 +1,7 @@
 #include "spin_puzzle_definitions.h"
 #include <chrono>
 #include <vector>
+#include <sstream>
 
 namespace puzzle {
 
@@ -49,9 +50,17 @@ public:
   void swap_side();
   void reset();
 
-  void replay_record(SpinPuzzleGame& game);
+  void rec(const SpinPuzzleGame& game);
+  void replay(SpinPuzzleGame& game);
+  bool step_forward(SpinPuzzleGame& game, size_t steps);
+  void rewind();
+  void rewind(SpinPuzzleGame& game);
 
 private:
+  void play(SpinPuzzleGame& game, std::vector<Event>::iterator begin, std::vector<Event>::iterator end);
   std::vector<Event> m_events;
+  std::vector<Event>::iterator m_current = m_events.end();
+  std::stringstream m_start_game;
+
 };
 }
