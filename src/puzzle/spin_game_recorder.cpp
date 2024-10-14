@@ -40,6 +40,7 @@ Recorder::reset()
 
 void Recorder::rec(const SpinPuzzleGame& game) {
   game.serialize(m_start_game);
+  m_recording = true;
 }
 
 void

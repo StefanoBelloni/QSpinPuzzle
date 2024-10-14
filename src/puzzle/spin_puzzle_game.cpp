@@ -635,6 +635,7 @@ SpinPuzzleGame::start_recording()
 std::shared_ptr<Recorder>
 SpinPuzzleGame::detached_recorder()
 {
+  m_recorder->stop();
   auto tmp = m_recorder;
   m_recorder = nullptr;
   return tmp;
