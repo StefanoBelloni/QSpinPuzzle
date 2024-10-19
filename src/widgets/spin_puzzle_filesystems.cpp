@@ -34,6 +34,31 @@ FileSystem::create_filesystem() const
   if (!dir_statistcs.exists()) {
     dir_statistcs.mkpath(".");
   }
+  auto dir_recordings = QDir(m_basedir + "/recordings");
+  if (!dir_recordings.exists()) {
+    dir_recordings.mkpath(".");
+  }
+}
+
+std::string FileSystem::get_recoding_puzzle() const {
+  auto now = std::chrono::system_clock::now();
+
+  auto in_time_t = std::chrono::system_clock::to_time_t(now);
+  std::stringstream datetime;
+  datetime << std::put_time(std::localtime(&in_time_t), "%Y_%m_%d_%H_%M_%S");
+  std::string name{"recording_" + datetime.str() + ".txt"};
+  return get_recoding_puzzle(name);
+}
+
+std::string FileSystem::get_recoding_puzzle(const std::string& name) const {
+  return get_recoding_puzzle_directory() + "/" + name;
+}
+
+std::string
+FileSystem::get_recoding_puzzle_directory() const
+{
+  auto filename = QDir(m_basedir + "/recordings/");
+  return filename.path().toStdString();
 }
 
 std::string

@@ -10,6 +10,7 @@
 #include "puzzle/spin_puzzle_record.h"
 #include "spin_puzzle_filesystems.h"
 #include "spin_puzzle_history_widget.h"
+#include "puzzle/spin_game_recorder.h"
 
 #define SAVE_LOAD_DATA 1
 
@@ -68,8 +69,11 @@ public:
   void load_latest_game();
   bool save_progress();
   bool quit();
+  bool start_recording();
+  bool stop_recording();
 
 private:
+  void reset_recording();
   void set_size(int win_width, int win_height);
   double get_radius_internal() const;
   void create_polygon(QPolygon& polygon);
@@ -132,11 +136,16 @@ private:
   void load(int index);
   void load(int index, puzzle::SpinPuzzleGame& game);
   void store_puzzle_begin();
+  void store_recorded_game() const;
   bool store_puzzle_record() const;
   bool store_puzzle_record(const puzzle::SpinPuzzleRecord& record) const;
   bool store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> games) const;
   // return max time
   int load_records(std::vector<puzzle::SpinPuzzleRecord>& games) const;
+
+  int messageBoxDeleteFiles();
+  void delete_game_recordings();
+  void delete_puzzle_files();
 
   bool can_rotate_internal() const;
   bool is_mause_on_leaf_marbles(QPoint pos, QPoint center) const;
@@ -168,6 +177,7 @@ private:
 
   QPushButton* m_load_btn = nullptr;
   QPushButton* m_save_btn = nullptr;
+  // QPushButton* m_rec_btn = nullptr;
   // QPushButton *m_load_records_btn = nullptr;
 
   // maybe use a shared_pointer ...
@@ -197,6 +207,7 @@ private:
 
   puzzle::Configuration m_config;
   puzzle::FileSystem m_files;
+  std::shared_ptr<puzzle::Recorder> m_recorderPtr{nullptr};
 };
 
 #endif // SPIN_PUZZLE_WIDGET_H

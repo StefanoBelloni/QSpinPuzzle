@@ -16,6 +16,7 @@
 #include <QStyleOption>
 #include <QTimer>
 #include <QtMath>
+ #include <QtLogging>
 #include <fstream>
 #include <sstream>
 
@@ -75,6 +76,7 @@ SpinPuzzleWidget::create_play_buttons()
   m_start_btn = new QPushButton("START", this);
   m_load_btn = new QPushButton("LATEST", this);
   m_save_btn = new QPushButton("SAVE", this);
+  // m_rec_btn = new QPushButton("REC", this);
   // m_load_records_btn = new QPushButton("PUZZLE RECORDS", this);
 }
 
@@ -119,9 +121,35 @@ SpinPuzzleWidget::connect_play_buttons()
       update();
     }
   });
+  /*
+  connect(m_rec_btn, &QPushButton::released, this, [this] {
+    if (!m_timer->isActive()) {
+      QMessageBox(QMessageBox::Information,
+                  "info",
+                  "No game is running: please start a challange and record it",
+                  QMessageBox::Ok)
+        .exec();
+        return;
+    }
+    if (m_rec_btn->text().toStdString() == "REC") {
+      this->rec();
+      m_rec_btn->setText("STOP");
+      update();
+    }
+    else if (m_rec_btn->text().toStdString() == "STOP") {
+      this->reset_recording();
+      update();
+    }
+  }); 
+  */
 
   // connect(m_load_records_btn, &QPushButton::released, this,
   // &SpinPuzzleWidget::exec_puzzle_records_dialog);
+}
+
+void SpinPuzzleWidget::reset_recording() {
+  this->stop_recording();
+  // m_rec_btn->setText("REC");
 }
 
 void
@@ -198,19 +226,22 @@ SpinPuzzleWidget::get_length_status_square() const
   return m_length / 24.0;
 }
 
-void
-SpinPuzzleWidget::reset_file_app()
-{
-  auto msg = QMessageBox(QMessageBox::Warning,
-                         "reset",
-                         "Do you want to delete all saved puzzles",
-                         QMessageBox::Ok | QMessageBox::Cancel);
-  msg.setInformativeText("This operation cannot be reversed!");
-  msg.setDefaultButton(QMessageBox::Cancel);
-  int delete_progress = msg.exec();
-  if (delete_progress == QMessageBox::Cancel) {
-    return;
+void 
+SpinPuzzleWidget::delete_game_recordings() {
+  // delete all recordings
+  QDir dir(m_files.get_recoding_puzzle_directory().c_str());
+  dir.setNameFilters(QStringList() << "*.*");
+  dir.setFilter(QDir::Files);
+  foreach(QString dirFile, dir.entryList()) {
+    if (dirFile.startsWith("recording_")) {
+      dir.remove(dirFile);
+    }
   }
+
+}
+
+void 
+SpinPuzzleWidget::delete_puzzle_files() {
   std::vector<std::string> files;
   files.emplace_back((m_files.get_current_puzzle_file().c_str()));
   files.emplace_back((m_files.get_puzzle_file().c_str()));
@@ -220,8 +251,28 @@ SpinPuzzleWidget::reset_file_app()
     QFile file(d.c_str());
     file.remove();
   }
-  // QFile file(m_files.get_records_puzzle_file().c_str());
-  // file.remove();
+}
+
+int 
+SpinPuzzleWidget::messageBoxDeleteFiles() {
+  auto msg = QMessageBox(QMessageBox::Warning,
+                         "reset",
+                         "Do you want to delete all saved puzzles",
+                         QMessageBox::Ok | QMessageBox::Cancel);
+  msg.setInformativeText("This operation cannot be reversed!");
+  msg.setDefaultButton(QMessageBox::Cancel);
+  return msg.exec();
+}
+
+void
+SpinPuzzleWidget::reset_file_app()
+{
+  int delete_progress = messageBoxDeleteFiles();
+  if (delete_progress == QMessageBox::Cancel) {
+    return;
+  }
+  delete_puzzle_files();
+  delete_game_recordings();
   reset();
   delete_history_popup();
   delete_config_popup();
@@ -264,6 +315,36 @@ SpinPuzzleWidget::quit()
   return do_quit == QMessageBox::Ok;
 }
 
+bool
+SpinPuzzleWidget::start_recording() 
+{
+  if (m_recorderPtr == nullptr) {
+    m_recorderPtr = std::make_shared<puzzle::Recorder>();
+  }
+  m_recorderPtr->reset();
+  m_game.attach_recorder(m_recorderPtr);
+  m_recorderPtr->rec(m_game);
+  return true;
+}
+
+bool
+SpinPuzzleWidget::stop_recording() 
+{
+  if (m_recorderPtr == nullptr || !m_recorderPtr->isRecording()) {
+    /*
+    m_recorderPtr = std::make_shared<puzzle::Recorder>();
+    QMessageBox(QMessageBox::Warning,
+                          "record",
+                          "No Recording started",
+                          QMessageBox::Ok).exec();
+    */
+    return false;
+  }
+  m_recorderPtr->stop();
+  m_game.detached_recorder();
+  return true;
+}
+
 void
 SpinPuzzleWidget::store_puzzle_begin()
 {
@@ -272,6 +353,20 @@ SpinPuzzleWidget::store_puzzle_begin()
     puzzle::SpinPuzzleRecord record(
       m_config.name(), m_elapsed_time, m_config.level(), m_game);
     record.serialize(f);
+    f.close();
+  }
+}
+
+void
+SpinPuzzleWidget::store_recorded_game() const
+{
+  if (m_recorderPtr == nullptr || m_recorderPtr->isRecording()) {
+    return;
+  }
+  std::cout << "[INFO] storing file into " << m_files.get_recoding_puzzle_directory() << "\n"; 
+  std::ofstream f(m_files.get_recoding_puzzle(), std::ios::trunc);
+  if (f.is_open()) {
+    m_recorderPtr->serialize(f);
     f.close();
   }
 }
@@ -425,7 +520,7 @@ SpinPuzzleWidget::load(int index, puzzle::SpinPuzzleGame& game)
       return;
     }
     m_elapsed_time = record.time();
-    m_game = record.game();
+    set_game(record.game());
     current++;
   } while (current != index);
   f.close();
@@ -475,8 +570,9 @@ SpinPuzzleWidget::load_latest_game()
         .exec();
       return;
     }
-    m_game = record.game();
+    set_game(record.game());
     m_elapsed_time = record.time();
+    reset_recording();
     f.close();
   }
   m_timer->start(1000);
@@ -638,6 +734,8 @@ SpinPuzzleWidget::paint_timer()
   if (m_game.is_game_solved()) {
     painter_status.setBrush(Qt::green);
     if (m_timer->isActive() && m_elapsed_time > 0 && !m_solved) {
+      this->stop_recording();
+      store_recorded_game();
       store_puzzle_record();
       m_solved = true;
       m_paint_congratulations = true;
@@ -732,14 +830,8 @@ SpinPuzzleWidget::set_size(int win_width, int win_height)
     m_reset_btn->setGeometry(QRect(t + 1 * w, m_win_height - h, w, h));
     m_load_btn->setGeometry(QRect(t + 2 * w, m_win_height - h, w, h));
     m_save_btn->setGeometry(QRect(t + 3 * w, m_win_height - h, w, h));
+    // m_rec_btn->setGeometry(QRect(t + 4 * w, m_win_height - h, w, h));
 
-    // m_load_records_btn->setGeometry(QRect(
-    //    0, 0, (8.0 * 10.0 - 2.0) / 10.0 * L / 24.0, 17.0 / 10.0 * L / 24.0));
-    // QPalette pal = m_load_records_btn->palette();
-    // pal.setColor(QPalette::Button, QColor(Qt::gray));
-    // m_load_records_btn->setAutoFillBackground(true);
-    // m_load_records_btn->setPalette(pal);
-    // m_load_records_btn->update();
   }
 }
 
@@ -1378,6 +1470,7 @@ SpinPuzzleWidget::set_game(const puzzle::SpinPuzzleGame& game)
 void
 SpinPuzzleWidget::set_game(int time, const puzzle::SpinPuzzleGame& game)
 {
+  reset_recording();
   m_elapsed_time = time;
   m_game = game;
   m_game.set_config(m_config);
@@ -1455,7 +1548,7 @@ SpinPuzzleWidget::reset()
       stop_spinning_winning();
       m_elapsed_time = 0;
       m_timer->stop();
-      m_game = puzzle::SpinPuzzleGame();
+      set_game(puzzle::SpinPuzzleGame());
       m_game.set_config(m_config);
       reset_leaf_colors();
     }
@@ -1508,6 +1601,7 @@ SpinPuzzleWidget::do_start_game(int shuffle_level)
   if (m_allow_play) {
     m_files.create_filesystem();
     store_puzzle_begin();
+    start_recording();
     save_progress();
   }
 

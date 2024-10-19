@@ -51,6 +51,15 @@ Recorder::replay(SpinPuzzleGame& game)
   play(game, m_events.begin(), m_events.end());
 }
 
+std::FILE*
+Recorder::serialize(std::FILE* file) const
+{
+  std::stringstream s;
+  serialize(s);
+  std::fputs(s.str().c_str(), file);
+  return file;
+}
+
 void
 Recorder::play(SpinPuzzleGame& game, std::vector<Event>::iterator begin, std::vector<Event>::iterator end)
 {

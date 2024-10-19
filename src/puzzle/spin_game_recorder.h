@@ -79,6 +79,7 @@ public:
 
   void rec(const SpinPuzzleGame& game);
   void stop() { 
+    if (!m_recording) { return; }
     m_start_game.seekg(0, std::ios::beg);
     m_recording = false;
   };
@@ -98,6 +99,8 @@ public:
     }
     return buffer;
   }
+
+  std::FILE* serialize(std::FILE* file) const;
 
   template<typename Buffer>
   void load(Buffer& buffer)

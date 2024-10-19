@@ -15,6 +15,9 @@ public:
   std::string get_records_puzzle_file() const;
   std::string get_current_puzzle_file() const;
   std::string get_config_puzzle_file() const;
+  std::string get_recoding_puzzle_directory() const;
+  std::string get_recoding_puzzle(const std::string& name) const;
+  std::string get_recoding_puzzle() const;
 
   void create_filesystem() const;
 
