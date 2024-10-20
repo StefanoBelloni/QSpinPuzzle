@@ -197,6 +197,8 @@ if (USE_QT)
             src/widgets/spin_puzzle_widget.cpp
             src/widgets/spin_puzzle_history_widget.h
             src/widgets/spin_puzzle_history_widget.cpp
+            src/widgets/spin_puzzle_replay_widget.h
+            src/widgets/spin_puzzle_replay_widget.cpp
             src/widgets/spin_puzzle_config_widget.h
             src/widgets/spin_puzzle_config_widget.cpp
             src/widgets/spin_puzzle_filesystems.h

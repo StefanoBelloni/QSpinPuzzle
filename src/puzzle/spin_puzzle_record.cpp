@@ -41,6 +41,11 @@ SpinPuzzleRecord::username() const
 {
   return m_username;
 }
+std::string
+SpinPuzzleRecord::file_recording() const
+{
+  return m_file_recording;
+}
 int
 SpinPuzzleRecord::time() const
 {
@@ -69,11 +74,18 @@ SpinPuzzleRecord::update_username(const std::string& username)
   m_username = username;
 }
 
+void
+SpinPuzzleRecord::set_file_recording(const std::string& filename)
+{
+  m_file_recording = filename;
+}
+
 bool
 SpinPuzzleRecord::serialize(std::ofstream& out) const
 {
   out << "spin_puzzle_single_record\n";
   out << username() << "\n";
+  out << file_recording() << "\n";
   out << time() << "\n";
   out << level() << "\n";
   m_game.serialize(out);
@@ -85,6 +97,7 @@ SpinPuzzleRecord::serialize(std::stringstream& out) const
 {
   out << "spin_puzzle_single_record\n";
   out << username() << "\n";
+  out << file_recording() << "\n";
   out << time() << "\n";
   out << level() << "\n";
   m_game.serialize(out);
@@ -112,6 +125,7 @@ SpinPuzzleRecord::load(std::ifstream& in)
   std::string buffer_time;
   std::string buffer_level;
   std::getline(in, m_username);
+  std::getline(in, m_file_recording);
   std::getline(in, buffer_time);
   std::getline(in, buffer_level);
   m_time = std::atoi(buffer_time.c_str());
@@ -141,6 +155,7 @@ SpinPuzzleRecord::load(std::stringstream& in)
   std::string buffer_time;
   std::string buffer_level;
   std::getline(in, m_username);
+  std::getline(in, m_file_recording);
   std::getline(in, buffer_time);
   std::getline(in, buffer_level);
   m_time = std::atoi(buffer_time.c_str());

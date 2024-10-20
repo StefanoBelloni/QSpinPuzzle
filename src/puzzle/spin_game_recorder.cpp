@@ -60,6 +60,39 @@ Recorder::serialize(std::FILE* file) const
   return file;
 }
 
+size_t
+Recorder::play(SpinPuzzleGame& game, size_t time)
+{
+  auto start_time = m_current->time();
+  for (; m_current != m_events.end(); ++m_current) {
+    const Event& event = *m_current;
+    switch (event.type()) {
+      case Recorder::EventType::ROTATE_MARBLES:
+        game.rotate_marbles(event.leaf(), event.angle());
+        break;
+      case Recorder::EventType::ROTATE_INTERNAL_DISK:
+        game.rotate_internal_disk(event.angle());
+        break;
+      case Recorder::EventType::SPIN_LEAF_ANGLE:
+        game.spin_leaf(event.leaf(), event.angle());
+        break;
+      case Recorder::EventType::SPIN_LEAF:
+        game.spin_leaf(event.leaf());
+        break;
+      case Recorder::EventType::SWAP_SIDE:
+        game.swap_side();
+        break;
+      default:
+        break;
+    }
+    if (m_current->time() - start_time >= time) { 
+      ++m_current;
+      break; 
+    }
+  }
+  return m_current - m_events.begin();
+}
+
 void
 Recorder::play(SpinPuzzleGame& game, std::vector<Event>::iterator begin, std::vector<Event>::iterator end)
 {
@@ -97,6 +130,9 @@ void Recorder::rewind() {
 }
 
 void Recorder::rewind(SpinPuzzleGame& game) {
+  m_start_game.seekg(0, std::ios::end);
+  int size = m_start_game.tellg();
+  if (size == 0) { return; }
   m_start_game.seekg(0, std::ios::beg);
   game.load(m_start_game);
   m_current = m_events.begin();
@@ -117,5 +153,10 @@ double
 Recorder::Event::angle() const
 {
   return m_angle;
+}
+size_t
+Recorder::Event::time() const
+{
+  return m_time;
 }
 }

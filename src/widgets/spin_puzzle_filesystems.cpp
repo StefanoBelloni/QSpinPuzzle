@@ -3,6 +3,7 @@
 #include <QStandardPaths>
 #include <QString>
 #include <string>
+#include <sstream>
 
 namespace puzzle {
 FileSystem::FileSystem()
@@ -40,14 +41,14 @@ FileSystem::create_filesystem() const
   }
 }
 
-std::string FileSystem::get_recoding_puzzle() const {
+std::string FileSystem::get_recoding_puzzle_name() const {
   auto now = std::chrono::system_clock::now();
 
   auto in_time_t = std::chrono::system_clock::to_time_t(now);
   std::stringstream datetime;
   datetime << std::put_time(std::localtime(&in_time_t), "%Y_%m_%d_%H_%M_%S");
   std::string name{"recording_" + datetime.str() + ".txt"};
-  return get_recoding_puzzle(name);
+  return name;
 }
 
 std::string FileSystem::get_recoding_puzzle(const std::string& name) const {

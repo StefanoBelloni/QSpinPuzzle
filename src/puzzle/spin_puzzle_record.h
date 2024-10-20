@@ -23,12 +23,14 @@ public:
   SpinPuzzleRecord(const SpinPuzzleRecord& record) = default;
 
   std::string username() const;
+  std::string file_recording() const;
   int time() const;
   int level() const;
   const puzzle::SpinPuzzleGame& game() const;
 
   void update_time(int time);
   void update_username(const std::string& username);
+  void set_file_recording(const std::string& filename);
 
   bool serialize(std::ofstream& out) const;
   bool serialize(std::stringstream& out) const;
@@ -43,6 +45,7 @@ public:
 
 private:
   std::string m_username = "";
+  std::string m_file_recording = "NONE";
   int m_time = 0;
   int m_difficult_level = -1;
   puzzle::SpinPuzzleGame m_game{};

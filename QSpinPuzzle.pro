@@ -38,6 +38,7 @@ SOURCES += \
     src/puzzle/spin_game_recorder.h \
     src/puzzle/spin_game_recorder.cpp \
     src/widgets/spin_puzzle_history_widget.cpp \
+    src/widgets/spin_puzzle_replay_widget.cpp \
     src/widgets/spin_puzzle_widget.cpp \
     src/widgets/spin_puzzle_window.cpp \
     src/widgets/spin_puzzle_config_widget.cpp \
@@ -53,7 +54,7 @@ HEADERS  += \
     src/puzzle/spin_puzzle_side.h \
     src/puzzle/spin_puzzle_cipher.h \
     src/puzzle/spin_configuration.h \
-    src/widgets/spin_puzzle_history_widget.cpp \
+    src/widgets/spin_puzzle_replay_widget.h \
     src/widgets/spin_puzzle_history_widget.h \
     src/widgets/spin_puzzle_widget.h \
     src/widgets/spin_puzzle_window.h \

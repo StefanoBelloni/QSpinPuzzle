@@ -16,6 +16,7 @@
 
 class SpinPuzzleHistoryWidget;
 class SpinPuzzleConfigurationWidget;
+class SpinPuzzleReplayWidget;
 
 /**
  * @brief  Class to display the SpinPuzzle Game
@@ -44,12 +45,20 @@ class SpinPuzzleConfigurationWidget;
 class SpinPuzzleWidget : public QWidget
 {
   friend class SpinPuzzleHistoryWidget;
+  friend class SpinPuzzleReplayWidget;
   friend class SpinPuzzleConfigurationWidget;
   Q_OBJECT
 public:
+
+  enum TypePuzzle {
+    GAME,
+    SHOW_HISTORY,
+    SHOW_REPLAY
+  };
+
   SpinPuzzleWidget(int win_width,
                    int win_heigth,
-                   bool m_allow_play = true,
+                   TypePuzzle typePuzzle = TypePuzzle::GAME,
                    QWidget* parent = nullptr);
 
   void paintEvent(QPaintEvent* ev) override;
@@ -69,11 +78,8 @@ public:
   void load_latest_game();
   bool save_progress();
   bool quit();
-  bool start_recording();
-  bool stop_recording();
 
 private:
-  void reset_recording();
   void set_size(int win_width, int win_height);
   double get_radius_internal() const;
   void create_polygon(QPolygon& polygon);
@@ -114,6 +120,10 @@ private:
   void do_spin_west();
   void do_start_game(int shuffle_level);
 
+  void reset_recording();
+  bool start_recording();
+  bool stop_recording();
+
   void update_configuration(const puzzle::Configuration& config);
   bool load_configuration();
 
@@ -123,6 +133,8 @@ private:
   bool processKey(int key, double fraction_angle);
 
   void delete_history_popup();
+  void add_replay_popup(SpinPuzzleReplayWidget* replay_widget);
+  void delete_replay_popup();
   void delete_config_popup();
   void stop_spinning_winning();
   void set_game(int time, const puzzle::SpinPuzzleGame& game);
@@ -136,8 +148,9 @@ private:
   void load(int index);
   void load(int index, puzzle::SpinPuzzleGame& game);
   void store_puzzle_begin();
-  void store_recorded_game() const;
+  std::string store_recorded_game() const;
   bool store_puzzle_record() const;
+  bool store_puzzle_record(const std::string& recording_name) const;
   bool store_puzzle_record(const puzzle::SpinPuzzleRecord& record) const;
   bool store_puzzles_record(std::vector<puzzle::SpinPuzzleRecord> games) const;
   // return max time
@@ -156,6 +169,14 @@ private:
   double get_height_button_bottom() const;
   double get_width_button_bottom() const;
   double get_length_status_square() const;
+
+  bool isInteractiveGame() { return m_typePuzzle == TypePuzzle::GAME; }
+  bool isHistoryShow() { return m_typePuzzle == TypePuzzle::SHOW_HISTORY; }
+  bool isReplayGame() { return m_typePuzzle == TypePuzzle::SHOW_REPLAY; }
+
+  puzzle::FileSystem files() {
+    return m_files;
+  }
 
   // plot puzzle body
   uint32_t m_length;
@@ -183,6 +204,7 @@ private:
   // maybe use a shared_pointer ...
   SpinPuzzleHistoryWidget* m_history_widget = nullptr;
   SpinPuzzleConfigurationWidget* m_config_widget = nullptr;
+  SpinPuzzleReplayWidget* m_replay_widget = nullptr;
 
   QTimer* m_timer;
   QTimer* m_congratulation_timer;
@@ -195,7 +217,7 @@ private:
   int m_ty = 0;
   int m_win_width = 0;
   int m_win_height = 0;
-  bool m_allow_play = true;
+  TypePuzzle m_typePuzzle = TypePuzzle::GAME;
   const int m_max_saved_games = 10;
   int m_rotation_congratulation = 0;
 
