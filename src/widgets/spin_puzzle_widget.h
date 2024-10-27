@@ -5,12 +5,12 @@
 #include <QWidget>
 
 #include "puzzle/spin_configuration.h"
+#include "puzzle/spin_game_recorder.h"
 #include "puzzle/spin_puzzle_definitions.h"
 #include "puzzle/spin_puzzle_game.h"
 #include "puzzle/spin_puzzle_record.h"
 #include "spin_puzzle_filesystems.h"
 #include "spin_puzzle_history_widget.h"
-#include "puzzle/spin_game_recorder.h"
 
 #define SAVE_LOAD_DATA 1
 
@@ -49,8 +49,8 @@ class SpinPuzzleWidget : public QWidget
   friend class SpinPuzzleConfigurationWidget;
   Q_OBJECT
 public:
-
-  enum TypePuzzle {
+  enum TypePuzzle
+  {
     GAME,
     SHOW_HISTORY,
     SHOW_REPLAY
@@ -127,8 +127,10 @@ private:
   void update_configuration(const puzzle::Configuration& config);
   bool load_configuration();
 
-  void connect_play_buttons();
-  void create_play_buttons();
+  void connect_widget_buttons();
+  void create_widget_buttons();
+  void create_widget_timers();
+  void setup_initial_configuration();
 
   bool processKey(int key, double fraction_angle);
 
@@ -174,9 +176,7 @@ private:
   bool isHistoryShow() { return m_typePuzzle == TypePuzzle::SHOW_HISTORY; }
   bool isReplayGame() { return m_typePuzzle == TypePuzzle::SHOW_REPLAY; }
 
-  puzzle::FileSystem files() {
-    return m_files;
-  }
+  puzzle::FileSystem files() { return m_files; }
 
   // plot puzzle body
   uint32_t m_length;
@@ -229,7 +229,7 @@ private:
 
   puzzle::Configuration m_config;
   puzzle::FileSystem m_files;
-  std::shared_ptr<puzzle::Recorder> m_recorderPtr{nullptr};
+  std::shared_ptr<puzzle::Recorder> m_recorderPtr{ nullptr };
 };
 
 #endif // SPIN_PUZZLE_WIDGET_H

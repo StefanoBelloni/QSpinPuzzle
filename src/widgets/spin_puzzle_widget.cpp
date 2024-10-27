@@ -15,8 +15,8 @@
 #include <QStandardPaths>
 #include <QStyleOption>
 #include <QTimer>
+#include <QtLogging>
 #include <QtMath>
- #include <QtLogging>
 #include <fstream>
 #include <sstream>
 
@@ -36,19 +36,20 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width,
   : QWidget(parent)
   , m_typePuzzle(typePuzzle)
 {
-  m_twist_side = new QPushButton(this);
-  connect(m_twist_side, &QPushButton::released, this, [this] {
-    this->m_game.swap_side();
-    update();
-  });
 
-  if (isInteractiveGame()) {
-    create_play_buttons();
-    connect_play_buttons();
-    load_configuration();
-    m_game.set_config(m_config);
-  }
+  create_widget_buttons();
+  create_widget_timers();
+  setup_initial_configuration();
 
+  set_size(win_width, win_heigth);
+  reset_leaf_colors();
+
+  this->setFocus();
+}
+
+void
+SpinPuzzleWidget::create_widget_timers()
+{
   m_timer = new QTimer(this);
   connect(m_timer, &QTimer::timeout, this, [this] {
     m_elapsed_time += 1;
@@ -60,73 +61,103 @@ SpinPuzzleWidget::SpinPuzzleWidget(int win_width,
     m_rotation_congratulation += 5;
     update();
   });
-
-  set_size(win_width, win_heigth);
-  reset_leaf_colors();
-
-  this->setFocus();
 }
 
 void
-SpinPuzzleWidget::create_play_buttons()
+SpinPuzzleWidget::setup_initial_configuration()
 {
-  m_spin_north = new QPushButton(this);
-  m_spin_east = new QPushButton(this);
-  m_spin_west = new QPushButton(this);
-  m_reset_btn = new QPushButton("RESET", this);
-  m_start_btn = new QPushButton("START", this);
-  m_load_btn = new QPushButton("LATEST", this);
-  m_save_btn = new QPushButton("SAVE", this);
-  // m_reset_btn = new QPushButton("⟲", this);
-  // m_start_btn = new QPushButton("▶", this);
-  // m_load_btn = new QPushButton("⟪", this);
-  // m_save_btn = new QPushButton("↓", this);
+  if (isInteractiveGame()) {
+    load_configuration();
+    m_game.set_config(m_config);
+  }
 }
 
 void
-SpinPuzzleWidget::connect_play_buttons()
+SpinPuzzleWidget::create_widget_buttons()
 {
-  connect(m_spin_north, &QPushButton::released, this, [this] {
-    do_spin_north();
-    update();
-  });
+  if (isInteractiveGame()) {
+    m_spin_north = new QPushButton(this);
+    m_spin_east = new QPushButton(this);
+    m_spin_west = new QPushButton(this);
+    // m_reset_btn = new QPushButton("RESET", this);
+    // m_start_btn = new QPushButton("START", this);
+    // m_load_btn = new QPushButton("LATEST", this);
+    // m_save_btn = new QPushButton("SAVE", this);
+    m_reset_btn = new QPushButton("⟲", this);
+    m_start_btn = new QPushButton("▶", this);
+    m_load_btn = new QPushButton("⟪", this);
+    m_save_btn = new QPushButton("⇓", this);
+  }
+  m_twist_side = new QPushButton(this);
 
-  connect(m_spin_east, &QPushButton::released, this, [this] {
-    do_spin_east();
-    update();
-  });
+  connect_widget_buttons();
+}
 
-  connect(m_spin_west, &QPushButton::released, this, [this] {
-    do_spin_west();
-    update();
-  });
-
-  connect(m_reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
-
-  connect(
-    m_start_btn, &QPushButton::released, this, &SpinPuzzleWidget::start_game);
-
-  connect(m_load_btn, &QPushButton::released, this, [this] {
-    m_paint_congratulations = false;
-    stop_spinning_winning();
-    load_latest_game();
-    update();
-  });
-
-  connect(m_save_btn, &QPushButton::released, this, [this] {
-    if (m_game.is_game_solved() ||
-        (!(m_timer->isActive() || m_elapsed_time > 0))) {
-      return;
-    }
-    if (save_progress()) {
-      QMessageBox(QMessageBox::Information, "progress", "progress saved.")
-        .exec();
+void
+SpinPuzzleWidget::connect_widget_buttons()
+{
+  if (isInteractiveGame()) {
+    connect(m_spin_north, &QPushButton::released, this, [this] {
+      do_spin_north();
       update();
-    }
-  });
+    });
+
+    connect(m_spin_east, &QPushButton::released, this, [this] {
+      do_spin_east();
+      update();
+    });
+
+    connect(m_spin_west, &QPushButton::released, this, [this] {
+      do_spin_west();
+      update();
+    });
+
+    connect(
+      m_reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
+
+    connect(
+      m_start_btn, &QPushButton::released, this, &SpinPuzzleWidget::start_game);
+
+    connect(m_load_btn, &QPushButton::released, this, [this] {
+      m_paint_congratulations = false;
+      stop_spinning_winning();
+      load_latest_game();
+      update();
+    });
+
+    connect(m_save_btn, &QPushButton::released, this, [this] {
+      if (m_game.is_game_solved() ||
+          (!(m_timer->isActive() || m_elapsed_time > 0))) {
+        return;
+      }
+      if (save_progress()) {
+        QMessageBox(QMessageBox::Information, "progress", "progress saved.")
+          .exec();
+        update();
+      }
+    });
+  }
+
+  if (isInteractiveGame()) {
+    connect(m_twist_side, &QPushButton::released, this, [this] {
+      this->m_game.swap_side();
+      update();
+    });
+  } else {
+    connect(m_twist_side, &QPushButton::released, this, [this] {
+      this->m_game.swap_side();
+      update();
+    });
+    connect(m_twist_side, &QPushButton::pressed, this, [this] {
+      this->m_game.swap_side();
+      update();
+    });
+  }
 }
 
-void SpinPuzzleWidget::reset_recording() {
+void
+SpinPuzzleWidget::reset_recording()
+{
   this->stop_recording();
   // m_rec_btn->setText("REC");
 }
@@ -146,6 +177,13 @@ SpinPuzzleWidget::exec_puzzle_records_dialog()
 void
 SpinPuzzleWidget::exec_puzzle_config_dialog()
 {
+  if (m_timer->isActive()) {
+    QMessageBox(QMessageBox::Warning,
+                "configuration",
+                "Cannot chage configuration while a game is running.")
+      .exec();
+    return;
+  }
   m_config_widget = new SpinPuzzleConfigurationWidget(
     m_win_width, m_win_height, this, m_config);
   m_config_widget->show();
@@ -196,22 +234,23 @@ SpinPuzzleWidget::get_length_status_square() const
   return m_length / 24.0;
 }
 
-void 
-SpinPuzzleWidget::delete_game_recordings() {
+void
+SpinPuzzleWidget::delete_game_recordings()
+{
   // delete all recordings
   QDir dir(m_files.get_recoding_puzzle_directory().c_str());
   dir.setNameFilters(QStringList() << "*.*");
   dir.setFilter(QDir::Files);
-  foreach(QString dirFile, dir.entryList()) {
+  foreach (QString dirFile, dir.entryList()) {
     if (dirFile.startsWith("recording_")) {
       dir.remove(dirFile);
     }
   }
-
 }
 
-void 
-SpinPuzzleWidget::delete_puzzle_files() {
+void
+SpinPuzzleWidget::delete_puzzle_files()
+{
   std::vector<std::string> files;
   files.emplace_back((m_files.get_current_puzzle_file().c_str()));
   files.emplace_back((m_files.get_puzzle_file().c_str()));
@@ -223,8 +262,9 @@ SpinPuzzleWidget::delete_puzzle_files() {
   }
 }
 
-int 
-SpinPuzzleWidget::messageBoxDeleteFiles() {
+int
+SpinPuzzleWidget::messageBoxDeleteFiles()
+{
   auto msg = QMessageBox(QMessageBox::Warning,
                          "reset",
                          "Do you want to delete all saved puzzles",
@@ -286,7 +326,7 @@ SpinPuzzleWidget::quit()
 }
 
 bool
-SpinPuzzleWidget::start_recording() 
+SpinPuzzleWidget::start_recording()
 {
   if (m_recorderPtr == nullptr) {
     m_recorderPtr = std::make_shared<puzzle::Recorder>();
@@ -298,7 +338,7 @@ SpinPuzzleWidget::start_recording()
 }
 
 bool
-SpinPuzzleWidget::stop_recording() 
+SpinPuzzleWidget::stop_recording()
 {
   if (m_recorderPtr == nullptr || !m_recorderPtr->isRecording()) {
     return false;
@@ -326,7 +366,8 @@ SpinPuzzleWidget::store_recorded_game() const
   if (m_recorderPtr == nullptr || m_recorderPtr->isRecording()) {
     return "NONE";
   }
-  std::cout << "[INFO] storing file into " << m_files.get_recoding_puzzle_directory() << "\n"; 
+  std::cout << "[INFO] storing file into "
+            << m_files.get_recoding_puzzle_directory() << "\n";
   std::string name = m_files.get_recoding_puzzle_name();
   std::ofstream f(m_files.get_recoding_puzzle(name), std::ios::trunc);
   if (f.is_open()) {
@@ -340,7 +381,8 @@ int
 SpinPuzzleWidget::load_records(
   std::vector<puzzle::SpinPuzzleRecord>& games) const
 {
-  std::cout << "[INFO] loading records from " << m_files.get_records_puzzle_file() << "\n";
+  std::cout << "[INFO] loading records from "
+            << m_files.get_records_puzzle_file() << "\n";
   games.clear();
   int max_time = 0;
   std::ifstream f1(m_files.get_records_puzzle_file());
@@ -379,7 +421,8 @@ SpinPuzzleWidget::store_puzzle_record(const std::string& recording_name) const
 }
 
 bool
-SpinPuzzleWidget::store_puzzle_record() const {
+SpinPuzzleWidget::store_puzzle_record() const
+{
   return store_puzzle_record("NONE");
 }
 
@@ -802,7 +845,6 @@ SpinPuzzleWidget::set_size(int win_width, int win_height)
     m_load_btn->setGeometry(QRect(t + 2 * w, m_win_height - h, w, h));
     m_save_btn->setGeometry(QRect(t + 3 * w, m_win_height - h, w, h));
     // m_rec_btn->setGeometry(QRect(t + 4 * w, m_win_height - h, w, h));
-
   }
 }
 
@@ -887,11 +929,11 @@ SpinPuzzleWidget::paint_background()
   QPainter painter(this);
   QColor background;
   if (isInteractiveGame())
-      background = QColor(208, 228, 225);
+    background = QColor(208, 228, 225);
   else if (isHistoryShow()) {
-      background = QColor(0xf0eb9a);
+    background = QColor(0xf0eb9a);
   } else if (isReplayGame()) {
-      background = QColor(0x00eb9a);
+    background = QColor(0x00eb9a);
   }
   painter.setBrush(background);
   painter.drawRect(0, 0, m_win_width - 1, m_win_height - 1);

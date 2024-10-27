@@ -39,10 +39,10 @@ SpinPuzzleWindow::create_actions()
   m_records_action = new QAction(tr("Records"), this);
   m_import = new QAction(tr("Import Game"), this);
 
-  m_start_game = new QAction(tr("Start Game"), this);
-  m_reset_game = new QAction(tr("Reset Game"), this);
-  m_save_game = new QAction(tr("Save Progress"), this);
-  m_load_game = new QAction(tr("Load Latest Game"), this);
+  m_start_game = new QAction(tr("Start Game (▶)"), this);
+  m_reset_game = new QAction(tr("Reset Game (⟲)"), this);
+  m_save_game = new QAction(tr("Save Progress (⇓)"), this);
+  m_load_game = new QAction(tr("Load Latest Game (⟪)"), this);
 
   m_config_game = new QAction(tr("Configuration"), this);
   m_reset_app = new QAction(tr("Reset App"), this);

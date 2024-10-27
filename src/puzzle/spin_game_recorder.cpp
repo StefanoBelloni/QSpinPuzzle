@@ -38,7 +38,9 @@ Recorder::reset()
   m_events.clear();
 }
 
-void Recorder::rec(const SpinPuzzleGame& game) {
+void
+Recorder::rec(const SpinPuzzleGame& game)
+{
   game.serialize(m_start_game);
   m_recording = true;
 }
@@ -85,18 +87,21 @@ Recorder::play(SpinPuzzleGame& game, size_t time)
       default:
         break;
     }
-    if (m_current->time() - start_time >= time) { 
+    if (m_current->time() - start_time >= time) {
       ++m_current;
-      break; 
+      break;
     }
   }
   return m_current - m_events.begin();
 }
 
 void
-Recorder::play(SpinPuzzleGame& game, std::vector<Event>::iterator begin, std::vector<Event>::iterator end)
+Recorder::play(SpinPuzzleGame& game,
+               std::vector<Event>::iterator begin,
+               std::vector<Event>::iterator end)
 {
-  for (m_current = begin; m_current != end && m_current != m_events.end(); ++m_current) {
+  for (m_current = begin; m_current != end && m_current != m_events.end();
+       ++m_current) {
     const Event& event = *m_current;
     switch (event.type()) {
       case Recorder::EventType::ROTATE_MARBLES:
@@ -120,19 +125,27 @@ Recorder::play(SpinPuzzleGame& game, std::vector<Event>::iterator begin, std::ve
   }
 }
 
-bool Recorder::step_forward(SpinPuzzleGame& game, size_t steps) {
+bool
+Recorder::step_forward(SpinPuzzleGame& game, size_t steps)
+{
   play(game, m_current, m_current + steps);
   return m_current != m_events.end();
 }
 
-void Recorder::rewind() {
+void
+Recorder::rewind()
+{
   m_current = m_events.begin();
 }
 
-void Recorder::rewind(SpinPuzzleGame& game) {
+void
+Recorder::rewind(SpinPuzzleGame& game)
+{
   m_start_game.seekg(0, std::ios::end);
   int size = m_start_game.tellg();
-  if (size == 0) { return; }
+  if (size == 0) {
+    return;
+  }
   m_start_game.seekg(0, std::ios::beg);
   game.load(m_start_game);
   m_current = m_events.begin();

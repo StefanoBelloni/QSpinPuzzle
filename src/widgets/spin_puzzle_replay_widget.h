@@ -2,11 +2,11 @@
 #ifndef SPIN_PUZZLE_REPLAY_WIDGET_H
 #define SPIN_PUZZLE_REPLAY_WIDGET_H
 
-#include <QWidget>
 #include <QDialog>
+#include <QWidget>
 
-#include "puzzle/spin_puzzle_game.h"
 #include "puzzle/spin_game_recorder.h"
+#include "puzzle/spin_puzzle_game.h"
 
 class SpinPuzzleWidget;
 class QPushButton;
@@ -23,6 +23,7 @@ public:
                          int win_heigth,
                          SpinPuzzleWidget* parent,
                          const puzzle::Recorder& recorder);
+
 private:
   void setup_ui();
   void setup_layout();
@@ -42,12 +43,11 @@ private:
   puzzle::Recorder m_recorder;
   puzzle::SpinPuzzleGame m_game;
 
-  SpinPuzzleWidget * m_spinPuzzleWidget;
+  SpinPuzzleWidget* m_spinPuzzleWidget;
   QTimer* m_timer;
-  size_t m_speed{10};
-  size_t m_speed_max{20};
+  size_t m_speed{ 10 };
+  size_t m_speed_max{ 20 };
   size_t m_timer_step = 40;
-
 };
 
 #endif // SPIN_PUZZLE_HISDTORY_WIDGET_H

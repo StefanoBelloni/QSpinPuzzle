@@ -2,9 +2,9 @@
 #ifndef SPIN_PUZZLE_HISDTORY_WIDGET_H
 #define SPIN_PUZZLE_HISDTORY_WIDGET_H
 
+#include <QDialog>
 #include <QScrollArea>
 #include <QWidget>
-#include <QDialog>
 
 #include "puzzle/spin_puzzle_game.h"
 #include "puzzle/spin_puzzle_record.h"

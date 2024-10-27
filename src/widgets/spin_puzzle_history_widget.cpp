@@ -12,8 +12,8 @@
 #include <QVBoxLayout>
 
 #include "puzzle/spin_puzzle_cipher.h"
-#include "spin_puzzle_widget.h"
 #include "spin_puzzle_replay_widget.h"
+#include "spin_puzzle_widget.h"
 
 #define DEBUG_CIPHER 0
 
@@ -121,7 +121,10 @@ SpinPuzzleHistoryWidget::get_puzzle(const puzzle::SpinPuzzleRecord& record)
   layout_btn->addWidget(delete_btn);
   btns->setLayout(layout_btn);
 
-  auto w1 = new SpinPuzzleWidget(m_win_width, m_win_heigth, SpinPuzzleWidget::TypePuzzle::SHOW_HISTORY, this);
+  auto w1 = new SpinPuzzleWidget(m_win_width,
+                                 m_win_heigth,
+                                 SpinPuzzleWidget::TypePuzzle::SHOW_HISTORY,
+                                 this);
   w1->set_game(record.game());
 
   layout->addWidget(w1);
@@ -137,14 +140,18 @@ SpinPuzzleHistoryWidget::get_puzzle(const puzzle::SpinPuzzleRecord& record)
   return widget;
 }
 
-void SpinPuzzleHistoryWidget::setup_select_btn(QPushButton* select_btn) {
+void
+SpinPuzzleHistoryWidget::setup_select_btn(QPushButton* select_btn)
+{
   connect(select_btn, &QPushButton::released, m_parent, [this] {
     m_parent->start_with_game(m_games[m_stackedWidget->currentIndex()].game());
     m_parent->delete_history_popup();
   });
 }
 
-void SpinPuzzleHistoryWidget::setup_export_btn(QPushButton* export_btn) {
+void
+SpinPuzzleHistoryWidget::setup_export_btn(QPushButton* export_btn)
+{
 
   connect(export_btn, &QPushButton::released, m_parent, [this] {
     auto& record = m_games[m_stackedWidget->currentIndex()];
@@ -160,7 +167,9 @@ void SpinPuzzleHistoryWidget::setup_export_btn(QPushButton* export_btn) {
   });
 }
 
-void SpinPuzzleHistoryWidget::setup_delete_btn(QPushButton* delete_btn) {
+void
+SpinPuzzleHistoryWidget::setup_delete_btn(QPushButton* delete_btn)
+{
   connect(delete_btn, &QPushButton::released, m_parent, [this] {
     if (m_games.size() == 0) {
       return;
@@ -178,14 +187,17 @@ void SpinPuzzleHistoryWidget::setup_delete_btn(QPushButton* delete_btn) {
   });
 }
 
-void SpinPuzzleHistoryWidget::setup_replay_btn(QPushButton* replay_btn) {
+void
+SpinPuzzleHistoryWidget::setup_replay_btn(QPushButton* replay_btn)
+{
   connect(replay_btn, &QPushButton::released, m_parent, [this] {
     auto record = m_games.begin() + m_stackedWidget->currentIndex();
     std::string name_recording = record->file_recording();
     puzzle::Recorder recorder;
     std::ifstream f(m_parent->files().get_recoding_puzzle(name_recording));
     recorder.load(f);
-    auto w1 = new SpinPuzzleReplayWidget(m_win_width, m_win_heigth, m_parent, recorder);
+    auto w1 =
+      new SpinPuzzleReplayWidget(m_win_width, m_win_heigth, m_parent, recorder);
     w1->exec();
     // m_parent->add_replay_popup(w1);
     // w1->setFixedSize(m_win_width, m_win_heigth);
