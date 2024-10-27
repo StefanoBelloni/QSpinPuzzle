@@ -15,32 +15,15 @@ class SpinPuzzleWindow : public QMainWindow
 public:
   SpinPuzzleWindow(QWidget* parent = nullptr);
   ~SpinPuzzleWindow();
-
-  void closeEvent(QCloseEvent* event) override
-  {
-    m_spinPuzzleWidget->closeEvent(event);
-  }
+  void closeEvent(QCloseEvent* event) override;
 
 private:
-  void create_actions();
-  void create_menus();
+  void create_menu();
+  void setup_central_widget();
+  void about();
+  void quit();
 
   SpinPuzzleWidget* m_spinPuzzleWidget;
-
-  QAction* m_records_action;
-  QAction* m_import;
-  QAction* m_start_game;
-  QAction* m_reset_game;
-  QAction* m_save_game;
-  QAction* m_load_game;
-  QAction* m_config_game;
-  QAction* m_reset_app;
-  QAction* m_about;
-  QAction* m_quit;
-
-  QAction* m_reset_application;
-
   QMenu* m_menu;
-  QMenu* m_extra;
 };
 #endif // QSPINPUZZLEWINDOW_H

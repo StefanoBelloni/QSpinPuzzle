@@ -74,12 +74,13 @@ public:
   bool import_game();
 
   void start_game();
-  void reset();
+  void reset_game();
   void load_latest_game();
-  bool save_progress();
+  void save_progress();
   bool quit();
 
 private:
+  bool do_save_progress();
   void set_size(int win_width, int win_height);
   double get_radius_internal() const;
   void create_polygon(QPolygon& polygon);

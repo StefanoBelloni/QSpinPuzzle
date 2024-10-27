@@ -113,7 +113,7 @@ SpinPuzzleWidget::connect_widget_buttons()
     });
 
     connect(
-      m_reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset);
+      m_reset_btn, &QPushButton::released, this, &SpinPuzzleWidget::reset_game);
 
     connect(
       m_start_btn, &QPushButton::released, this, &SpinPuzzleWidget::start_game);
@@ -125,17 +125,10 @@ SpinPuzzleWidget::connect_widget_buttons()
       update();
     });
 
-    connect(m_save_btn, &QPushButton::released, this, [this] {
-      if (m_game.is_game_solved() ||
-          (!(m_timer->isActive() || m_elapsed_time > 0))) {
-        return;
-      }
-      if (save_progress()) {
-        QMessageBox(QMessageBox::Information, "progress", "progress saved.")
-          .exec();
-        update();
-      }
-    });
+    connect(m_save_btn,
+            &QPushButton::released,
+            this,
+            &SpinPuzzleWidget::save_progress);
   }
 
   if (isInteractiveGame()) {
@@ -152,6 +145,19 @@ SpinPuzzleWidget::connect_widget_buttons()
       this->m_game.swap_side();
       update();
     });
+  }
+}
+
+void
+SpinPuzzleWidget::save_progress()
+{
+  if (m_game.is_game_solved() ||
+      (!(m_timer->isActive() || m_elapsed_time > 0))) {
+    return;
+  }
+  if (do_save_progress()) {
+    QMessageBox(QMessageBox::Information, "progress", "progress saved.").exec();
+    update();
   }
 }
 
@@ -283,14 +289,14 @@ SpinPuzzleWidget::reset_file_app()
   }
   delete_puzzle_files();
   delete_game_recordings();
-  reset();
+  reset_game();
   delete_history_popup();
   delete_config_popup();
   update();
 }
 
 bool
-SpinPuzzleWidget::save_progress()
+SpinPuzzleWidget::do_save_progress()
 {
   auto file_name = m_files.get_current_puzzle_file();
   std::ofstream f(file_name, std::ios::trunc);
@@ -314,7 +320,7 @@ SpinPuzzleWidget::quit()
                            QMessageBox::Ok | QMessageBox::Cancel)
                  .exec();
     if (save == QMessageBox::Ok) {
-      save_progress();
+      do_save_progress();
     }
   }
   int do_quit = QMessageBox(QMessageBox::Question,
@@ -1304,7 +1310,7 @@ SpinPuzzleWidget::mousePressEvent(QMouseEvent* e)
     // if (rec.contains(e->pos())) {
     // reset();
     // }
-    reset();
+    reset_game();
     return;
   }
 
@@ -1560,7 +1566,7 @@ SpinPuzzleWidget::processKey(int key, double fraction_angle)
 }
 
 void
-SpinPuzzleWidget::reset()
+SpinPuzzleWidget::reset_game()
 {
   if ((m_timer->isActive() || m_elapsed_time > 0) && !m_solved) {
     auto msg = QMessageBox(QMessageBox::Question,
@@ -1628,7 +1634,7 @@ SpinPuzzleWidget::do_start_game(int shuffle_level)
     m_files.create_filesystem();
     store_puzzle_begin();
     start_recording();
-    save_progress();
+    do_save_progress();
   }
 
   update();
