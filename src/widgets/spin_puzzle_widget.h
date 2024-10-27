@@ -10,7 +10,6 @@
 #include "puzzle/spin_puzzle_game.h"
 #include "puzzle/spin_puzzle_record.h"
 #include "spin_puzzle_filesystems.h"
-#include "spin_puzzle_history_widget.h"
 
 #define SAVE_LOAD_DATA 1
 
@@ -90,7 +89,7 @@ private:
                             QColor color_internal,
                             QColor color_body) const;
 
-  void next_section(QPainter& painter, int angle = 120) const;
+  void move_to_next_section(QPainter& painter, int angle = 120) const;
 
   void paint_background();
   void paint_status();

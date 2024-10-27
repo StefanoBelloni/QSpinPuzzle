@@ -24,10 +24,29 @@
 #include "puzzle/spin_puzzle_cipher.h"
 #include "spin_puzzle_config_widget.h"
 #include "spin_puzzle_replay_widget.h"
+#include "spin_puzzle_history_widget.h"
 
 #define DEBUG_MARBLES 0
 #define DEBUG_CIPHER 0
 #define HIDDEN_BUTTON 1
+
+#define PAINT_PUZZLE_SECTION(__leaf__)                                         \
+  paint_puzzle_section(                                                        \
+    painter,                                                                   \
+    (m_game.get_keybord_state() == puzzle::LEAF::__leaf__) ? true : false,     \
+    m_colors_leaves[COLOR_SIDE][__leaf__],                                     \
+    m_colors_leaves_internal[COLOR_SIDE][__leaf__],                            \
+    m_colors_leaves_body[COLOR_SIDE][__leaf__]);                               \
+  move_to_next_section(painter);
+
+#define PAINT_MARBLES_ON_LEAF()                                                \
+  for (size_t n = 0; n < 7; ++n, ++it) {                                       \
+    paint_marble(shift_local, painter, it, center, n + 2, r);                  \
+  }                                                                            \
+  move_to_next_section(painter, internal_dist_angle);                          \
+  for (size_t n = 9; n >= 7; --n, ++it) {                                      \
+    paint_marble(-shift_local, painter, it, center, n + 2, r);                 \
+  }
 
 SpinPuzzleWidget::SpinPuzzleWidget(int win_width,
                                    int win_heigth,
@@ -855,7 +874,7 @@ SpinPuzzleWidget::set_size(int win_width, int win_height)
 }
 
 void
-SpinPuzzleWidget::next_section(QPainter& painter, int angle) const
+SpinPuzzleWidget::move_to_next_section(QPainter& painter, int angle) const
 {
   const int L = this->m_length;
   const QPoint center = QPoint(L / 2, (2 * std::sqrt(3) + 3) * L / 12);
@@ -964,35 +983,17 @@ SpinPuzzleWidget::paint_game()
 
   QPainter painter(this);
   painter.translate(QPoint(m_tx, m_ty));
-  next_section(painter, m_rotation_congratulation);
+  move_to_next_section(painter, m_rotation_congratulation);
   painter.save();
   // ====================================================================== //
   // NORTH
-  int color_side = static_cast<uint8_t>(m_game.get_active_side());
-  int north = static_cast<uint8_t>(puzzle::LEAF::NORTH);
-  int east = static_cast<uint8_t>(puzzle::LEAF::EAST);
-  int west = static_cast<uint8_t>(puzzle::LEAF::WEST);
-  paint_puzzle_section(
-    painter,
-    (m_game.get_keybord_state() == puzzle::LEAF::NORTH) ? true : false,
-    m_colors_leaves[color_side][north],
-    m_colors_leaves_internal[color_side][north],
-    m_colors_leaves_body[color_side][north]);
-  next_section(painter);
-  paint_puzzle_section(
-    painter,
-    (m_game.get_keybord_state() == puzzle::LEAF::EAST) ? true : false,
-    m_colors_leaves[color_side][east],
-    m_colors_leaves_internal[color_side][east],
-    m_colors_leaves_body[color_side][east]);
-  // WEST
-  next_section(painter);
-  paint_puzzle_section(
-    painter,
-    (m_game.get_keybord_state() == puzzle::LEAF::WEST) ? true : false,
-    m_colors_leaves[color_side][west],
-    m_colors_leaves_internal[color_side][west],
-    m_colors_leaves_body[color_side][west]);
+  const int COLOR_SIDE = static_cast<uint8_t>(m_game.get_active_side());
+  const int NORTH = static_cast<uint8_t>(puzzle::LEAF::NORTH);
+  const int EAST = static_cast<uint8_t>(puzzle::LEAF::EAST);
+  const int WEST = static_cast<uint8_t>(puzzle::LEAF::WEST);
+  PAINT_PUZZLE_SECTION(NORTH);
+  PAINT_PUZZLE_SECTION(EAST);
+  PAINT_PUZZLE_SECTION(WEST);
   // ====================================================================== //
 
   painter.restore();
@@ -1005,8 +1006,8 @@ SpinPuzzleWidget::paint_game()
     QPen activePen(Qt::black, 3);
     painter.setPen(activePen);
   }
-  radialGrad.setColorAt((color_side) % 2, Qt::magenta);
-  radialGrad.setColorAt((color_side + 1) % 2, Qt::darkMagenta);
+  radialGrad.setColorAt((COLOR_SIDE) % 2, Qt::magenta);
+  radialGrad.setColorAt((COLOR_SIDE + 1) % 2, Qt::darkMagenta);
   // radialGrad.setColorAt(1, Qt::magenta);
   painter.setBrush(radialGrad);
   // painter.setBrush(Qt::magenta);
@@ -1016,14 +1017,14 @@ SpinPuzzleWidget::paint_game()
 
   painter.restore();
   // NORTH
-  next_section(painter, game_side.get_phase_shift_internal_disk());
+  move_to_next_section(painter, game_side.get_phase_shift_internal_disk());
   painter.setBrush(Qt::darkBlue);
   paint_internal_circular_guide(painter, Qt::darkBlue);
   // EAST
-  next_section(painter);
+  move_to_next_section(painter);
   paint_internal_circular_guide(painter, Qt::darkBlue);
   // WEST
-  next_section(painter);
+  move_to_next_section(painter);
   paint_internal_circular_guide(painter, Qt::darkBlue);
   // ====================================================================== //
 }
@@ -1033,7 +1034,7 @@ SpinPuzzleWidget::paint_marbles()
 {
   QPainter painter(this);
   painter.translate(QPoint(m_tx, m_ty));
-  next_section(painter, m_rotation_congratulation);
+  move_to_next_section(painter, m_rotation_congratulation);
 
   painter.save();
   auto& game_side = m_game.get_side(m_game.get_active_side());
@@ -1051,18 +1052,18 @@ SpinPuzzleWidget::do_paint_marbles(QPainter& painter)
   // ====================================================================== //
   // paint marbles
   paint_marbles_on_leaf(painter, puzzle::LEAF::NORTH);
-  next_section(painter);
+  move_to_next_section(painter);
   paint_marbles_on_leaf(painter, puzzle::LEAF::EAST);
-  next_section(painter);
+  move_to_next_section(painter);
   paint_marbles_on_leaf(painter, puzzle::LEAF::WEST);
   // -------------------------- //
   painter.restore();
   // -------------------------- //
-  next_section(painter, game_side.get_phase_shift_internal_disk());
+  move_to_next_section(painter, game_side.get_phase_shift_internal_disk());
   paint_marbles_on_internal_circle(painter, puzzle::LEAF::NORTH);
-  next_section(painter);
+  move_to_next_section(painter);
   paint_marbles_on_internal_circle(painter, puzzle::LEAF::EAST);
-  next_section(painter);
+  move_to_next_section(painter);
   paint_marbles_on_internal_circle(painter, puzzle::LEAF::WEST);
 }
 
@@ -1079,32 +1080,13 @@ SpinPuzzleWidget::do_paint_marbles_on_border(QPainter& painter)
   double internal_dist_angle = game_side.get_phase_shift_internal_disk();
 
   // NORTH
-  for (size_t n = 0; n < 7; ++n, ++it) {
-    paint_marble(shift_local, painter, it, center, n + 2, r);
-  }
-  next_section(painter, internal_dist_angle);
-  for (size_t n = 9; n >= 7; --n, ++it) {
-    paint_marble(-shift_local, painter, it, center, n + 2, r);
-  }
+  PAINT_MARBLES_ON_LEAF();
   // EAST
-  next_section(painter, 120 - internal_dist_angle);
-  for (size_t n = 0; n < 7; ++n, ++it) {
-    paint_marble(shift_local, painter, it, center, n + 2, r);
-  }
-  next_section(painter, internal_dist_angle);
-  for (size_t n = 9; n >= 7; --n, ++it) {
-    paint_marble(-shift_local, painter, it, center, n + 2, r);
-  }
+  move_to_next_section(painter, 120 - internal_dist_angle);
+  PAINT_MARBLES_ON_LEAF();
   // WEST
-  next_section(painter, 120 - internal_dist_angle);
-  for (size_t n = 0; n < 7; ++n, ++it) {
-    paint_marble(shift_local, painter, it, center, n + 2, r);
-  }
-  next_section(painter, internal_dist_angle);
-  for (size_t n = 9; n >= 7; --n, ++it) {
-    paint_marble(-shift_local, painter, it, center, n + 2, r);
-  }
-  // next_section(painter, 120 - internal_dist_angle);
+  move_to_next_section(painter, 120 - internal_dist_angle);
+  PAINT_MARBLES_ON_LEAF();
 }
 
 QColor
